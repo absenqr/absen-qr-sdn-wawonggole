@@ -1086,9 +1086,10 @@
         document.getElementById('scanner-modal').classList.add('open');
         html5QrCode = new Html5Qrcode("qr-reader");
         html5QrCode.start({ facingMode:"environment" }, { fps:24, qrbox:220 }, (text) => {
-            if (text === "SDN_WAWONGGOLE_HADIR") { submitAbsen(); stopScanner(); }
-            else showToast('QR Code tidak dikenali');
-        }).catch(console.error);
+            if (text === auth.currentUser.uid) {
+    submitAbsen(); // UID di QR harus milik sendiri
+        } else {
+    showToast('⚠️ QR bukan milik Anda!');
     };
 
     window.stopScanner = () => {
