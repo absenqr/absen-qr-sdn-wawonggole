@@ -1081,17 +1081,20 @@
     };
 
     window.startScanner = () => {
-        if (!gpsChecked) { showToast('Harap tunggu, GPS sedang diperiksa…'); return; }
-        if (!gpsValid)   { showToast('❌ Anda berada di luar area sekolah.'); return; }
-        document.getElementById('scanner-modal').classList.add('open');
-        html5QrCode = new Html5Qrcode("qr-reader");
-        html5QrCode.start({ facingMode:"environment" }, { fps:24, qrbox:220 }, (text) => {
-            if (text === auth.currentUser.uid) {
-    submitAbsen(); // UID di QR harus milik sendiri
+    if (!gpsChecked) { showToast('Harap tunggu, GPS sedang diperiksa…'); return; }
+    if (!gpsValid)   { showToast('❌ Anda berada di luar area sekolah.'); return; }
+    document.getElementById('scanner-modal').classList.add('open');
+    html5QrCode = new Html5Qrcode("qr-reader");
+    html5QrCode.start({ facingMode:"environment" }, { fps:24, qrbox:220 }, (text) => {
+        if (text === auth.currentUser.uid) {
+            submitAbsen();
+            stopScanner(); // ← wajib ada agar kamera tertutup
         } else {
-    showToast('⚠️ QR bukan milik Anda!');
-    };
-
+            showToast('⚠️ QR bukan milik Anda!');
+        }
+    }).catch(console.error); // ← tangkap error kamera
+};
+    
     window.stopScanner = () => {
         if (html5QrCode) {
             html5QrCode.stop().finally(() => {
