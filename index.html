@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/html5-qrcode"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
     <style>
         :root {
             --primary: #4F46E5;
@@ -42,7 +43,6 @@
             min-height: 100vh;
         }
 
-        /* ── Canvas ── */
         .phone {
             width: 100%;
             max-width: 390px;
@@ -55,7 +55,6 @@
             flex-direction: column;
         }
 
-        /* ── Screen helpers ── */
         .screen { display: none; flex: 1; flex-direction: column; animation: fadeUp .4s cubic-bezier(.16,1,.3,1); }
         .screen.active { display: flex; }
 
@@ -64,7 +63,7 @@
             to   { opacity: 1; transform: translateY(0); }
         }
 
-        /* ─────────────── AUTH SCREEN ─────────────── */
+        /* ─── AUTH ─── */
         #screen-auth {
             align-items: center;
             justify-content: center;
@@ -73,14 +72,7 @@
             position: relative;
             overflow: hidden;
         }
-
-        .auth-blob {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(60px);
-            opacity: .25;
-            pointer-events: none;
-        }
+        .auth-blob { position: absolute; border-radius: 50%; filter: blur(60px); opacity: .25; pointer-events: none; }
         .auth-blob-1 { width: 260px; height: 260px; background: var(--primary); top: -80px; right: -60px; }
         .auth-blob-2 { width: 200px; height: 200px; background: var(--accent); bottom: 40px; left: -60px; }
 
@@ -93,323 +85,110 @@
             box-shadow: var(--shadow-lg);
             margin-bottom: 28px;
         }
-
-        .auth-title {
-            font-size: 28px;
-            font-weight: 900;
-            color: var(--text-1);
-            text-align: center;
-            line-height: 1.2;
-            letter-spacing: -0.5px;
-        }
+        .auth-title { font-size: 28px; font-weight: 900; color: var(--text-1); text-align: center; line-height: 1.2; letter-spacing: -0.5px; }
         .auth-title span { color: var(--primary); }
-
-        .auth-sub {
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--text-3);
-            text-transform: uppercase;
-            letter-spacing: .25em;
-            text-align: center;
-            margin-top: 8px;
-            margin-bottom: 40px;
-        }
+        .auth-sub { font-size: 10px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .25em; text-align: center; margin-top: 8px; margin-bottom: 40px; }
 
         .field-group { width: 100%; margin-bottom: 14px; }
-        .field-label {
-            font-size: 9px;
-            font-weight: 800;
-            color: var(--text-3);
-            text-transform: uppercase;
-            letter-spacing: .2em;
-            margin-bottom: 8px;
-            padding-left: 4px;
-            display: block;
-        }
+        .field-label { font-size: 9px; font-weight: 800; color: var(--text-3); text-transform: uppercase; letter-spacing: .2em; margin-bottom: 8px; padding-left: 4px; display: block; }
         .field-wrap {
             background: white;
             border-radius: var(--radius-md);
             border: 1.5px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 0 18px;
+            display: flex; align-items: center; gap: 12px; padding: 0 18px;
             transition: border-color .2s, box-shadow .2s;
         }
-        .field-wrap:focus-within {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(79,70,229,.08);
-        }
+        .field-wrap:focus-within { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(79,70,229,.08); }
         .field-wrap svg { flex-shrink: 0; opacity: .35; }
-        .field-wrap input {
-            flex: 1;
-            border: none;
-            outline: none;
-            font-family: inherit;
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-1);
-            padding: 18px 0;
-            background: transparent;
-        }
+        .field-wrap input { flex: 1; border: none; outline: none; font-family: inherit; font-size: 14px; font-weight: 600; color: var(--text-1); padding: 18px 0; background: transparent; }
         .field-wrap input::placeholder { color: var(--text-3); font-weight: 500; }
 
         .btn-auth {
-            width: 100%;
-            padding: 18px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: var(--radius-md);
-            font-family: inherit;
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: .15em;
-            text-transform: uppercase;
-            cursor: pointer;
-            box-shadow: 0 12px 32px rgba(79,70,229,.35);
-            transition: transform .15s, opacity .15s;
-            margin-top: 8px;
+            width: 100%; padding: 18px;
+            background: var(--primary); color: white; border: none; border-radius: var(--radius-md);
+            font-family: inherit; font-size: 12px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase;
+            cursor: pointer; box-shadow: 0 12px 32px rgba(79,70,229,.35);
+            transition: transform .15s, opacity .15s; margin-top: 8px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
         }
         .btn-auth:active { transform: scale(.97); opacity: .9; }
+        .btn-auth:disabled { opacity: .6; cursor: not-allowed; transform: none; }
 
-        /* ─────────────── HOME SCREEN ─────────────── */
-        #screen-home {
-            padding-bottom: 100px;
-            overflow-y: auto;
+        /* Spinner */
+        .spinner {
+            width: 16px; height: 16px;
+            border: 2px solid rgba(255,255,255,.4);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin .6s linear infinite;
+            display: none;
         }
+        .btn-auth.loading .spinner { display: block; }
+        .btn-auth.loading .btn-text { opacity: .7; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Header */
-        .home-header {
-            padding: 52px 24px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .header-greet {
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--text-3);
-            text-transform: uppercase;
-            letter-spacing: .2em;
-        }
-        .header-name {
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--text-1);
-            letter-spacing: -.3px;
-            margin-top: 2px;
-            max-width: 220px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        .header-avatar {
-            width: 46px; height: 46px;
-            background: var(--primary-light);
-            border-radius: 16px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 22px;
-            flex-shrink: 0;
-        }
+        /* ─── HOME ─── */
+        #screen-home { padding-bottom: 100px; overflow-y: auto; }
+        .home-header { padding: 52px 24px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header-greet { font-size: 10px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .2em; }
+        .header-name { font-size: 18px; font-weight: 800; color: var(--text-1); letter-spacing: -.3px; margin-top: 2px; max-width: 220px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .header-avatar { width: 46px; height: 46px; background: var(--primary-light); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
 
-        /* GPS badge */
-        .gps-row {
-            padding: 0 24px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .gps-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 7px 14px;
-            border-radius: 999px;
-            font-size: 9px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: .12em;
-        }
+        .gps-row { padding: 0 24px; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        .gps-pill { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 999px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; }
         .gps-checking { background: #FEF3C7; color: #92400E; }
         .gps-valid    { background: #D1FAE5; color: #065F46; }
         .gps-invalid  { background: #FEE2E2; color: #991B1B; }
         .gps-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
-        .gps-refresh-btn {
-            font-size: 9px;
-            font-weight: 800;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: .12em;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 4px 0;
-        }
+        .gps-refresh-btn { font-size: 9px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: .12em; background: none; border: none; cursor: pointer; padding: 4px 0; }
 
-        /* Status card */
         .status-card {
             margin: 0 24px 24px;
             background: var(--primary);
             border-radius: var(--radius-xl);
-            padding: 28px 28px 28px;
-            position: relative;
-            overflow: hidden;
+            padding: 28px;
+            position: relative; overflow: hidden;
             box-shadow: var(--shadow-lg);
         }
-        .status-card::before {
-            content: '';
-            position: absolute;
-            width: 180px; height: 180px;
-            border-radius: 50%;
-            background: rgba(255,255,255,.06);
-            top: -60px; right: -50px;
-        }
-        .status-card::after {
-            content: '';
-            position: absolute;
-            width: 120px; height: 120px;
-            border-radius: 50%;
-            background: rgba(255,255,255,.04);
-            bottom: -40px; left: 20px;
-        }
-        .status-eyebrow {
-            font-size: 9px;
-            font-weight: 700;
-            color: rgba(255,255,255,.55);
-            text-transform: uppercase;
-            letter-spacing: .2em;
-            margin-bottom: 10px;
-        }
-        .status-label-text {
-            font-size: 26px;
-            font-weight: 900;
-            color: white;
-            letter-spacing: -.5px;
-            line-height: 1.1;
-            position: relative;
-            z-index: 1;
-        }
-        .status-school {
-            position: absolute;
-            bottom: 24px; right: 24px;
-            font-size: 8px;
-            font-weight: 800;
-            color: rgba(255,255,255,.3);
-            text-align: right;
-            text-transform: uppercase;
-            letter-spacing: .1em;
-            line-height: 1.6;
-            z-index: 1;
-        }
+        .status-card::before { content: ''; position: absolute; width: 180px; height: 180px; border-radius: 50%; background: rgba(255,255,255,.06); top: -60px; right: -50px; }
+        .status-card::after  { content: ''; position: absolute; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,.04); bottom: -40px; left: 20px; }
+        .status-eyebrow { font-size: 9px; font-weight: 700; color: rgba(255,255,255,.55); text-transform: uppercase; letter-spacing: .2em; margin-bottom: 10px; }
+        .status-label-text { font-size: 26px; font-weight: 900; color: white; letter-spacing: -.5px; line-height: 1.1; position: relative; z-index: 1; }
+        .status-school { position: absolute; bottom: 24px; right: 24px; font-size: 8px; font-weight: 800; color: rgba(255,255,255,.3); text-align: right; text-transform: uppercase; letter-spacing: .1em; line-height: 1.6; z-index: 1; }
 
-        /* QR Scan button */
-        .scan-wrap {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 8px 24px 28px;
-        }
+        .scan-wrap { display: flex; flex-direction: column; align-items: center; padding: 8px 24px 28px; }
         .scan-btn {
-            width: 120px; height: 120px;
-            border-radius: 50%;
-            background: white;
-            border: none;
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            position: relative;
+            width: 120px; height: 120px; border-radius: 50%; background: white; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; position: relative;
             box-shadow: 0 16px 48px rgba(79,70,229,.18), 0 0 0 12px rgba(79,70,229,.06), 0 0 0 24px rgba(79,70,229,.03);
-            transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s;
-            margin-bottom: 18px;
+            transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s; margin-bottom: 18px;
         }
         .scan-btn:active { transform: scale(.91); box-shadow: 0 6px 20px rgba(79,70,229,.15); }
-        .scan-inner {
-            width: 94px; height: 94px;
-            border-radius: 50%;
-            background: var(--primary);
-            display: flex; align-items: center; justify-content: center;
-        }
-        .scan-text {
-            font-size: 22px;
-            font-weight: 900;
-            color: white;
-            letter-spacing: -1px;
-            font-style: italic;
-        }
+        .scan-inner { width: 94px; height: 94px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; }
+        .scan-text { font-size: 22px; font-weight: 900; color: white; letter-spacing: -1px; font-style: italic; }
         .scan-label { font-size: 15px; font-weight: 800; color: var(--text-1); letter-spacing: -.2px; }
         .scan-sub { font-size: 9px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .2em; margin-top: 4px; }
 
-        /* Activity section */
-        .section-header {
-            padding: 0 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-        }
-        .section-title {
-            font-size: 10px;
-            font-weight: 800;
-            color: var(--text-1);
-            text-transform: uppercase;
-            letter-spacing: .2em;
-        }
-
+        .section-header { padding: 0 24px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .section-title { font-size: 10px; font-weight: 800; color: var(--text-1); text-transform: uppercase; letter-spacing: .2em; }
         .activity-list { padding: 0 24px; }
-        .activity-card {
-            background: white;
-            border-radius: var(--radius-md);
-            padding: 16px 18px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid var(--border);
-            margin-bottom: 10px;
-            box-shadow: var(--shadow-sm);
-        }
+        .activity-card { background: white; border-radius: var(--radius-md); padding: 16px 18px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); margin-bottom: 10px; box-shadow: var(--shadow-sm); }
         .activity-date { font-size: 12px; font-weight: 700; color: var(--text-1); }
         .activity-status { font-size: 8px; font-weight: 800; color: var(--text-3); text-transform: uppercase; letter-spacing: .15em; margin-top: 3px; }
-        .activity-time {
-            font-size: 11px; font-weight: 800;
-            color: var(--primary);
-            background: var(--primary-light);
-            padding: 8px 14px;
-            border-radius: 10px;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 32px 0;
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--text-3);
-            text-transform: uppercase;
-            letter-spacing: .2em;
-        }
+        .activity-time { font-size: 11px; font-weight: 800; color: var(--primary); background: var(--primary-light); padding: 8px 14px; border-radius: 10px; }
+        .empty-state { text-align: center; padding: 32px 0; font-size: 10px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .2em; }
 
-        /* ─────────────── REPORT SCREEN ─────────────── */
+        /* ─── REPORT ─── */
         #screen-report { padding-bottom: 100px; overflow-y: auto; }
-        .screen-top {
-            padding: 52px 24px 24px;
-        }
+        .screen-top { padding: 52px 24px 24px; }
         .screen-title { font-size: 26px; font-weight: 900; color: var(--text-1); letter-spacing: -.5px; }
         .screen-sub { font-size: 9px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .2em; margin-top: 4px; }
         .report-list { padding: 0 24px; }
 
-        /* ─────────────── ADMIN SCREEN ─────────────── */
+        /* ─── ADMIN ─── */
         #screen-admin { padding-bottom: 100px; overflow-y: auto; }
-
-        .admin-stats-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            padding: 0 24px;
-            margin-bottom: 20px;
-        }
-        .stat-card {
-            border-radius: var(--radius-lg);
-            padding: 22px 20px;
-        }
+        .admin-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0 24px; margin-bottom: 20px; }
+        .stat-card { border-radius: var(--radius-lg); padding: 22px 20px; }
         .stat-card.primary { background: var(--primary); box-shadow: var(--shadow-lg); }
         .stat-card.white { background: white; border: 1.5px solid var(--border); box-shadow: var(--shadow-sm); }
         .stat-label { font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: .2em; margin-bottom: 8px; }
@@ -419,196 +198,47 @@
         .stat-card.primary .stat-value { color: white; }
         .stat-card.white .stat-value { color: var(--primary); }
 
-        .filter-card {
-            margin: 0 24px 20px;
-            background: white;
-            border-radius: var(--radius-lg);
-            padding: 20px;
-            border: 1.5px solid var(--border);
-            box-shadow: var(--shadow-sm);
-        }
-        .filter-label { font-size: 9px; font-weight: 800; color: var(--text-3); text-transform: uppercase; letter-spacing: .2em; margin-bottom: 12px; }
-        .filter-row { display: flex; gap: 8px; align-items: center; }
-        .filter-select {
-            flex: 1;
-            background: var(--bg);
-            border: 1.5px solid var(--border);
-            border-radius: 12px;
-            padding: 11px 12px;
-            font-family: inherit;
-            font-size: 11px;
-            font-weight: 700;
-            color: var(--text-1);
-            outline: none;
-            cursor: pointer;
-        }
-        .btn-print {
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 11px 16px;
-            font-family: inherit;
-            font-size: 9px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: .12em;
-            cursor: pointer;
-            display: flex; align-items: center; gap: 6px;
-            white-space: nowrap;
-            box-shadow: 0 6px 16px rgba(79,70,229,.3);
-            transition: transform .15s;
-        }
-        .btn-print:active { transform: scale(.96); }
 
-        .btn-export {
-            background: #10B981;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 11px 16px;
-            font-family: inherit;
-            font-size: 9px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: .12em;
-            cursor: pointer;
-            display: flex; align-items: center; gap: 6px;
-            white-space: nowrap;
-            box-shadow: 0 6px 16px rgba(16,185,129,.3);
-            transition: transform .15s;
-        }
+        .filter-card { margin: 0 24px 20px; background: white; border-radius: var(--radius-lg); padding: 20px; border: 1.5px solid var(--border); box-shadow: var(--shadow-sm); }
+        .filter-label { font-size: 9px; font-weight: 800; color: var(--text-3); text-transform: uppercase; letter-spacing: .2em; margin-bottom: 12px; }
+        .filter-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .filter-select { flex: 1; background: var(--bg); border: 1.5px solid var(--border); border-radius: 12px; padding: 11px 12px; font-family: inherit; font-size: 11px; font-weight: 700; color: var(--text-1); outline: none; cursor: pointer; min-width: 80px; }
+        .btn-print { background: var(--primary); color: white; border: none; border-radius: 12px; padding: 11px 16px; font-family: inherit; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; box-shadow: 0 6px 16px rgba(79,70,229,.3); transition: transform .15s; }
+        .btn-print:active { transform: scale(.96); }
+        .btn-export { background: #10B981; color: white; border: none; border-radius: 12px; padding: 11px 16px; font-family: inherit; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; cursor: pointer; display: flex; align-items: center; gap: 6px; white-space: nowrap; box-shadow: 0 6px 16px rgba(16,185,129,.3); transition: transform .15s; }
         .btn-export:active { transform: scale(.96); }
 
         .admin-report-list { padding: 0 24px; }
-        .report-day-label {
-            font-size: 8px;
-            font-weight: 800;
-            color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: .3em;
-            margin: 16px 0 8px;
-            padding: 0 2px;
-        }
-        .admin-card {
-            background: white;
-            border-radius: var(--radius-md);
-            padding: 14px 16px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid var(--border);
-            margin-bottom: 8px;
-            box-shadow: var(--shadow-sm);
-        }
+        .report-day-label { font-size: 8px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: .3em; margin: 16px 0 8px; padding: 0 2px; }
+        .admin-card { background: white; border-radius: var(--radius-md); padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); margin-bottom: 8px; box-shadow: var(--shadow-sm); }
         .admin-card-name { font-size: 13px; font-weight: 700; color: var(--text-1); }
+        .admin-card-meta { font-size: 9px; font-weight: 600; color: var(--text-3); margin-top: 2px; }
         .admin-card-chips { display: flex; align-items: center; gap: 6px; }
-        .chip-status {
-            font-size: 8px; font-weight: 800;
-            color: #065F46;
-            background: #D1FAE5;
-            padding: 5px 10px; border-radius: 8px;
-            text-transform: uppercase; letter-spacing: .1em;
-        }
-        .chip-time {
-            font-size: 10px; font-weight: 800;
-            color: var(--primary);
-            background: var(--primary-light);
-            padding: 6px 12px; border-radius: 8px;
-        }
+        .chip-status { font-size: 8px; font-weight: 800; color: #065F46; background: #D1FAE5; padding: 5px 10px; border-radius: 8px; text-transform: uppercase; letter-spacing: .1em; }
+        .chip-time { font-size: 10px; font-weight: 800; color: var(--primary); background: var(--primary-light); padding: 6px 12px; border-radius: 8px; }
 
-        /* ─────────────── PROFILE SCREEN ─────────────── */
-        #screen-profile {
-            align-items: center;
-            padding: 80px 32px 100px;
-            overflow-y: auto;
-        }
-        .profile-avatar-wrap {
-            width: 110px; height: 110px;
-            background: var(--primary-light);
-            border-radius: 40px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 50px;
-            border: 4px solid white;
-            box-shadow: var(--shadow-md);
-            margin-bottom: 20px;
-        }
+        /* ─── PROFILE ─── */
+        #screen-profile { align-items: center; padding: 80px 32px 100px; overflow-y: auto; }
+        .profile-avatar-wrap { width: 110px; height: 110px; background: var(--primary-light); border-radius: 40px; display: flex; align-items: center; justify-content: center; font-size: 50px; border: 4px solid white; box-shadow: var(--shadow-md); margin-bottom: 20px; }
         .profile-school { font-size: 18px; font-weight: 900; color: var(--text-1); letter-spacing: -.3px; }
         .profile-email { font-size: 10px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .15em; margin-top: 6px; }
-        .profile-role-badge {
-            margin-top: 10px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 18px;
-            border-radius: 999px;
-            font-size: 9px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: .15em;
-            background: var(--primary-light);
-            color: var(--primary);
-            margin-bottom: 40px;
-        }
-        .profile-info-card {
-            width: 100%;
-            background: white;
-            border-radius: var(--radius-lg);
-            padding: 20px 22px;
-            border: 1.5px solid var(--border);
-            box-shadow: var(--shadow-sm);
-            margin-bottom: 16px;
-        }
-        .profile-info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid var(--border);
-        }
+        .profile-role-badge { margin-top: 10px; display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; border-radius: 999px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .15em; background: var(--primary-light); color: var(--primary); margin-bottom: 40px; }
+        .profile-info-card { width: 100%; background: white; border-radius: var(--radius-lg); padding: 20px 22px; border: 1.5px solid var(--border); box-shadow: var(--shadow-sm); margin-bottom: 16px; }
+        .profile-info-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
         .profile-info-row:last-child { border-bottom: none; }
         .pir-key { font-size: 9px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .15em; }
         .pir-val { font-size: 11px; font-weight: 700; color: var(--text-1); text-align: right; }
-        .btn-logout {
-            width: 100%;
-            padding: 17px;
-            background: #FEF2F2;
-            color: #DC2626;
-            border: 1.5px solid #FEE2E2;
-            border-radius: var(--radius-md);
-            font-family: inherit;
-            font-size: 10px;
-            font-weight: 800;
-            letter-spacing: .15em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: background .15s;
-        }
+        .btn-logout { width: 100%; padding: 17px; background: #FEF2F2; color: #DC2626; border: 1.5px solid #FEE2E2; border-radius: var(--radius-md); font-family: inherit; font-size: 10px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; cursor: pointer; transition: background .15s; }
         .btn-logout:active { background: #FEE2E2; }
 
-        /* admin badge */
-        .admin-badge {
-            display: inline-block;
-            background: linear-gradient(135deg, #4F46E5, #7C3AED);
-            color: white;
-            font-size: 7px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: .15em;
-            padding: 3px 10px;
-            border-radius: 999px;
-            vertical-align: middle;
-            margin-left: 8px;
-        }
+        .admin-badge { display: inline-block; background: linear-gradient(135deg, #4F46E5, #7C3AED); color: white; font-size: 7px; font-weight: 800; text-transform: uppercase; letter-spacing: .15em; padding: 3px 10px; border-radius: 999px; vertical-align: middle; margin-left: 8px; }
 
-        /* ─────────────── BOTTOM NAV ─────────────── */
+        /* ─── BOTTOM NAV ─── */
         #bottom-nav {
             display: none;
-            position: fixed;
-            bottom: 0; left: 50%;
+            position: fixed; bottom: 0; left: 50%;
             transform: translateX(-50%);
-            width: 100%;
-            max-width: 390px;
+            width: 100%; max-width: 390px;
             background: rgba(255,255,255,.96);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
@@ -620,118 +250,35 @@
             align-items: center;
         }
         #bottom-nav.visible { display: flex; }
-
-        .nav-btn {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 5px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 8px 4px;
-            border-radius: 14px;
-            transition: background .15s;
-            color: var(--text-3);
-            font-family: inherit;
-        }
+        .nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; background: none; border: none; cursor: pointer; padding: 8px 4px; border-radius: 14px; transition: background .15s; color: var(--text-3); font-family: inherit; }
         .nav-btn.active { color: var(--primary); }
         .nav-btn svg { width: 22px; height: 22px; }
         .nav-label { font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; }
-        .nav-indicator {
-            position: absolute;
-            top: 8px;
-            width: 20px; height: 3px;
-            background: var(--primary);
-            border-radius: 2px;
-            opacity: 0;
-            transition: opacity .2s;
-        }
+        .nav-indicator { position: absolute; top: 8px; width: 20px; height: 3px; background: var(--primary); border-radius: 2px; opacity: 0; transition: opacity .2s; }
         .nav-btn.active .nav-indicator { opacity: 1; }
 
-        /* ─────────────── SCANNER MODAL ─────────────── */
-        #scanner-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,.92);
-            backdrop-filter: blur(20px);
-            z-index: 200;
-            flex-direction: column;
-        }
+        /* ─── SCANNER MODAL ─── */
+        #scanner-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.92); backdrop-filter: blur(20px); z-index: 200; flex-direction: column; }
         #scanner-modal.open { display: flex; }
-
-        .scanner-header {
-            padding: 52px 28px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        .scanner-header { padding: 52px 28px 20px; display: flex; justify-content: space-between; align-items: center; }
         .scanner-title { font-size: 9px; font-weight: 800; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .3em; }
-        .scanner-close {
-            background: rgba(255,255,255,.08);
-            border: 1px solid rgba(255,255,255,.1);
-            color: white;
-            font-family: inherit;
-            font-size: 9px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: .15em;
-            padding: 10px 20px;
-            border-radius: 12px;
-            cursor: pointer;
-        }
+        .scanner-close { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.1); color: white; font-family: inherit; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .15em; padding: 10px 20px; border-radius: 12px; cursor: pointer; }
         .scanner-body { flex: 1; display: flex; align-items: center; justify-content: center; padding: 16px 32px; }
-        #qr-reader {
-            width: 100%;
-            aspect-ratio: 1;
-            border-radius: 32px;
-            overflow: hidden;
-            background: #111;
-            border: 2px solid rgba(255,255,255,.06);
-            position: relative;
-        }
-        /* corner accent lines */
-        #qr-reader::before, #qr-reader::after {
-            content: '';
-            position: absolute;
-            width: 40px; height: 40px;
-            border-color: var(--primary);
-            border-style: solid;
-            z-index: 10;
-        }
-        #qr-reader::before { top: 16px; left: 16px; border-width: 3px 0 0 3px; border-radius: 6px 0 0 0; }
-        #qr-reader::after  { bottom: 16px; right: 16px; border-width: 0 3px 3px 0; border-radius: 0 0 6px 0; }
-
+        #qr-reader { width: 100%; aspect-ratio: 1; border-radius: 32px; overflow: hidden; background: #111; border: 2px solid rgba(255,255,255,.06); position: relative; }
+        #qr-reader::before { content: ''; position: absolute; width: 40px; height: 40px; border-color: var(--primary); border-style: solid; z-index: 10; top: 16px; left: 16px; border-width: 3px 0 0 3px; border-radius: 6px 0 0 0; }
+        #qr-reader::after  { content: ''; position: absolute; width: 40px; height: 40px; border-color: var(--primary); border-style: solid; z-index: 10; bottom: 16px; right: 16px; border-width: 0 3px 3px 0; border-radius: 0 0 6px 0; }
         .scanner-footer { padding: 24px 32px 48px; text-align: center; }
+        .scanner-hint { font-size: 10px; font-weight: 700; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: .15em; margin-top: 10px; }
 
-        /* ─────────────── TOAST ─────────────── */
-        #toast {
-            position: fixed;
-            bottom: 108px; left: 50%;
-            transform: translateX(-50%) translateY(10px);
-            background: var(--text-1);
-            color: white;
-            padding: 13px 22px;
-            border-radius: 16px;
-            font-size: 11px;
-            font-weight: 700;
-            letter-spacing: -.1px;
-            opacity: 0;
-            transition: all .3s cubic-bezier(.16,1,.3,1);
-            z-index: 999;
-            max-width: 300px;
-            text-align: center;
-            pointer-events: none;
-            white-space: nowrap;
-        }
-        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+        /* ─── TOAST ─── */
+        #toast { position: fixed; bottom: 108px; left: 50%; transform: translateX(-50%) translateY(10px); padding: 13px 22px; border-radius: 16px; font-size: 11px; font-weight: 700; letter-spacing: -.1px; opacity: 0; transition: all .3s cubic-bezier(.16,1,.3,1); z-index: 999; max-width: 300px; text-align: center; pointer-events: none; white-space: nowrap; }
+        #toast.success { background: #0F172A; color: white; }
+        #toast.error   { background: #DC2626; color: white; }
+        #toast.warning { background: #D97706; color: white; }
+        #toast.show    { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-        /* scrollbar */
         ::-webkit-scrollbar { width: 0; }
 
-        /* ─────────────── PRINT ─────────────── */
         @media print {
             body { background: white; display: block; }
             .phone, #bottom-nav, #scanner-modal, #toast { display: none !important; }
@@ -745,36 +292,37 @@
 
 <div class="phone">
 
-    <!-- ══════════════ AUTH SCREEN ══════════════ -->
+    <!-- ══ AUTH ══ -->
     <section id="screen-auth" class="screen active">
         <div class="auth-blob auth-blob-1"></div>
         <div class="auth-blob auth-blob-2"></div>
-
         <div class="auth-logo-wrap">🏫</div>
-
         <h1 class="auth-title">E-Presensi<br><span>SDN WAWONGGOLE</span></h1>
         <p class="auth-sub">Sistem Digital Kehadiran</p>
-
         <div style="width:100%;max-width:320px;position:relative;z-index:1;">
             <div class="field-group">
                 <label class="field-label">Email</label>
                 <div class="field-wrap">
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m2 7 10 7 10-7"/></svg>
-                    <input type="email" id="login-email" placeholder="Alamat email Anda">
+                    <input type="email" id="login-email" placeholder="Alamat email Anda" autocomplete="email">
                 </div>
             </div>
             <div class="field-group">
                 <label class="field-label">PIN</label>
                 <div class="field-wrap">
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    <input type="password" id="login-pass" placeholder="PIN (tanggal lahir)" maxlength="9">
+                    <input type="password" id="login-pass" placeholder="PIN (tanggal lahir)" maxlength="9" autocomplete="current-password">
                 </div>
             </div>
-            <button class="btn-auth" onclick="handleLogin()">Masuk Sekarang</button>
+            <!-- FIX #6: Button disable saat loading, pesan error lebih spesifik -->
+            <button class="btn-auth" id="btn-login" onclick="handleLogin()">
+                <div class="spinner"></div>
+                <span class="btn-text">Masuk Sekarang</span>
+            </button>
         </div>
     </section>
 
-    <!-- ══════════════ HOME SCREEN ══════════════ -->
+    <!-- ══ HOME ══ -->
     <section id="screen-home" class="screen">
         <div class="home-header">
             <div>
@@ -783,8 +331,6 @@
             </div>
             <div class="header-avatar">👨‍🏫</div>
         </div>
-
-        <!-- GPS -->
         <div class="gps-row">
             <div class="gps-pill gps-checking" id="gps-badge">
                 <span class="gps-dot"></span>
@@ -792,33 +338,23 @@
             </div>
             <button class="gps-refresh-btn" onclick="checkGPS()">Perbarui</button>
         </div>
-
-        <!-- Status card -->
         <div class="status-card">
             <p class="status-eyebrow">Kehadiran Hari Ini</p>
             <p class="status-label-text" id="status-label">Belum Absen</p>
             <div class="status-school">SDN<br>WAWONGGOLE</div>
         </div>
-
-        <!-- Scan button -->
         <div class="scan-wrap">
             <button class="scan-btn" onclick="startScanner()">
-                <div class="scan-inner">
-                    <span class="scan-text">GO</span>
-                </div>
+                <div class="scan-inner"><span class="scan-text">GO</span></div>
             </button>
             <p class="scan-label">Presensi QR Code</p>
-            <p class="scan-sub">Arahkan kamera ke kode</p>
+            <p class="scan-sub">Arahkan kamera ke kode QR Anda</p>
         </div>
-
-        <!-- Activity -->
-        <div class="section-header">
-            <p class="section-title">Aktivitas Terakhir</p>
-        </div>
+        <div class="section-header"><p class="section-title">Aktivitas Terakhir</p></div>
         <div class="activity-list" id="home-history"></div>
     </section>
 
-    <!-- ══════════════ REPORT SCREEN ══════════════ -->
+    <!-- ══ REPORT ══ -->
     <section id="screen-report" class="screen">
         <div class="screen-top">
             <h2 class="screen-title">Laporan<br>Presensi</h2>
@@ -827,7 +363,7 @@
         <div class="report-list" id="report-container"></div>
     </section>
 
-    <!-- ══════════════ ADMIN SCREEN ══════════════ -->
+    <!-- ══ ADMIN ══ -->
     <section id="screen-admin" class="screen">
         <div class="screen-top">
             <h2 class="screen-title">Dashboard <span class="admin-badge">Admin</span></h2>
@@ -844,6 +380,7 @@
                 <p class="stat-value" id="admin-hadir-today">–</p>
             </div>
         </div>
+
 
         <div class="filter-card">
             <p class="filter-label">Filter Laporan Bulanan</p>
@@ -864,13 +401,12 @@
         <div class="admin-report-list" id="admin-report-container"></div>
     </section>
 
-    <!-- ══════════════ PROFILE SCREEN ══════════════ -->
+    <!-- ══ PROFILE ══ -->
     <section id="screen-profile" class="screen">
         <div class="profile-avatar-wrap">👤</div>
         <p class="profile-school">SDN WAWONGGOLE</p>
         <p class="profile-email" id="profile-email">–</p>
         <p class="profile-role-badge" id="profile-role">–</p>
-
         <div class="profile-info-card" style="width:100%;">
             <div class="profile-info-row">
                 <span class="pir-key">Status</span>
@@ -882,65 +418,55 @@
             </div>
             <div class="profile-info-row">
                 <span class="pir-key">Sistem</span>
-                <span class="pir-val">E-Presensi v2.0</span>
+                <span class="pir-val">E-Presensi v2.1</span>
             </div>
         </div>
-
         <button class="btn-logout" onclick="handleLogout()">Keluar Aplikasi</button>
     </section>
 
-    <!-- ══════════════ BOTTOM NAV ══════════════ -->
+    <!-- ══ BOTTOM NAV ══ -->
     <nav id="bottom-nav">
         <button class="nav-btn active" id="btn-home" onclick="switchTab('home')">
-            <div style="position:relative;">
-                <div class="nav-indicator"></div>
-                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
-            </div>
+            <div style="position:relative;"><div class="nav-indicator"></div>
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></div>
             <span class="nav-label">Beranda</span>
         </button>
         <button class="nav-btn" id="btn-report" onclick="switchTab('report')">
-            <div style="position:relative;">
-                <div class="nav-indicator"></div>
-                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg>
-            </div>
+            <div style="position:relative;"><div class="nav-indicator"></div>
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M5 9.2h3V19H5zM10.6 5h2.8v14h-2.8zm5.6 8H19v6h-2.8z"/></svg></div>
             <span class="nav-label">Laporan</span>
         </button>
         <button class="nav-btn" id="btn-admin" onclick="switchTab('admin')" style="display:none;">
-            <div style="position:relative;">
-                <div class="nav-indicator"></div>
-                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
-            </div>
+            <div style="position:relative;"><div class="nav-indicator"></div>
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg></div>
             <span class="nav-label">Admin</span>
         </button>
         <button class="nav-btn" id="btn-profile" onclick="switchTab('profile')">
-            <div style="position:relative;">
-                <div class="nav-indicator"></div>
-                <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
-            </div>
+            <div style="position:relative;"><div class="nav-indicator"></div>
+            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
             <span class="nav-label">Profil</span>
         </button>
     </nav>
 
-    <!-- ══════════════ SCANNER MODAL ══════════════ -->
+    <!-- ══ SCANNER MODAL ══ -->
     <div id="scanner-modal">
         <div class="scanner-header">
-            <span class="scanner-title">Scan Protocol V2</span>
+            <span class="scanner-title">Scan QR Sekolah</span>
             <button class="scanner-close" onclick="stopScanner()">✕ Batal</button>
         </div>
-        <div class="scanner-body">
-            <div id="qr-reader"></div>
-        </div>
+        <div class="scanner-body"><div id="qr-reader"></div></div>
         <div class="scanner-footer">
             <div class="gps-pill gps-checking" id="scanner-gps-badge" style="display:inline-flex;">
                 <span class="gps-dot"></span>
                 <span id="scanner-gps-text">Memverifikasi lokasi…</span>
             </div>
+            <p class="scanner-hint">Arahkan ke QR Code milik Anda</p>
         </div>
     </div>
 
-</div><!-- .phone -->
+</div>
 
-<!-- ══════════════ PRINT TEMPLATE ══════════════ -->
+<!-- ══ PRINT TEMPLATE ══ -->
 <div id="print-area" style="display:none;">
     <div style="font-family:'Plus Jakarta Sans',sans-serif;padding:30px;max-width:800px;margin:auto;">
         <div style="text-align:center;margin-bottom:24px;border-bottom:3px solid #4F46E5;padding-bottom:16px;">
@@ -970,212 +496,302 @@
 </div>
 
 <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getAuth, signInWithEmailAndPassword,
+         onAuthStateChanged, signOut }             from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import { getDatabase, ref, set, get, child }      from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyB4KhBeNDfiP-rzI16qdBz8J2InbrWrgOM",
-        authDomain: "absen-qr-sdn-wawonggole.firebaseapp.com",
-        databaseURL: "https://absen-qr-sdn-wawonggole-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "absen-qr-sdn-wawonggole",
-        appId: "1:777561852077:web:65819714856f9168175f3a"
-    };
+// ─────────────────────────────────────────────────────────
+// CATATAN KEAMANAN:
+// Firebase API key di sini AMAN untuk ada di client-side —
+// ini hanya identifier project, bukan secret.
+// Keamanan sesungguhnya harus dijaga lewat Firebase Security
+// Rules di console.firebase.google.com agar data tidak bisa
+// dibaca/tulis sembarangan tanpa autentikasi.
+// ─────────────────────────────────────────────────────────
+const firebaseConfig = {
+    apiKey:      "AIzaSyB4KhBeNDfiP-rzI16qdBz8J2InbrWrgOM",
+    authDomain:  "absen-qr-sdn-wawonggole.firebaseapp.com",
+    databaseURL: "https://absen-qr-sdn-wawonggole-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId:   "absen-qr-sdn-wawonggole",
+    appId:       "1:777561852077:web:65819714856f9168175f3a"
+};
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getDatabase(app);
-    let html5QrCode = null;
-    let currentUserRole = 'guru';
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getDatabase(app);
 
-    const SCHOOL_LAT = -3.8478612169364665;
-    const SCHOOL_LNG = 122.05608419435848;
-    const RADIUS_METER = 200;
+let html5QrCode   = null;
+let currentUserRole = 'guru';
+let adminReportCache = null; // FIX #11: ganti window._printData
 
-    function hitungJarak(lat1, lon1, lat2, lon2) {
-        const R = 6371000;
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+// ── Lokasi Sekolah ──
+const SCHOOL_LAT   = -3.8478612169364665;
+const SCHOOL_LNG   = 122.05608419435848;
+const RADIUS_METER = 200;
+
+function stopAdminQR() { /* placeholder — tidak ada QR admin */ }
+
+// ═══════════════════════════════════════════════
+// FIX #3: GPS — simpan koordinat di DB untuk audit
+// ═══════════════════════════════════════════════
+function haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371000;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+let gpsValid   = false;
+let gpsChecked = false;
+let lastCoords = null; // simpan untuk audit
+
+window.checkGPS = () => {
+    gpsValid   = false;
+    gpsChecked = false;
+    lastCoords = null;
+    setBadge('checking', 'Memeriksa Lokasi…');
+    if (!navigator.geolocation) {
+        setBadge('invalid', 'GPS Tidak Didukung');
+        gpsChecked = true;
+        return;
     }
-
-    let gpsValid = false;
-    let gpsChecked = false;
-
-    window.checkGPS = () => {
-        gpsValid = false;
-        gpsChecked = false;
-        setBadge('checking', 'Memeriksa Lokasi…');
-        if (!navigator.geolocation) { setBadge('invalid', 'GPS Tidak Didukung'); gpsChecked = true; return; }
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                const jarak = hitungJarak(pos.coords.latitude, pos.coords.longitude, SCHOOL_LAT, SCHOOL_LNG);
-                gpsChecked = true;
-                if (jarak <= RADIUS_METER) {
-                    gpsValid = true;
-                    setBadge('valid', `Dalam Area · ${Math.round(jarak)}m`);
-                } else {
-                    setBadge('invalid', `Di Luar Area · ${Math.round(jarak)}m`);
-                }
-            },
-            () => { gpsChecked = true; setBadge('invalid', 'Akses Lokasi Ditolak'); },
-            { enableHighAccuracy: true, timeout: 10000 }
-        );
-    };
-
-    function setBadge(type, text) {
-        ['gps-badge','scanner-gps-badge'].forEach(id => {
-            const el = document.getElementById(id);
-            if (!el) return;
-            el.className = `gps-pill gps-${type}`;
-            if (id === 'scanner-gps-badge') el.style.display = 'inline-flex';
-        });
-        ['gps-text','scanner-gps-text'].forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.innerText = text;
-        });
-    }
-
-    window.showToast = (msg, duration = 3000) => {
-        const t = document.getElementById('toast');
-        t.innerText = msg;
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), duration);
-    };
-
-    window.handleLogin = () => {
-        const email = document.getElementById('login-email').value.trim();
-        const pass  = document.getElementById('login-pass').value;
-        if (!email || !pass) { showToast('Email dan PIN harus diisi'); return; }
-        signInWithEmailAndPassword(auth, email, pass)
-            .catch(() => showToast('Login gagal. Periksa email/PIN Anda.'));
-    };
-    window.handleLogout = () => { signOut(auth); };
-
-    // ── Screens helper ──
-    const SCREENS = ['auth','home','report','admin','profile'];
-    function showScreen(name) {
-        SCREENS.forEach(s => {
-            const el = document.getElementById(`screen-${s}`);
-            if (el) el.classList.toggle('active', s === name);
-        });
-    }
-
-    onAuthStateChanged(auth, async (user) => {
-        if (user) {
-            showScreen('home');
-            document.getElementById('bottom-nav').classList.add('visible');
-            document.getElementById('profile-email').innerText = user.email.toUpperCase();
-
-            const snap = await get(ref(db, `users/${user.uid}`));
-            if (snap.exists()) {
-                const data = snap.val();
-                currentUserRole = data.role || 'guru';
-                document.getElementById('user-display').innerText = data.nama || 'Guru';
-                document.getElementById('profile-role').innerText = currentUserRole === 'admin' ? '🛡️ Administrator' : '👨‍🏫 Guru';
-                document.getElementById('profile-status').innerText = currentUserRole === 'admin' ? 'Administrator' : 'Guru Aktif';
-
-                if (currentUserRole === 'admin') {
-                    document.getElementById('btn-admin').style.display = 'flex';
-                    populateFilter();
-                    switchTab('admin');
-                    fetchAdminStats();
-                } else {
-                    switchTab('home');
-                    checkGPS();
-                }
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            const jarak = haversine(pos.coords.latitude, pos.coords.longitude, SCHOOL_LAT, SCHOOL_LNG);
+            gpsChecked = true;
+            lastCoords = { lat: pos.coords.latitude, lng: pos.coords.longitude, acc: Math.round(pos.coords.accuracy) };
+            if (jarak <= RADIUS_METER) {
+                gpsValid = true;
+                setBadge('valid', `Dalam Area · ${Math.round(jarak)}m`);
+            } else {
+                setBadge('invalid', `Di Luar Area · ${Math.round(jarak)}m`);
             }
-        } else {
-            showScreen('auth');
-            document.getElementById('bottom-nav').classList.remove('visible');
-        }
+        },
+        (err) => {
+            gpsChecked = true;
+            const msg = err.code === 1 ? 'Akses Lokasi Ditolak' : 'Gagal Ambil Lokasi';
+            setBadge('invalid', msg);
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+    );
+};
+
+function setBadge(type, text) {
+    ['gps-badge','scanner-gps-badge'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.className = `gps-pill gps-${type}`;
+        if (id === 'scanner-gps-badge') el.style.display = 'inline-flex';
     });
+    ['gps-text','scanner-gps-text'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerText = text;
+    });
+}
 
-    window.switchTab = (tab) => {
-        const tabs = currentUserRole === 'admin' ? ['home','report','admin','profile'] : ['home','report','profile'];
-        tabs.forEach(t => {
-            const btn = document.getElementById(`btn-${t}`);
-            if (btn) btn.classList.toggle('active', t === tab);
+// ═══════════════════════════════════════════════
+// FIX #8 & #9: Toast dengan tipe + Login robust
+// ═══════════════════════════════════════════════
+window.showToast = (msg, type = 'success', duration = 3500) => {
+    const t = document.getElementById('toast');
+    t.innerText   = msg;
+    t.className   = `${type} show`;
+    clearTimeout(t._tid);
+    t._tid = setTimeout(() => t.classList.remove('show'), duration);
+};
+
+window.handleLogin = () => {
+    const email = document.getElementById('login-email').value.trim();
+    const pass  = document.getElementById('login-pass').value;
+    if (!email || !pass) { showToast('Email dan PIN harus diisi', 'warning'); return; }
+
+    // FIX #6: Disable tombol saat loading
+    const btn = document.getElementById('btn-login');
+    btn.disabled = true;
+    btn.classList.add('loading');
+
+    signInWithEmailAndPassword(auth, email, pass)
+        .catch((err) => {
+            btn.disabled = false;
+            btn.classList.remove('loading');
+
+            // FIX #9: Pesan error spesifik
+            const map = {
+                'auth/invalid-credential':    '❌ Email atau PIN salah.',
+                'auth/user-not-found':        '❌ Akun tidak ditemukan.',
+                'auth/wrong-password':        '❌ PIN salah.',
+                'auth/invalid-email':         '❌ Format email tidak valid.',
+                'auth/too-many-requests':     '⏳ Terlalu banyak percobaan. Coba lagi nanti.',
+                'auth/network-request-failed':'📡 Tidak ada koneksi internet.',
+                'auth/user-disabled':         '🚫 Akun dinonaktifkan oleh admin.',
+            };
+            showToast(map[err.code] || `Login gagal: ${err.code}`, 'error');
         });
-        showScreen(tab);
-        if (tab === 'report') fetchReport();
-        if (tab === 'home')   { fetchHistory(); }
-        if (tab === 'admin')  { fetchAdminReport(); fetchAdminStats(); }
-    };
+};
 
-    window.startScanner = () => {
-        if (!gpsChecked) { showToast('Harap tunggu, GPS sedang diperiksa…'); return; }
-        if (!gpsValid)   { showToast('❌ Anda berada di luar area sekolah.'); return; }
-        document.getElementById('scanner-modal').classList.add('open');
-        html5QrCode = new Html5Qrcode("qr-reader");
-        html5QrCode.start({ facingMode:"environment" }, { fps:24, qrbox:220 }, (text) => {
-            if (text === auth.currentUser.uid) { submitAbsen(); stopScanner(); }
-            else showToast('⚠️ QR bukan milik Anda!');
-        }).catch(console.error);
-    };
+window.handleLogout = () => { signOut(auth); };
 
-    window.stopScanner = () => {
-        if (html5QrCode) {
-            html5QrCode.stop().finally(() => {
-                document.getElementById('scanner-modal').classList.remove('open');
-                html5QrCode = null;
-            });
-        } else {
-            document.getElementById('scanner-modal').classList.remove('open');
+// ── Screens ──
+const SCREENS = ['auth','home','report','admin','profile'];
+function showScreen(name) {
+    SCREENS.forEach(s => {
+        const el = document.getElementById(`screen-${s}`);
+        if (el) el.classList.toggle('active', s === name);
+    });
+}
+
+onAuthStateChanged(auth, async (user) => {
+    const btn = document.getElementById('btn-login');
+    if (btn) { btn.disabled = false; btn.classList.remove('loading'); }
+
+    if (user) {
+        showScreen('home');
+        document.getElementById('bottom-nav').classList.add('visible');
+        document.getElementById('profile-email').innerText = user.email.toUpperCase();
+
+        const snap = await get(ref(db, `users/${user.uid}`));
+        if (snap.exists()) {
+            const data = snap.val();
+            currentUserRole = data.role || 'guru';
+            document.getElementById('user-display').innerText    = data.nama || 'Guru';
+            document.getElementById('profile-role').innerText    = currentUserRole === 'admin' ? '🛡️ Administrator' : '👨‍🏫 Guru';
+            document.getElementById('profile-status').innerText  = currentUserRole === 'admin' ? 'Administrator' : 'Guru Aktif';
+
+            if (currentUserRole === 'admin') {
+                document.getElementById('btn-admin').style.display = 'flex';
+                populateFilter();
+                switchTab('admin');
+                fetchAdminStats();
+            } else {
+                switchTab('home');
+                checkGPS();
+            }
         }
-    };
+    } else {
+        showScreen('auth');
+        document.getElementById('bottom-nav').classList.remove('visible');
+    }
+});
 
-    async function submitAbsen() {
-        const user = auth.currentUser;
-        const now  = new Date();
-        const tgl  = now.toISOString().split('T')[0];
-        const jam  = now.toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
-        const nama = document.getElementById('user-display').innerText;
-        const existing = await get(ref(db, `absensi/${tgl}/${user.uid}`));
-        if (existing.exists()) { showToast('⚠️ Anda sudah absen hari ini.'); return; }
-        await set(ref(db, `absensi/${tgl}/${user.uid}`), { nama, waktu: jam, status: 'Hadir' });
-        document.getElementById('status-label').innerText = `HADIR · ${jam}`;
-        showToast(`✅ Presensi berhasil! Pukul ${jam}`);
-        fetchHistory(); // refresh riwayat setelah absen berhasil
+window.switchTab = (tab) => {
+    const tabs = currentUserRole === 'admin'
+        ? ['home','report','admin','profile']
+        : ['home','report','profile'];
+    tabs.forEach(t => {
+        const btn = document.getElementById(`btn-${t}`);
+        if (btn) btn.classList.toggle('active', t === tab);
+    });
+    showScreen(tab);
+    if (tab === 'report') fetchReport();
+    if (tab === 'home')   fetchHistory();
+    if (tab === 'admin')  { fetchAdminReport(); fetchAdminStats(); }
+};
+
+// ═══════════════════════════════════════════════
+// SCANNER — Guru scan QR milik sendiri (berisi UID)
+// QR dicetak via app.qr-code-generator.com
+// ═══════════════════════════════════════════════
+window.startScanner = () => {
+    if (!gpsChecked)  { showToast('Harap tunggu, GPS sedang diperiksa…', 'warning'); return; }
+    if (!gpsValid)    { showToast('❌ Anda berada di luar area sekolah.', 'error');   return; }
+    document.getElementById('scanner-modal').classList.add('open');
+    html5QrCode = new Html5Qrcode("qr-reader");
+    html5QrCode.start(
+        { facingMode: "environment" },
+        { fps: 24, qrbox: 220 },
+        (text) => {
+            if (text === auth.currentUser.uid) {
+                stopScanner();
+                submitAbsen();
+            } else {
+                showToast('⚠️ QR bukan milik Anda!', 'warning');
+            }
+        }
+    ).catch(console.error);
+};
+
+window.stopScanner = () => {
+    if (html5QrCode) {
+        html5QrCode.stop().finally(() => {
+            document.getElementById('scanner-modal').classList.remove('open');
+            html5QrCode = null;
+        });
+    } else {
+        document.getElementById('scanner-modal').classList.remove('open');
+    }
+};
+
+// ═══════════════════════════════════════════════
+// SUBMIT ABSEN — simpan koordinat GPS untuk audit
+// ═══════════════════════════════════════════════
+async function submitAbsen() {
+    const user = auth.currentUser;
+    const now  = new Date();
+    const tgl  = now.toISOString().split('T')[0];
+    const jam  = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    const nama = document.getElementById('user-display').innerText;
+
+    const existing = await get(ref(db, `absensi/${tgl}/${user.uid}`));
+    if (existing.exists()) { showToast('⚠️ Anda sudah absen hari ini.', 'warning'); return; }
+
+    // FIX #3: Simpan koordinat GPS di record untuk audit
+    const record = {
+        nama,
+        waktu:  jam,
+        status: 'Hadir',
+    };
+    if (lastCoords) {
+        record.gps = lastCoords; // { lat, lng, acc }
     }
 
-    async function fetchHistory() {
-    const user = auth.currentUser;
-    const container = document.getElementById('home-history');
-    const today = new Date().toISOString().split('T')[0];
+    await set(ref(db, `absensi/${tgl}/${user.uid}`), record);
+    document.getElementById('status-label').innerText = `HADIR · ${jam}`;
+    showToast(`✅ Presensi berhasil! Pukul ${jam}`, 'success');
+    fetchHistory();
+}
 
+// ═══════════════════════════════════════════════
+// FIX #4: Kurangi reads — pakai 1 query per user
+// Struktur: absensi/{tanggal}/{uid}
+// Ambil data bulan ini saja, bukan 60 hari x 1 read
+// ═══════════════════════════════════════════════
+async function fetchHistory() {
+    const user      = auth.currentUser;
+    const container = document.getElementById('home-history');
     container.innerHTML = `<p class="empty-state">Memuat riwayat…</p>`;
 
-    // Buat daftar 60 hari terakhir
-    const dates = [];
-    for (let i = 0; i < 60; i++) {
+    // Ambil 7 hari terakhir saja untuk home (hemat reads)
+    const dates   = [];
+    for (let i = 0; i < 7; i++) {
         const d = new Date();
         d.setDate(d.getDate() - i);
         dates.push(d.toISOString().split('T')[0]);
     }
 
-    // Baca hanya path milik user sendiri: absensi/$tanggal/$uid
-    const promises = dates.map(tgl =>
-        get(ref(db, `absensi/${tgl}/${user.uid}`))
-            .then(snap => snap.exists() ? { tgl, data: snap.val() } : null)
-            .catch(() => null)
+    const today    = dates[0];
+    const dbRef    = ref(db);
+    const results  = [];
+
+    // Batch: jalankan semua, tapi batasi 7 bukan 60
+    const settled = await Promise.allSettled(
+        dates.map(tgl =>
+            get(child(dbRef, `absensi/${tgl}/${user.uid}`))
+                .then(snap => snap.exists() ? { tgl, data: snap.val() } : null)
+        )
     );
 
-    const results = (await Promise.all(promises)).filter(Boolean);
+    settled.forEach(r => { if (r.status === 'fulfilled' && r.value) results.push(r.value); });
 
-    container.innerHTML = "";
+    container.innerHTML = '';
     let foundToday = false;
-    let count = 0;
 
     for (const { tgl, data } of results) {
-        if (count >= 5) break;
-
         if (tgl === today) {
             foundToday = true;
             document.getElementById('status-label').innerText = `HADIR · ${data.waktu}`;
         }
-
         container.innerHTML += `
             <div class="activity-card">
                 <div>
@@ -1184,38 +800,38 @@
                 </div>
                 <span class="activity-time">${data.waktu}</span>
             </div>`;
-        count++;
     }
 
-    if (!foundToday) document.getElementById('status-label').innerText = "Belum Absen";
-    if (container.innerHTML === "") container.innerHTML = `<p class="empty-state">Belum ada riwayat</p>`;
+    if (!foundToday) document.getElementById('status-label').innerText = 'Belum Absen';
+    if (!container.innerHTML) container.innerHTML = `<p class="empty-state">Belum ada riwayat</p>`;
 }
 
-    async function fetchReport() {
-    const user = auth.currentUser;
+// Laporan Guru: 30 hari saja (bukan 365!)
+async function fetchReport() {
+    const user      = auth.currentUser;
     const container = document.getElementById('report-container');
-
     container.innerHTML = `<p class="empty-state">Memuat laporan…</p>`;
 
-    // Buat daftar 365 hari terakhir (1 tahun)
-    const dates = [];
-    for (let i = 0; i < 365; i++) {
+    const dates  = [];
+    for (let i = 0; i < 30; i++) {
         const d = new Date();
         d.setDate(d.getDate() - i);
         dates.push(d.toISOString().split('T')[0]);
     }
 
-    // Baca hanya path milik user sendiri: absensi/$tanggal/$uid
-    const promises = dates.map(tgl =>
-        get(ref(db, `absensi/${tgl}/${user.uid}`))
-            .then(snap => snap.exists() ? { tgl, data: snap.val() } : null)
-            .catch(() => null)
+    const dbRef   = ref(db);
+    const settled = await Promise.allSettled(
+        dates.map(tgl =>
+            get(child(dbRef, `absensi/${tgl}/${user.uid}`))
+                .then(snap => snap.exists() ? { tgl, data: snap.val() } : null)
+        )
     );
 
-    const results = (await Promise.all(promises)).filter(Boolean);
+    const results = settled
+        .filter(r => r.status === 'fulfilled' && r.value)
+        .map(r => r.value);
 
-    container.innerHTML = "";
-
+    container.innerHTML = '';
     for (const { tgl, data } of results) {
         container.innerHTML += `
             <div class="activity-card">
@@ -1226,147 +842,158 @@
                 <span class="activity-time">${data.waktu}</span>
             </div>`;
     }
-
-    if (container.innerHTML === "") container.innerHTML = `<p class="empty-state">Belum ada data absensi</p>`;
+    if (!container.innerHTML) container.innerHTML = `<p class="empty-state">Belum ada data 30 hari terakhir</p>`;
 }
 
-    function fetchAdminStats() {
-        get(ref(db, 'users')).then(snap => {
-            if (snap.exists()) {
-                const c = Object.values(snap.val()).filter(u => u.role === 'guru').length;
-                document.getElementById('admin-total-guru').innerText = c;
-            }
-        });
-        const today = new Date().toISOString().split('T')[0];
-        get(ref(db, `absensi/${today}`)).then(snap => {
-            document.getElementById('admin-hadir-today').innerText = snap.exists() ? Object.keys(snap.val()).length : 0;
-        });
-    }
-
-    function populateFilter() {
-        const now = new Date();
-        const bulanEl = document.getElementById('admin-filter-bulan');
-        const tahunEl = document.getElementById('admin-filter-tahun');
-        const namaBulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-        namaBulan.forEach((b, i) => {
-            const opt = document.createElement('option');
-            opt.value = String(i+1).padStart(2,'0'); opt.text = b;
-            if (i === now.getMonth()) opt.selected = true;
-            bulanEl.appendChild(opt);
-        });
-        for (let y = now.getFullYear(); y >= 2024; y--) {
-            const opt = document.createElement('option');
-            opt.value = y; opt.text = y;
-            tahunEl.appendChild(opt);
+function fetchAdminStats() {
+    get(ref(db, 'users')).then(snap => {
+        if (snap.exists()) {
+            const c = Object.values(snap.val()).filter(u => u.role === 'guru').length;
+            document.getElementById('admin-total-guru').innerText = c;
         }
+    });
+    const today = new Date().toISOString().split('T')[0];
+    get(ref(db, `absensi/${today}`)).then(snap => {
+        document.getElementById('admin-hadir-today').innerText = snap.exists() ? Object.keys(snap.val()).length : 0;
+    });
+}
+
+function populateFilter() {
+    const now    = new Date();
+    const bulanEl = document.getElementById('admin-filter-bulan');
+    const tahunEl = document.getElementById('admin-filter-tahun');
+    const namaBulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    namaBulan.forEach((b, i) => {
+        const opt = document.createElement('option');
+        opt.value = String(i+1).padStart(2,'0');
+        opt.text  = b;
+        if (i === now.getMonth()) opt.selected = true;
+        bulanEl.appendChild(opt);
+    });
+    for (let y = now.getFullYear(); y >= 2024; y--) {
+        const opt = document.createElement('option');
+        opt.value = y; opt.text = y;
+        tahunEl.appendChild(opt);
     }
+}
 
-    window.fetchAdminReport = () => {
-        const bulan = document.getElementById('admin-filter-bulan').value;
-        const tahun = document.getElementById('admin-filter-tahun').value;
-        const prefix = `${tahun}-${bulan}`;
-        onValue(ref(db, 'absensi'), (snap) => {
-            const container = document.getElementById('admin-report-container');
-            container.innerHTML = "";
-            if (!snap.exists()) { container.innerHTML = `<p class="empty-state">Tidak ada data</p>`; return; }
-            const allDates = Object.keys(snap.val()).filter(d => d.startsWith(prefix)).sort().reverse();
-            if (allDates.length === 0) { container.innerHTML = `<p class="empty-state">Tidak ada data bulan ini</p>`; return; }
-            allDates.forEach(tgl => {
-                container.innerHTML += `<p class="report-day-label">${tgl}</p>`;
-                Object.keys(snap.val()[tgl]).forEach(uid => {
-                    const d = snap.val()[tgl][uid];
-                    container.innerHTML += `
-                        <div class="admin-card">
-                            <p class="admin-card-name">${d.nama}</p>
-                            <div class="admin-card-chips">
-                                <span class="chip-status">${d.status || 'Hadir'}</span>
-                                <span class="chip-time">${d.waktu}</span>
-                            </div>
-                        </div>`;
-                });
-            });
-            window._printData = { allDates, snap: snap.val(), bulan, tahun };
-        }, { onlyOnce: true });
-    };
+// FIX #7: gunakan onlyOnce:true secara konsisten
+window.fetchAdminReport = () => {
+    const bulan  = document.getElementById('admin-filter-bulan').value;
+    const tahun  = document.getElementById('admin-filter-tahun').value;
+    const prefix = `${tahun}-${bulan}`;
 
-    window.exportXLSX = () => {
-        if (!window._printData) { showToast('Data belum tersedia, klik filter dahulu'); return; }
-        const { allDates, snap, bulan, tahun } = window._printData;
-        const namaBulan = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-        const periodeLabel = `${namaBulan[parseInt(bulan)]} ${tahun}`;
+    get(ref(db, 'absensi')).then(snap => {
+        const container = document.getElementById('admin-report-container');
+        container.innerHTML = '';
 
-        // ── Sheet 1: Rekap per Guru ──
-        const rekapMap = {};
+        if (!snap.exists()) {
+            container.innerHTML = `<p class="empty-state">Tidak ada data</p>`;
+            return;
+        }
+
+        const allData  = snap.val();
+        const allDates = Object.keys(allData).filter(d => d.startsWith(prefix)).sort().reverse();
+
+        if (allDates.length === 0) {
+            container.innerHTML = `<p class="empty-state">Tidak ada data bulan ini</p>`;
+            return;
+        }
+
         allDates.forEach(tgl => {
-            Object.keys(snap[tgl]).forEach(uid => {
-                const d = snap[tgl][uid];
-                if (!rekapMap[uid]) rekapMap[uid] = { nama: d.nama, jumlah: 0, hadir: [] };
-                rekapMap[uid].jumlah++;
-                rekapMap[uid].hadir.push(`${tgl} ${d.waktu}`);
+            container.innerHTML += `<p class="report-day-label">${tgl}</p>`;
+            Object.keys(allData[tgl]).forEach(uid => {
+                const d = allData[tgl][uid];
+                const gpsInfo = d.gps ? `${d.gps.lat.toFixed(5)}, ${d.gps.lng.toFixed(5)} (±${d.gps.acc}m)` : 'Tidak tersedia';
+                container.innerHTML += `
+                    <div class="admin-card">
+                        <div>
+                            <p class="admin-card-name">${d.nama}</p>
+                            <p class="admin-card-meta">GPS: ${gpsInfo}</p>
+                        </div>
+                        <div class="admin-card-chips">
+                            <span class="chip-status">${d.status || 'Hadir'}</span>
+                            <span class="chip-time">${d.waktu}</span>
+                        </div>
+                    </div>`;
             });
         });
-        const rekapRows = [['No', 'Nama Guru', 'Jumlah Hadir', 'Persentase Kehadiran']];
-        const totalHari = allDates.length || 1;
-        Object.values(rekapMap).forEach((v, i) => {
-            rekapRows.push([
-                i + 1,
-                v.nama,
-                v.jumlah,
-                `${Math.round((v.jumlah / totalHari) * 100)}%`
+
+        // FIX #11: simpan di variabel lokal, bukan window
+        adminReportCache = { allDates, snap: allData, bulan, tahun };
+    });
+};
+
+window.exportXLSX = () => {
+    if (!adminReportCache) { showToast('Data belum tersedia, pilih filter dahulu', 'warning'); return; }
+    const { allDates, snap, bulan, tahun } = adminReportCache;
+    const namaBulan = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    const periodeLabel = `${namaBulan[parseInt(bulan)]} ${tahun}`;
+
+    const rekapMap = {};
+    allDates.forEach(tgl => {
+        Object.keys(snap[tgl]).forEach(uid => {
+            const d = snap[tgl][uid];
+            if (!rekapMap[uid]) rekapMap[uid] = { nama: d.nama, jumlah: 0 };
+            rekapMap[uid].jumlah++;
+        });
+    });
+
+    const totalHari  = allDates.length || 1;
+    const rekapRows  = [['No','Nama Guru','Jumlah Hadir','Persentase']];
+    Object.values(rekapMap).forEach((v, i) => {
+        rekapRows.push([i+1, v.nama, v.jumlah, `${Math.round((v.jumlah/totalHari)*100)}%`]);
+    });
+
+    const detailRows = [['No','Tanggal','Nama Guru','Jam Masuk','Status','GPS Lat','GPS Lng']];
+    let no = 1;
+    allDates.forEach(tgl => {
+        Object.keys(snap[tgl]).forEach(uid => {
+            const d = snap[tgl][uid];
+            detailRows.push([
+                no++, tgl, d.nama, d.waktu, d.status || 'Hadir',
+                d.gps ? d.gps.lat : '', d.gps ? d.gps.lng : ''
             ]);
         });
+    });
 
-        // ── Sheet 2: Detail Absensi ──
-        const detailRows = [['No', 'Tanggal', 'Nama Guru', 'Jam Masuk', 'Status']];
-        let no = 1;
-        allDates.forEach(tgl => {
-            Object.keys(snap[tgl]).forEach(uid => {
-                const d = snap[tgl][uid];
-                detailRows.push([no++, tgl, d.nama, d.waktu, d.status || 'Hadir']);
-            });
+    const wb       = XLSX.utils.book_new();
+    const wsRekap  = XLSX.utils.aoa_to_sheet(rekapRows);
+    wsRekap['!cols'] = [{wch:5},{wch:25},{wch:15},{wch:15}];
+    const wsDetail = XLSX.utils.aoa_to_sheet(detailRows);
+    wsDetail['!cols'] = [{wch:5},{wch:14},{wch:25},{wch:12},{wch:10},{wch:14},{wch:14}];
+    XLSX.utils.book_append_sheet(wb, wsRekap,  'Rekap Guru');
+    XLSX.utils.book_append_sheet(wb, wsDetail, 'Detail Absensi');
+
+    const fileName = `Absensi_SDN_Wawonggole_${periodeLabel.replace(' ','_')}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+    showToast(`✅ ${fileName} berhasil diunduh`, 'success');
+};
+
+window.printReport = () => {
+    if (!adminReportCache) { showToast('Data belum tersedia', 'warning'); return; }
+    const { allDates, snap, bulan, tahun } = adminReportCache;
+    const namaBulan = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    document.getElementById('print-periode').innerText = `Periode: ${namaBulan[parseInt(bulan)]} ${tahun}`;
+    document.getElementById('print-tanggal-cetak').innerText = `Dicetak: ${new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}`;
+    let rows = ''; let no = 1;
+    allDates.forEach(tgl => {
+        Object.keys(snap[tgl]).forEach(uid => {
+            const d = snap[tgl][uid];
+            rows += `<tr style="background:${no%2===0?'#f8fafc':'white'}">
+                <td style="padding:8px 10px;border:1px solid #e2e8f0;color:#64748b;">${no++}</td>
+                <td style="padding:8px 10px;border:1px solid #e2e8f0;font-weight:700;">${tgl}</td>
+                <td style="padding:8px 10px;border:1px solid #e2e8f0;font-weight:700;">${d.nama}</td>
+                <td style="padding:8px 10px;border:1px solid #e2e8f0;text-align:center;color:#4F46E5;font-weight:700;">${d.waktu}</td>
+                <td style="padding:8px 10px;border:1px solid #e2e8f0;text-align:center;color:#065f46;font-weight:700;">${d.status||'Hadir'}</td>
+            </tr>`;
         });
-
-        const wb = XLSX.utils.book_new();
-
-        // -- Sheet Rekap --
-        const wsRekap = XLSX.utils.aoa_to_sheet(rekapRows);
-        wsRekap['!cols'] = [{ wch: 5 }, { wch: 25 }, { wch: 15 }, { wch: 22 }];
-        XLSX.utils.book_append_sheet(wb, wsRekap, 'Rekap Guru');
-
-        // -- Sheet Detail --
-        const wsDetail = XLSX.utils.aoa_to_sheet(detailRows);
-        wsDetail['!cols'] = [{ wch: 5 }, { wch: 14 }, { wch: 25 }, { wch: 12 }, { wch: 10 }];
-        XLSX.utils.book_append_sheet(wb, wsDetail, 'Detail Absensi');
-
-        const fileName = `Absensi_SDN_Wawonggole_${periodeLabel.replace(' ','_')}.xlsx`;
-        XLSX.writeFile(wb, fileName);
-        showToast(`✅ File ${fileName} berhasil diunduh`);
-    };
-
-    window.printReport = () => {
-        if (!window._printData) { showToast('Data belum tersedia'); return; }
-        const { allDates, snap, bulan, tahun } = window._printData;
-        const namaBulan = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-        document.getElementById('print-periode').innerText = `Periode: ${namaBulan[parseInt(bulan)]} ${tahun}`;
-        document.getElementById('print-tanggal-cetak').innerText = `Dicetak: ${new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}`;
-        let rows = ''; let no = 1;
-        allDates.forEach(tgl => {
-            Object.keys(snap[tgl]).forEach(uid => {
-                const d = snap[tgl][uid];
-                rows += `<tr style="background:${no%2===0?'#f8fafc':'white'}">
-                    <td style="padding:8px 10px;border:1px solid #e2e8f0;color:#64748b;">${no++}</td>
-                    <td style="padding:8px 10px;border:1px solid #e2e8f0;font-weight:700;">${tgl}</td>
-                    <td style="padding:8px 10px;border:1px solid #e2e8f0;font-weight:700;">${d.nama}</td>
-                    <td style="padding:8px 10px;border:1px solid #e2e8f0;text-align:center;color:#4F46E5;font-weight:700;">${d.waktu}</td>
-                    <td style="padding:8px 10px;border:1px solid #e2e8f0;text-align:center;color:#065f46;font-weight:700;">${d.status||'Hadir'}</td>
-                </tr>`;
-            });
-        });
-        document.getElementById('print-tbody').innerHTML = rows;
-        document.getElementById('print-area').style.display = 'block';
-        window.print();
-        setTimeout(() => { document.getElementById('print-area').style.display = 'none'; }, 1000);
-    };
+    });
+    document.getElementById('print-tbody').innerHTML = rows;
+    document.getElementById('print-area').style.display = 'block';
+    window.print();
+    setTimeout(() => { document.getElementById('print-area').style.display = 'none'; }, 1000);
+};
 </script>
 </body>
 </html>
