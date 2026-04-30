@@ -375,7 +375,7 @@
         </div>
     </section>
 
-    <!-- ══ HOME ══ -->
+    <!-- ══ HOME — hanya untuk guru ══ -->
     <section id="screen-home" class="screen">
         <div class="home-header">
             <div>
@@ -732,6 +732,7 @@ let gpsChecked = false;
 let lastCoords = null;
 
 window.checkGPS = () => {
+    if (currentUserRole === 'admin') return;
     gpsValid   = false;
     gpsChecked = false;
     lastCoords = null;
@@ -855,6 +856,8 @@ onAuthStateChanged(auth, async (user) => {
 
             if (currentUserRole === 'admin') {
                 document.getElementById('btn-admin').style.display = 'flex';
+                document.getElementById('btn-home').remove();
+                document.getElementById('btn-report').remove();
                 populateFilter();
                 switchTab('admin');
                 fetchAdminStats();
@@ -871,7 +874,7 @@ onAuthStateChanged(auth, async (user) => {
 
 window.switchTab = (tab) => {
     const tabs = currentUserRole === 'admin'
-        ? ['home','report','admin','profile']
+        ? ['admin','profile']
         : ['home','report','profile'];
     tabs.forEach(t => {
         const btn = document.getElementById(`btn-${t}`);
@@ -895,6 +898,7 @@ window.switchAdminTab = (tab) => {
 // SCANNER — dual mode masuk / pulang
 // ══════════════════════════════════════════════════════════
 window.startScanner = (mode) => {
+    if (currentUserRole === 'admin') { showToast('Admin tidak memiliki akses absensi.', 'error'); return; }
     if (!gpsChecked)  { showToast('Harap tunggu, GPS sedang diperiksa…', 'warning'); return; }
     if (!gpsValid)    { showToast('❌ Anda berada di luar area sekolah.', 'error');   return; }
 
@@ -936,6 +940,7 @@ window.stopScanner = () => {
 // SUBMIT ABSEN — dengan kalkulasi status waktu
 // ══════════════════════════════════════════════════════════
 async function submitAbsen(mode) {
+    if (currentUserRole === 'admin') { showToast('Admin tidak memiliki akses absensi.', 'error'); return; }
     const user = auth.currentUser;
     const now  = new Date();
     const tgl  = now.toISOString().split('T')[0];
@@ -1228,9 +1233,6 @@ window.fetchAdminReport = () => {
 
                 const masukInfo  = d.masuk  ? `${d.masuk.waktu} <small>(${d.masuk.status})</small>`  : '–';
                 const pulangInfo = d.pulang ? `${d.pulang.waktu} <small>(${d.pulang.status})</small>` : '–';
-                const gpsInfo    = d.masuk && d.masuk.gps
-                    ? `${d.masuk.gps.lat.toFixed(5)}, ${d.masuk.gps.lng.toFixed(5)} (±${d.masuk.gps.acc}m)`
-                    : 'Tidak tersedia';
 
                 const masukChip = d.masuk
                     ? `<span class="status-chip ${scChipClass(d.masuk.status)}">${d.masuk.status.substring(0, 18)}</span>`
@@ -1241,7 +1243,6 @@ window.fetchAdminReport = () => {
                         <div class="admin-card-top">
                             <div>
                                 <p class="admin-card-name">${nama}</p>
-                                <p class="admin-card-meta">GPS: ${gpsInfo}</p>
                             </div>
                             ${masukChip}
                         </div>
