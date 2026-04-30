@@ -379,7 +379,7 @@
     <section id="screen-home" class="screen">
         <div class="home-header">
             <div>
-                <p class="header-greet">Guru Terverifikasi</p>
+                <p class="header-greet" id="header-greet">Guru Terverifikasi</p>
                 <p class="header-name" id="user-display">Memuat…</p>
             </div>
             <div class="header-avatar">👨‍🏫</div>
@@ -733,6 +733,7 @@ let lastCoords = null;
 
 window.checkGPS = () => {
     if (currentUserRole === 'admin') return;
+    if (currentUserRole !== 'guru' && currentUserRole !== 'kepala_sekolah') return;
     gpsValid   = false;
     gpsChecked = false;
     lastCoords = null;
@@ -850,9 +851,12 @@ onAuthStateChanged(auth, async (user) => {
             document.getElementById('profile-jadwal-masuk').innerText = userJadwal.masuk;
             document.getElementById('profile-jadwal-pulang').innerText = userJadwal.pulang;
 
-            document.getElementById('user-display').innerText    = data.nama || 'Guru';
-            document.getElementById('profile-role').innerText    = currentUserRole === 'admin' ? '🛡️ Administrator' : '👨‍🏫 Guru';
-            document.getElementById('profile-status').innerText  = currentUserRole === 'admin' ? 'Administrator' : 'Guru Aktif';
+            document.getElementById('user-display').innerText = data.nama || 'Pengguna';
+
+            const roleLabel  = { admin:'🛡️ Administrator', kepala_sekolah:'🏫 Kepala Sekolah', guru:'👨‍🏫 Guru' };
+            const roleStatus = { admin:'Administrator', kepala_sekolah:'Kepala Sekolah', guru:'Guru Aktif' };
+            document.getElementById('profile-role').innerText   = roleLabel[currentUserRole]  || '👨‍🏫 Guru';
+            document.getElementById('profile-status').innerText = roleStatus[currentUserRole] || 'Guru Aktif';
 
             if (currentUserRole === 'admin') {
                 document.getElementById('btn-admin').style.display = 'flex';
@@ -861,6 +865,15 @@ onAuthStateChanged(auth, async (user) => {
                 populateFilter();
                 switchTab('admin');
                 fetchAdminStats();
+            } else if (currentUserRole === 'kepala_sekolah') {
+                document.getElementById('btn-admin').style.display = 'flex';
+                document.getElementById('header-greet').innerText = 'Kepala Sekolah';
+                const tabJadwal = document.getElementById('tab-jadwal');
+                if (tabJadwal) tabJadwal.style.display = 'none';
+                populateFilter();
+                fetchAdminStats();
+                switchTab('home');
+                checkGPS();
             } else {
                 switchTab('home');
                 checkGPS();
@@ -875,6 +888,8 @@ onAuthStateChanged(auth, async (user) => {
 window.switchTab = (tab) => {
     const tabs = currentUserRole === 'admin'
         ? ['admin','profile']
+        : currentUserRole === 'kepala_sekolah'
+        ? ['home','report','admin','profile']
         : ['home','report','profile'];
     tabs.forEach(t => {
         const btn = document.getElementById(`btn-${t}`);
@@ -887,6 +902,8 @@ window.switchTab = (tab) => {
 };
 
 window.switchAdminTab = (tab) => {
+    // Kepala sekolah tidak bisa akses tab Atur Jadwal
+    if (tab === 'jadwal' && currentUserRole === 'kepala_sekolah') return;
     document.getElementById('tab-laporan').classList.toggle('active', tab === 'laporan');
     document.getElementById('tab-jadwal').classList.toggle('active', tab === 'jadwal');
     document.getElementById('panel-laporan').style.display = tab === 'laporan' ? 'block' : 'none';
@@ -899,6 +916,7 @@ window.switchAdminTab = (tab) => {
 // ══════════════════════════════════════════════════════════
 window.startScanner = (mode) => {
     if (currentUserRole === 'admin') { showToast('Admin tidak memiliki akses absensi.', 'error'); return; }
+    if (currentUserRole !== 'guru' && currentUserRole !== 'kepala_sekolah') { showToast('Akses absensi tidak diizinkan.', 'error'); return; }
     if (!gpsChecked)  { showToast('Harap tunggu, GPS sedang diperiksa…', 'warning'); return; }
     if (!gpsValid)    { showToast('❌ Anda berada di luar area sekolah.', 'error');   return; }
 
@@ -940,7 +958,7 @@ window.stopScanner = () => {
 // SUBMIT ABSEN — dengan kalkulasi status waktu
 // ══════════════════════════════════════════════════════════
 async function submitAbsen(mode) {
-    if (currentUserRole === 'admin') { showToast('Admin tidak memiliki akses absensi.', 'error'); return; }
+    if (currentUserRole !== 'guru' && currentUserRole !== 'kepala_sekolah') { showToast('Akses absensi tidak diizinkan.', 'error'); return; }
     const user = auth.currentUser;
     const now  = new Date();
     const tgl  = now.toISOString().split('T')[0];
