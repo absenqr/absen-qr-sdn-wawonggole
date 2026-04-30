@@ -114,7 +114,6 @@
         .btn-auth:active { transform: scale(.97); opacity: .9; }
         .btn-auth:disabled { opacity: .6; cursor: not-allowed; transform: none; }
 
-        /* Spinner */
         .spinner {
             width: 16px; height: 16px;
             border: 2px solid rgba(255,255,255,.4);
@@ -142,40 +141,67 @@
         .gps-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; flex-shrink: 0; }
         .gps-refresh-btn { font-size: 9px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: .12em; background: none; border: none; cursor: pointer; padding: 4px 0; }
 
+        /* Status Card — dual row masuk/pulang */
         .status-card {
-            margin: 0 24px 24px;
+            margin: 0 24px 20px;
             background: var(--primary);
             border-radius: var(--radius-xl);
-            padding: 28px;
+            padding: 22px 28px;
             position: relative; overflow: hidden;
             box-shadow: var(--shadow-lg);
         }
         .status-card::before { content: ''; position: absolute; width: 180px; height: 180px; border-radius: 50%; background: rgba(255,255,255,.06); top: -60px; right: -50px; }
         .status-card::after  { content: ''; position: absolute; width: 120px; height: 120px; border-radius: 50%; background: rgba(255,255,255,.04); bottom: -40px; left: 20px; }
         .status-eyebrow { font-size: 9px; font-weight: 700; color: rgba(255,255,255,.55); text-transform: uppercase; letter-spacing: .2em; margin-bottom: 10px; }
-        .status-label-text { font-size: 26px; font-weight: 900; color: white; letter-spacing: -.5px; line-height: 1.1; position: relative; z-index: 1; }
-        .status-school { position: absolute; bottom: 24px; right: 24px; font-size: 8px; font-weight: 800; color: rgba(255,255,255,.3); text-align: right; text-transform: uppercase; letter-spacing: .1em; line-height: 1.6; z-index: 1; }
+        .status-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; position: relative; z-index: 1; }
+        .status-row:last-child { margin-bottom: 0; }
+        .status-row-label { font-size: 10px; font-weight: 700; color: rgba(255,255,255,.55); text-transform: uppercase; letter-spacing: .15em; }
+        .status-row-val { font-size: 14px; font-weight: 800; color: white; }
+        .status-row-val.late { color: #FCA5A5; }
+        .status-row-val.early { color: #6EE7B7; }
+        .status-row-val.empty { color: rgba(255,255,255,.3); font-weight: 600; }
+        .status-divider { height: 1px; background: rgba(255,255,255,.1); margin: 10px 0; position: relative; z-index: 1; }
+        .status-school { font-size: 8px; font-weight: 800; color: rgba(255,255,255,.3); text-transform: uppercase; letter-spacing: .1em; line-height: 1.6; z-index: 1; position: relative; margin-top: 8px; }
+        .jadwal-row { display: flex; align-items: center; gap: 8px; margin-bottom: 14px; position: relative; z-index: 1; }
+        .jadwal-chip { background: rgba(255,255,255,.12); border-radius: 8px; padding: 5px 10px; font-size: 9px; font-weight: 700; color: rgba(255,255,255,.7); display: flex; gap: 5px; align-items: center; }
+        .jadwal-chip span { color: white; font-weight: 800; }
 
-        .scan-wrap { display: flex; flex-direction: column; align-items: center; padding: 8px 24px 28px; }
-        .scan-btn {
-            width: 120px; height: 120px; border-radius: 50%; background: white; border: none; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; position: relative;
-            box-shadow: 0 16px 48px rgba(79,70,229,.18), 0 0 0 12px rgba(79,70,229,.06), 0 0 0 24px rgba(79,70,229,.03);
-            transition: transform .2s cubic-bezier(.34,1.56,.64,1), box-shadow .2s; margin-bottom: 18px;
+        /* SCAN BUTTONS — dual */
+        .scan-wrap { padding: 4px 24px 24px; display: flex; flex-direction: column; align-items: center; gap: 14px; }
+        .scan-btn-row { display: flex; gap: 12px; width: 100%; }
+        .scan-btn-box {
+            flex: 1; padding: 18px 12px; border-radius: var(--radius-lg);
+            border: none; cursor: pointer; font-family: inherit;
+            display: flex; flex-direction: column; align-items: center; gap: 6px;
+            transition: transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s;
+            box-shadow: var(--shadow-md);
         }
-        .scan-btn:active { transform: scale(.91); box-shadow: 0 6px 20px rgba(79,70,229,.15); }
-        .scan-inner { width: 94px; height: 94px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; }
-        .scan-text { font-size: 22px; font-weight: 900; color: white; letter-spacing: -1px; font-style: italic; }
-        .scan-label { font-size: 15px; font-weight: 800; color: var(--text-1); letter-spacing: -.2px; }
-        .scan-sub { font-size: 9px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .2em; margin-top: 4px; }
+        .scan-btn-box:active { transform: scale(.93); }
+        .scan-btn-box.masuk { background: var(--primary); }
+        .scan-btn-box.pulang { background: #10B981; }
+        .scan-btn-box.done { background: #E2E8F0; cursor: not-allowed; }
+        .scan-btn-box.done:active { transform: none; }
+        .scan-btn-icon { font-size: 28px; }
+        .scan-btn-label { font-size: 11px; font-weight: 800; color: white; text-transform: uppercase; letter-spacing: .15em; }
+        .scan-btn-box.done .scan-btn-label { color: var(--text-3); }
+        .scan-btn-sub { font-size: 9px; font-weight: 600; color: rgba(255,255,255,.65); }
+        .scan-btn-box.done .scan-btn-sub { color: var(--text-3); }
 
         .section-header { padding: 0 24px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .section-title { font-size: 10px; font-weight: 800; color: var(--text-1); text-transform: uppercase; letter-spacing: .2em; }
         .activity-list { padding: 0 24px; }
-        .activity-card { background: white; border-radius: var(--radius-md); padding: 16px 18px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); margin-bottom: 10px; box-shadow: var(--shadow-sm); }
-        .activity-date { font-size: 12px; font-weight: 700; color: var(--text-1); }
-        .activity-status { font-size: 8px; font-weight: 800; color: var(--text-3); text-transform: uppercase; letter-spacing: .15em; margin-top: 3px; }
-        .activity-time { font-size: 11px; font-weight: 800; color: var(--primary); background: var(--primary-light); padding: 8px 14px; border-radius: 10px; }
+        .activity-card { background: white; border-radius: var(--radius-md); padding: 14px 18px; border: 1px solid var(--border); margin-bottom: 10px; box-shadow: var(--shadow-sm); }
+        .activity-date { font-size: 12px; font-weight: 700; color: var(--text-1); margin-bottom: 8px; }
+        .activity-row { display: flex; justify-content: space-between; align-items: center; }
+        .activity-type { font-size: 9px; font-weight: 800; color: var(--text-3); text-transform: uppercase; letter-spacing: .15em; }
+        .activity-time { font-size: 11px; font-weight: 800; color: var(--primary); background: var(--primary-light); padding: 6px 12px; border-radius: 8px; }
+        .activity-time.pulang { color: #059669; background: #D1FAE5; }
+        .activity-status-chip { font-size: 8px; font-weight: 800; padding: 4px 8px; border-radius: 6px; }
+        .chip-hadir { background: #D1FAE5; color: #065F46; }
+        .chip-awal { background: #DBEAFE; color: #1E40AF; }
+        .chip-late { background: #FEE2E2; color: #991B1B; }
+        .chip-pulang-awal { background: #FEF3C7; color: #92400E; }
+        .activity-row-wrap { display: flex; align-items: center; gap: 8px; }
         .empty-state { text-align: center; padding: 32px 0; font-size: 10px; font-weight: 700; color: var(--text-3); text-transform: uppercase; letter-spacing: .2em; }
 
         /* ─── REPORT ─── */
@@ -198,6 +224,10 @@
         .stat-card.primary .stat-value { color: white; }
         .stat-card.white .stat-value { color: var(--primary); }
 
+        /* Admin tabs */
+        .admin-tabs { display: flex; gap: 8px; padding: 0 24px; margin-bottom: 20px; }
+        .admin-tab { flex: 1; padding: 10px; background: white; border: 1.5px solid var(--border); border-radius: 12px; font-family: inherit; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; color: var(--text-3); cursor: pointer; transition: all .2s; }
+        .admin-tab.active { background: var(--primary); color: white; border-color: var(--primary); }
 
         .filter-card { margin: 0 24px 20px; background: white; border-radius: var(--radius-lg); padding: 20px; border: 1.5px solid var(--border); box-shadow: var(--shadow-sm); }
         .filter-label { font-size: 9px; font-weight: 800; color: var(--text-3); text-transform: uppercase; letter-spacing: .2em; margin-bottom: 12px; }
@@ -210,12 +240,32 @@
 
         .admin-report-list { padding: 0 24px; }
         .report-day-label { font-size: 8px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: .3em; margin: 16px 0 8px; padding: 0 2px; }
-        .admin-card { background: white; border-radius: var(--radius-md); padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; border: 1px solid var(--border); margin-bottom: 8px; box-shadow: var(--shadow-sm); }
+        .admin-card { background: white; border-radius: var(--radius-md); padding: 14px 16px; border: 1px solid var(--border); margin-bottom: 8px; box-shadow: var(--shadow-sm); }
+        .admin-card-top { display: flex; justify-content: space-between; align-items: flex-start; }
         .admin-card-name { font-size: 13px; font-weight: 700; color: var(--text-1); }
         .admin-card-meta { font-size: 9px; font-weight: 600; color: var(--text-3); margin-top: 2px; }
-        .admin-card-chips { display: flex; align-items: center; gap: 6px; }
-        .chip-status { font-size: 8px; font-weight: 800; color: #065F46; background: #D1FAE5; padding: 5px 10px; border-radius: 8px; text-transform: uppercase; letter-spacing: .1em; }
-        .chip-time { font-size: 10px; font-weight: 800; color: var(--primary); background: var(--primary-light); padding: 6px 12px; border-radius: 8px; }
+        .admin-card-times { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+        .time-chip { display: flex; gap: 4px; align-items: center; font-size: 9px; font-weight: 700; padding: 5px 10px; border-radius: 8px; }
+        .time-chip-label { opacity: .6; }
+        .time-chip.masuk-chip { background: var(--primary-light); color: var(--primary); }
+        .time-chip.pulang-chip { background: #D1FAE5; color: #065F46; }
+        .status-chip { font-size: 8px; font-weight: 800; padding: 4px 10px; border-radius: 6px; }
+        .sc-hadir { background: #D1FAE5; color: #065F46; }
+        .sc-awal { background: #DBEAFE; color: #1E40AF; }
+        .sc-late { background: #FEE2E2; color: #991B1B; }
+
+        /* ─── JADWAL ADMIN ─── */
+        #panel-jadwal { padding: 0 24px; }
+        .jadwal-user-card { background: white; border-radius: var(--radius-md); padding: 14px 16px; border: 1px solid var(--border); margin-bottom: 10px; box-shadow: var(--shadow-sm); }
+        .jadwal-user-name { font-size: 13px; font-weight: 700; color: var(--text-1); }
+        .jadwal-fields { display: flex; gap: 10px; margin-top: 12px; align-items: flex-end; }
+        .jadwal-field { flex: 1; }
+        .jadwal-field label { font-size: 8px; font-weight: 800; color: var(--text-3); text-transform: uppercase; letter-spacing: .2em; display: block; margin-bottom: 6px; }
+        .jadwal-field input { width: 100%; background: var(--bg); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px; font-family: inherit; font-size: 13px; font-weight: 700; color: var(--text-1); outline: none; }
+        .jadwal-field input:focus { border-color: var(--primary); }
+        .btn-save-jadwal { background: var(--primary); color: white; border: none; border-radius: 10px; padding: 10px 16px; font-family: inherit; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .12em; cursor: pointer; transition: transform .15s; white-space: nowrap; }
+        .btn-save-jadwal:active { transform: scale(.95); }
+        .jadwal-current { font-size: 9px; color: var(--text-3); font-weight: 600; margin-top: 4px; }
 
         /* ─── PROFILE ─── */
         #screen-profile { align-items: center; padding: 80px 32px 100px; overflow-y: auto; }
@@ -261,6 +311,10 @@
         #scanner-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.92); backdrop-filter: blur(20px); z-index: 200; flex-direction: column; }
         #scanner-modal.open { display: flex; }
         .scanner-header { padding: 52px 28px 20px; display: flex; justify-content: space-between; align-items: center; }
+        .scanner-title-wrap { display: flex; flex-direction: column; gap: 4px; }
+        .scanner-mode-badge { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .2em; padding: 4px 12px; border-radius: 999px; display: inline-block; }
+        .scanner-mode-badge.masuk { background: rgba(79,70,229,.3); color: #A5B4FC; }
+        .scanner-mode-badge.pulang { background: rgba(16,185,129,.3); color: #6EE7B7; }
         .scanner-title { font-size: 9px; font-weight: 800; color: rgba(255,255,255,.35); text-transform: uppercase; letter-spacing: .3em; }
         .scanner-close { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.1); color: white; font-family: inherit; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .15em; padding: 10px 20px; border-radius: 12px; cursor: pointer; }
         .scanner-body { flex: 1; display: flex; align-items: center; justify-content: center; padding: 16px 32px; }
@@ -271,7 +325,7 @@
         .scanner-hint { font-size: 10px; font-weight: 700; color: rgba(255,255,255,.5); text-transform: uppercase; letter-spacing: .15em; margin-top: 10px; }
 
         /* ─── TOAST ─── */
-        #toast { position: fixed; bottom: 108px; left: 50%; transform: translateX(-50%) translateY(10px); padding: 13px 22px; border-radius: 16px; font-size: 11px; font-weight: 700; letter-spacing: -.1px; opacity: 0; transition: all .3s cubic-bezier(.16,1,.3,1); z-index: 999; max-width: 300px; text-align: center; pointer-events: none; white-space: nowrap; }
+        #toast { position: fixed; bottom: 108px; left: 50%; transform: translateX(-50%) translateY(10px); padding: 13px 22px; border-radius: 16px; font-size: 11px; font-weight: 700; letter-spacing: -.1px; opacity: 0; transition: all .3s cubic-bezier(.16,1,.3,1); z-index: 999; max-width: 320px; text-align: center; pointer-events: none; white-space: nowrap; }
         #toast.success { background: #0F172A; color: white; }
         #toast.error   { background: #DC2626; color: white; }
         #toast.warning { background: #D97706; color: white; }
@@ -314,7 +368,6 @@
                     <input type="password" id="login-pass" placeholder="PIN (tanggal lahir)" maxlength="9" autocomplete="current-password">
                 </div>
             </div>
-            <!-- FIX #6: Button disable saat loading, pesan error lebih spesifik -->
             <button class="btn-auth" id="btn-login" onclick="handleLogin()">
                 <div class="spinner"></div>
                 <span class="btn-text">Masuk Sekarang</span>
@@ -338,18 +391,45 @@
             </div>
             <button class="gps-refresh-btn" onclick="checkGPS()">Perbarui</button>
         </div>
+
+        <!-- Status Card dengan masuk/pulang -->
         <div class="status-card">
             <p class="status-eyebrow">Kehadiran Hari Ini</p>
-            <p class="status-label-text" id="status-label">Belum Absen</p>
-            <div class="status-school">SDN<br>WAWONGGOLE</div>
+            <!-- Jadwal chips -->
+            <div class="jadwal-row">
+                <div class="jadwal-chip">Masuk <span id="jadwal-masuk-display">07:20</span></div>
+                <div class="jadwal-chip">Pulang <span id="jadwal-pulang-display">12:00</span></div>
+            </div>
+            <!-- Masuk row -->
+            <div class="status-row">
+                <span class="status-row-label">Absen Masuk</span>
+                <span class="status-row-val empty" id="status-masuk-val">Belum Absen</span>
+            </div>
+            <div class="status-divider"></div>
+            <!-- Pulang row -->
+            <div class="status-row">
+                <span class="status-row-label">Absen Pulang</span>
+                <span class="status-row-val empty" id="status-pulang-val">Belum Absen</span>
+            </div>
+            <p class="status-school">SDN WAWONGGOLE</p>
         </div>
+
+        <!-- Dual scan buttons -->
         <div class="scan-wrap">
-            <button class="scan-btn" onclick="startScanner()">
-                <div class="scan-inner"><span class="scan-text">GO</span></div>
-            </button>
-            <p class="scan-label">Presensi QR Code</p>
-            <p class="scan-sub">Arahkan kamera ke kode QR Anda</p>
+            <div class="scan-btn-row">
+                <button class="scan-btn-box masuk" id="btn-scan-masuk" onclick="startScanner('masuk')">
+                    <span class="scan-btn-icon">📥</span>
+                    <span class="scan-btn-label">Absen Masuk</span>
+                    <span class="scan-btn-sub">Pagi / Shift 1</span>
+                </button>
+                <button class="scan-btn-box pulang" id="btn-scan-pulang" onclick="startScanner('pulang')">
+                    <span class="scan-btn-icon">📤</span>
+                    <span class="scan-btn-label">Absen Pulang</span>
+                    <span class="scan-btn-sub">Akhir Tugas</span>
+                </button>
+            </div>
         </div>
+
         <div class="section-header"><p class="section-title">Aktivitas Terakhir</p></div>
         <div class="activity-list" id="home-history"></div>
     </section>
@@ -381,24 +461,39 @@
             </div>
         </div>
 
-
-        <div class="filter-card">
-            <p class="filter-label">Filter Laporan Bulanan</p>
-            <div class="filter-row">
-                <select id="admin-filter-bulan" class="filter-select" onchange="fetchAdminReport()"></select>
-                <select id="admin-filter-tahun" class="filter-select" style="width:90px;flex:none;" onchange="fetchAdminReport()"></select>
-                <button class="btn-print" onclick="printReport()">
-                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                    Cetak
-                </button>
-                <button class="btn-export" onclick="exportXLSX()">
-                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                    Excel
-                </button>
-            </div>
+        <!-- Admin Tabs -->
+        <div class="admin-tabs">
+            <button class="admin-tab active" id="tab-laporan" onclick="switchAdminTab('laporan')">Laporan</button>
+            <button class="admin-tab" id="tab-jadwal" onclick="switchAdminTab('jadwal')">Atur Jadwal</button>
         </div>
 
-        <div class="admin-report-list" id="admin-report-container"></div>
+        <!-- PANEL LAPORAN -->
+        <div id="panel-laporan">
+            <div class="filter-card">
+                <p class="filter-label">Filter Laporan Bulanan</p>
+                <div class="filter-row">
+                    <select id="admin-filter-bulan" class="filter-select" onchange="fetchAdminReport()"></select>
+                    <select id="admin-filter-tahun" class="filter-select" style="width:90px;flex:none;" onchange="fetchAdminReport()"></select>
+                    <button class="btn-print" onclick="printReport()">
+                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                        Cetak
+                    </button>
+                    <button class="btn-export" onclick="exportXLSX()">
+                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        Excel
+                    </button>
+                </div>
+            </div>
+            <div class="admin-report-list" id="admin-report-container"></div>
+        </div>
+
+        <!-- PANEL JADWAL -->
+        <div id="panel-jadwal" style="display:none;">
+            <div style="padding: 0 0 12px;">
+                <p style="font-size:9px;font-weight:800;color:var(--text-3);text-transform:uppercase;letter-spacing:.2em;">Jadwal default jika tidak diisi: Masuk 07:20 · Pulang 12:00</p>
+            </div>
+            <div id="jadwal-list"></div>
+        </div>
     </section>
 
     <!-- ══ PROFILE ══ -->
@@ -413,12 +508,20 @@
                 <span class="pir-val" id="profile-status">–</span>
             </div>
             <div class="profile-info-row">
+                <span class="pir-key">Jadwal Masuk</span>
+                <span class="pir-val" id="profile-jadwal-masuk">–</span>
+            </div>
+            <div class="profile-info-row">
+                <span class="pir-key">Jadwal Pulang</span>
+                <span class="pir-val" id="profile-jadwal-pulang">–</span>
+            </div>
+            <div class="profile-info-row">
                 <span class="pir-key">Sekolah</span>
                 <span class="pir-val">SDN WAWONGGOLE</span>
             </div>
             <div class="profile-info-row">
                 <span class="pir-key">Sistem</span>
-                <span class="pir-val">E-Presensi v2.1</span>
+                <span class="pir-val">E-Presensi v3.0</span>
             </div>
         </div>
         <button class="btn-logout" onclick="handleLogout()">Keluar Aplikasi</button>
@@ -451,7 +554,10 @@
     <!-- ══ SCANNER MODAL ══ -->
     <div id="scanner-modal">
         <div class="scanner-header">
-            <span class="scanner-title">Scan QR Sekolah</span>
+            <div class="scanner-title-wrap">
+                <span class="scanner-mode-badge masuk" id="scanner-mode-badge">Absen Masuk</span>
+                <span class="scanner-title">Scan QR Sekolah</span>
+            </div>
             <button class="scanner-close" onclick="stopScanner()">✕ Batal</button>
         </div>
         <div class="scanner-body"><div id="qr-reader"></div></div>
@@ -468,21 +574,23 @@
 
 <!-- ══ PRINT TEMPLATE ══ -->
 <div id="print-area" style="display:none;">
-    <div style="font-family:'Plus Jakarta Sans',sans-serif;padding:30px;max-width:800px;margin:auto;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif;padding:30px;max-width:900px;margin:auto;">
         <div style="text-align:center;margin-bottom:24px;border-bottom:3px solid #4F46E5;padding-bottom:16px;">
             <h1 style="font-size:20px;font-weight:900;color:#0F172A;margin:0;">LAPORAN ABSENSI BULANAN</h1>
             <h2 style="font-size:16px;font-weight:700;color:#4F46E5;margin:4px 0;">SDN WAWONGGOLE</h2>
             <p id="print-periode" style="font-size:12px;color:#64748B;margin:4px 0;font-weight:600;"></p>
             <p id="print-tanggal-cetak" style="font-size:10px;color:#94A3B8;margin:0;"></p>
         </div>
-        <table id="print-table" style="width:100%;border-collapse:collapse;font-size:12px;">
+        <table id="print-table" style="width:100%;border-collapse:collapse;font-size:11px;">
             <thead>
                 <tr style="background:#4F46E5;color:white;">
-                    <th style="padding:10px;text-align:left;border:1px solid #e2e8f0;">No</th>
-                    <th style="padding:10px;text-align:left;border:1px solid #e2e8f0;">Tanggal</th>
-                    <th style="padding:10px;text-align:left;border:1px solid #e2e8f0;">Nama Guru</th>
-                    <th style="padding:10px;text-align:center;border:1px solid #e2e8f0;">Jam Masuk</th>
-                    <th style="padding:10px;text-align:center;border:1px solid #e2e8f0;">Status</th>
+                    <th style="padding:8px;text-align:left;border:1px solid #e2e8f0;">No</th>
+                    <th style="padding:8px;text-align:left;border:1px solid #e2e8f0;">Tanggal</th>
+                    <th style="padding:8px;text-align:left;border:1px solid #e2e8f0;">Nama Guru</th>
+                    <th style="padding:8px;text-align:center;border:1px solid #e2e8f0;">Jam Masuk</th>
+                    <th style="padding:8px;text-align:center;border:1px solid #e2e8f0;">Status Masuk</th>
+                    <th style="padding:8px;text-align:center;border:1px solid #e2e8f0;">Jam Pulang</th>
+                    <th style="padding:8px;text-align:center;border:1px solid #e2e8f0;">Status Pulang</th>
                 </tr>
             </thead>
             <tbody id="print-tbody"></tbody>
@@ -499,16 +607,8 @@
 import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword,
          onAuthStateChanged, signOut }             from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getDatabase, ref, set, get, child }      from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+import { getDatabase, ref, set, get, child, update } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-// ─────────────────────────────────────────────────────────
-// CATATAN KEAMANAN:
-// Firebase API key di sini AMAN untuk ada di client-side —
-// ini hanya identifier project, bukan secret.
-// Keamanan sesungguhnya harus dijaga lewat Firebase Security
-// Rules di console.firebase.google.com agar data tidak bisa
-// dibaca/tulis sembarangan tanpa autentikasi.
-// ─────────────────────────────────────────────────────────
 const firebaseConfig = {
     apiKey:      "AIzaSyB4KhBeNDfiP-rzI16qdBz8J2InbrWrgOM",
     authDomain:  "absen-qr-sdn-wawonggole.firebaseapp.com",
@@ -521,20 +621,104 @@ const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getDatabase(app);
 
-let html5QrCode   = null;
+let html5QrCode     = null;
 let currentUserRole = 'guru';
-let adminReportCache = null; // FIX #11: ganti window._printData
+let currentScanMode = 'masuk'; // 'masuk' | 'pulang'
+let adminReportCache = null;
+let userJadwal = { masuk: '07:20', pulang: '12:00' }; // default
 
 // ── Lokasi Sekolah ──
 const SCHOOL_LAT   = -3.8478612169364665;
 const SCHOOL_LNG   = 122.05608419435848;
 const RADIUS_METER = 200;
 
-function stopAdminQR() { /* placeholder — tidak ada QR admin */ }
+// ══════════════════════════════════════════════════════════
+// HITUNG STATUS — Logika jam masuk & pulang
+// ══════════════════════════════════════════════════════════
 
-// ═══════════════════════════════════════════════
-// FIX #3: GPS — simpan koordinat di DB untuk audit
-// ═══════════════════════════════════════════════
+/**
+ * Konversi waktu format "HH.MM" atau "HH:MM" ke total menit
+ */
+function waktuKeMenit(waktu) {
+    if (!waktu) return 0;
+    const sep  = waktu.includes(':') ? ':' : '.';
+    const [h, m] = waktu.split(sep).map(Number);
+    return h * 60 + m;
+}
+
+/**
+ * Hitung status absen masuk
+ * @param {string} jamSekarang - format "HH.MM"
+ * @param {string} jadwalMasuk - format "HH:MM"
+ * @returns {{ status: string, keterangan: string, chipClass: string }}
+ */
+function hitungStatusMasuk(jamSekarang, jadwalMasuk) {
+    const menitSekarang = waktuKeMenit(jamSekarang);
+    const menitJadwal   = waktuKeMenit(jadwalMasuk);
+    const selisih       = menitSekarang - menitJadwal;
+
+    if (selisih < 0) {
+        return {
+            status:     'Hadir Lebih Awal',
+            keterangan: `${Math.abs(selisih)} menit lebih awal`,
+            chipClass:  'chip-awal',
+            valClass:   'early'
+        };
+    } else if (selisih === 0) {
+        return {
+            status:     'Hadir',
+            keterangan: 'Tepat waktu',
+            chipClass:  'chip-hadir',
+            valClass:   ''
+        };
+    } else {
+        return {
+            status:     `Terlambat ${selisih} menit`,
+            keterangan: `${selisih} menit keterlambatan`,
+            chipClass:  'chip-late',
+            valClass:   'late'
+        };
+    }
+}
+
+/**
+ * Hitung status absen pulang
+ * @param {string} jamSekarang - format "HH.MM"
+ * @param {string} jadwalPulang - format "HH:MM"
+ * @returns {{ status: string, keterangan: string, chipClass: string }}
+ */
+function hitungStatusPulang(jamSekarang, jadwalPulang) {
+    const menitSekarang = waktuKeMenit(jamSekarang);
+    const menitJadwal   = waktuKeMenit(jadwalPulang);
+    const selisih       = menitSekarang - menitJadwal;
+
+    if (selisih < 0) {
+        return {
+            status:     `Pulang Lebih Awal ${Math.abs(selisih)} menit`,
+            keterangan: `${Math.abs(selisih)} menit lebih awal`,
+            chipClass:  'chip-pulang-awal',
+            valClass:   'early'
+        };
+    } else if (selisih === 0) {
+        return {
+            status:     'Pulang Tepat Waktu',
+            keterangan: 'Tepat waktu',
+            chipClass:  'chip-hadir',
+            valClass:   ''
+        };
+    } else {
+        return {
+            status:     'Pulang',
+            keterangan: `${selisih} menit setelah jadwal`,
+            chipClass:  'chip-hadir',
+            valClass:   ''
+        };
+    }
+}
+
+// ══════════════════════════════════════════════════════════
+// GPS
+// ══════════════════════════════════════════════════════════
 function haversine(lat1, lon1, lat2, lon2) {
     const R = 6371000;
     const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -545,7 +729,7 @@ function haversine(lat1, lon1, lat2, lon2) {
 
 let gpsValid   = false;
 let gpsChecked = false;
-let lastCoords = null; // simpan untuk audit
+let lastCoords = null;
 
 window.checkGPS = () => {
     gpsValid   = false;
@@ -591,9 +775,9 @@ function setBadge(type, text) {
     });
 }
 
-// ═══════════════════════════════════════════════
-// FIX #8 & #9: Toast dengan tipe + Login robust
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════
+// TOAST & LOGIN
+// ══════════════════════════════════════════════════════════
 window.showToast = (msg, type = 'success', duration = 3500) => {
     const t = document.getElementById('toast');
     t.innerText   = msg;
@@ -607,7 +791,6 @@ window.handleLogin = () => {
     const pass  = document.getElementById('login-pass').value;
     if (!email || !pass) { showToast('Email dan PIN harus diisi', 'warning'); return; }
 
-    // FIX #6: Disable tombol saat loading
     const btn = document.getElementById('btn-login');
     btn.disabled = true;
     btn.classList.add('loading');
@@ -616,8 +799,6 @@ window.handleLogin = () => {
         .catch((err) => {
             btn.disabled = false;
             btn.classList.remove('loading');
-
-            // FIX #9: Pesan error spesifik
             const map = {
                 'auth/invalid-credential':    '❌ Email atau PIN salah.',
                 'auth/user-not-found':        '❌ Akun tidak ditemukan.',
@@ -655,6 +836,19 @@ onAuthStateChanged(auth, async (user) => {
         if (snap.exists()) {
             const data = snap.val();
             currentUserRole = data.role || 'guru';
+
+            // Load jadwal dari Firebase (default jika belum ada)
+            userJadwal = {
+                masuk:  (data.jadwal && data.jadwal.masuk)  ? data.jadwal.masuk  : '07:20',
+                pulang: (data.jadwal && data.jadwal.pulang) ? data.jadwal.pulang : '12:00'
+            };
+
+            // Tampilkan jadwal di home dan profil
+            document.getElementById('jadwal-masuk-display').innerText = userJadwal.masuk;
+            document.getElementById('jadwal-pulang-display').innerText = userJadwal.pulang;
+            document.getElementById('profile-jadwal-masuk').innerText = userJadwal.masuk;
+            document.getElementById('profile-jadwal-pulang').innerText = userJadwal.pulang;
+
             document.getElementById('user-display').innerText    = data.nama || 'Guru';
             document.getElementById('profile-role').innerText    = currentUserRole === 'admin' ? '🛡️ Administrator' : '👨‍🏫 Guru';
             document.getElementById('profile-status').innerText  = currentUserRole === 'admin' ? 'Administrator' : 'Guru Aktif';
@@ -689,13 +883,28 @@ window.switchTab = (tab) => {
     if (tab === 'admin')  { fetchAdminReport(); fetchAdminStats(); }
 };
 
-// ═══════════════════════════════════════════════
-// SCANNER — Guru scan QR milik sendiri (berisi UID)
-// QR dicetak via app.qr-code-generator.com
-// ═══════════════════════════════════════════════
-window.startScanner = () => {
+window.switchAdminTab = (tab) => {
+    document.getElementById('tab-laporan').classList.toggle('active', tab === 'laporan');
+    document.getElementById('tab-jadwal').classList.toggle('active', tab === 'jadwal');
+    document.getElementById('panel-laporan').style.display = tab === 'laporan' ? 'block' : 'none';
+    document.getElementById('panel-jadwal').style.display  = tab === 'jadwal'  ? 'block' : 'none';
+    if (tab === 'jadwal') fetchJadwalList();
+};
+
+// ══════════════════════════════════════════════════════════
+// SCANNER — dual mode masuk / pulang
+// ══════════════════════════════════════════════════════════
+window.startScanner = (mode) => {
     if (!gpsChecked)  { showToast('Harap tunggu, GPS sedang diperiksa…', 'warning'); return; }
     if (!gpsValid)    { showToast('❌ Anda berada di luar area sekolah.', 'error');   return; }
+
+    currentScanMode = mode;
+
+    // Update badge di modal
+    const badge = document.getElementById('scanner-mode-badge');
+    badge.innerText = mode === 'masuk' ? 'Absen Masuk' : 'Absen Pulang';
+    badge.className = `scanner-mode-badge ${mode}`;
+
     document.getElementById('scanner-modal').classList.add('open');
     html5QrCode = new Html5Qrcode("qr-reader");
     html5QrCode.start(
@@ -704,7 +913,7 @@ window.startScanner = () => {
         (text) => {
             if (text === auth.currentUser.uid) {
                 stopScanner();
-                submitAbsen();
+                submitAbsen(currentScanMode);
             } else {
                 showToast('⚠️ QR bukan milik Anda!', 'warning');
             }
@@ -723,58 +932,100 @@ window.stopScanner = () => {
     }
 };
 
-// ═══════════════════════════════════════════════
-// SUBMIT ABSEN — simpan koordinat GPS untuk audit
-// ═══════════════════════════════════════════════
-async function submitAbsen() {
+// ══════════════════════════════════════════════════════════
+// SUBMIT ABSEN — dengan kalkulasi status waktu
+// ══════════════════════════════════════════════════════════
+async function submitAbsen(mode) {
     const user = auth.currentUser;
     const now  = new Date();
     const tgl  = now.toISOString().split('T')[0];
-    const jam  = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    // Format jam pakai titik sesuai konvensi sistem: "07.15"
+    const jam  = now.getHours().toString().padStart(2,'0') + '.' + now.getMinutes().toString().padStart(2,'0');
     const nama = document.getElementById('user-display').innerText;
 
-    const existing = await get(ref(db, `absensi/${tgl}/${user.uid}`));
-    if (existing.exists()) { showToast('⚠️ Anda sudah absen hari ini.', 'warning'); return; }
-
-    // FIX #3: Simpan koordinat GPS di record untuk audit
-    const record = {
-        nama,
-        waktu:  jam,
-        status: 'Hadir',
-    };
-    if (lastCoords) {
-        record.gps = lastCoords; // { lat, lng, acc }
+    // Cek apakah sudah absen mode ini hari ini
+    const existingSnap = await get(ref(db, `absensi/${tgl}/${user.uid}/${mode}`));
+    if (existingSnap.exists()) {
+        showToast(`⚠️ Anda sudah absen ${mode === 'masuk' ? 'masuk' : 'pulang'} hari ini.`, 'warning');
+        return;
     }
 
-    await set(ref(db, `absensi/${tgl}/${user.uid}`), record);
-    document.getElementById('status-label').innerText = `HADIR · ${jam}`;
-    showToast(`✅ Presensi berhasil! Pukul ${jam}`, 'success');
+    // Jika absen pulang, pastikan sudah absen masuk dulu
+    if (mode === 'pulang') {
+        const masukSnap = await get(ref(db, `absensi/${tgl}/${user.uid}/masuk`));
+        if (!masukSnap.exists()) {
+            showToast('⚠️ Absen masuk terlebih dahulu!', 'warning');
+            return;
+        }
+    }
+
+    // Hitung status berdasarkan mode dan jadwal
+    let statusResult;
+    if (mode === 'masuk') {
+        statusResult = hitungStatusMasuk(jam, userJadwal.masuk);
+    } else {
+        statusResult = hitungStatusPulang(jam, userJadwal.pulang);
+    }
+
+    const record = {
+        waktu:      jam,
+        status:     statusResult.status,
+        keterangan: statusResult.keterangan,
+    };
+    if (lastCoords) record.gps = lastCoords;
+
+    // Simpan ke Firebase: absensi/{tgl}/{uid}/masuk atau /pulang
+    await set(ref(db, `absensi/${tgl}/${user.uid}/${mode}`), record);
+
+    // Update nama di node parent agar admin bisa baca
+    await set(ref(db, `absensi/${tgl}/${user.uid}/nama`), nama);
+
+    // Update UI
+    updateStatusCard(mode, jam, statusResult);
+    updateScanButton(mode, 'done');
+
+    const emoji = statusResult.valClass === 'late' ? '⚠️' : '✅';
+    showToast(`${emoji} ${statusResult.status} · Pukul ${jam}`, statusResult.valClass === 'late' ? 'warning' : 'success');
     fetchHistory();
 }
 
-// ═══════════════════════════════════════════════
-// FIX #4: Kurangi reads — pakai 1 query per user
-// Struktur: absensi/{tanggal}/{uid}
-// Ambil data bulan ini saja, bukan 60 hari x 1 read
-// ═══════════════════════════════════════════════
+function updateStatusCard(mode, jam, statusResult) {
+    const elId  = mode === 'masuk' ? 'status-masuk-val' : 'status-pulang-val';
+    const el    = document.getElementById(elId);
+    el.innerText = `${jam} — ${statusResult.status}`;
+    el.className = `status-row-val ${statusResult.valClass}`;
+}
+
+function updateScanButton(mode, state) {
+    const btn = document.getElementById(`btn-scan-${mode}`);
+    if (!btn) return;
+    if (state === 'done') {
+        btn.classList.remove(mode);
+        btn.classList.add('done');
+        btn.onclick = null;
+        const sub = btn.querySelector('.scan-btn-sub');
+        if (sub) sub.innerText = 'Sudah Absen';
+    }
+}
+
+// ══════════════════════════════════════════════════════════
+// FETCH HISTORY — tampilkan masuk & pulang
+// ══════════════════════════════════════════════════════════
 async function fetchHistory() {
     const user      = auth.currentUser;
     const container = document.getElementById('home-history');
     container.innerHTML = `<p class="empty-state">Memuat riwayat…</p>`;
 
-    // Ambil 7 hari terakhir saja untuk home (hemat reads)
-    const dates   = [];
+    const dates = [];
     for (let i = 0; i < 7; i++) {
         const d = new Date();
         d.setDate(d.getDate() - i);
         dates.push(d.toISOString().split('T')[0]);
     }
 
-    const today    = dates[0];
-    const dbRef    = ref(db);
-    const results  = [];
+    const today  = dates[0];
+    const dbRef  = ref(db);
 
-    // Batch: jalankan semua, tapi batasi 7 bukan 60
     const settled = await Promise.allSettled(
         dates.map(tgl =>
             get(child(dbRef, `absensi/${tgl}/${user.uid}`))
@@ -782,31 +1033,79 @@ async function fetchHistory() {
         )
     );
 
-    settled.forEach(r => { if (r.status === 'fulfilled' && r.value) results.push(r.value); });
-
     container.innerHTML = '';
     let foundToday = false;
 
-    for (const { tgl, data } of results) {
+    for (const r of settled) {
+        if (r.status !== 'fulfilled' || !r.value) continue;
+        const { tgl, data } = r.value;
+
         if (tgl === today) {
             foundToday = true;
-            document.getElementById('status-label').innerText = `HADIR · ${data.waktu}`;
+            // Update status card
+            if (data.masuk) {
+                const sm = hitungStatusMasuk(data.masuk.waktu, userJadwal.masuk);
+                updateStatusCard('masuk', data.masuk.waktu, sm);
+                updateScanButton('masuk', 'done');
+            }
+            if (data.pulang) {
+                const sp = hitungStatusPulang(data.pulang.waktu, userJadwal.pulang);
+                updateStatusCard('pulang', data.pulang.waktu, sp);
+                updateScanButton('pulang', 'done');
+            }
         }
+
+        // Render activity card
+        const masukHTML = data.masuk ? `
+            <div class="activity-row">
+                <div class="activity-row-wrap">
+                    <span class="activity-type">Masuk</span>
+                    <span class="activity-status-chip ${chipMasukClass(data.masuk.status)}">${data.masuk.status}</span>
+                </div>
+                <span class="activity-time">${data.masuk.waktu}</span>
+            </div>` : `<div class="activity-row"><span class="activity-type" style="color:var(--text-3)">Masuk — Tidak Hadir</span></div>`;
+
+        const pulangHTML = data.pulang ? `
+            <div class="activity-row" style="margin-top:6px;">
+                <div class="activity-row-wrap">
+                    <span class="activity-type">Pulang</span>
+                    <span class="activity-status-chip ${chipPulangClass(data.pulang.status)}">${data.pulang.status.length > 20 ? data.pulang.status.substring(0,18)+'…' : data.pulang.status}</span>
+                </div>
+                <span class="activity-time pulang">${data.pulang.waktu}</span>
+            </div>` : `<div class="activity-row" style="margin-top:6px;"><span class="activity-type" style="color:var(--text-3)">Pulang — Belum Absen</span></div>`;
+
         container.innerHTML += `
             <div class="activity-card">
-                <div>
-                    <p class="activity-date">${tgl}</p>
-                    <p class="activity-status">${data.status || 'Hadir'}</p>
-                </div>
-                <span class="activity-time">${data.waktu}</span>
+                <p class="activity-date">${tgl}</p>
+                ${masukHTML}
+                ${pulangHTML}
             </div>`;
     }
 
-    if (!foundToday) document.getElementById('status-label').innerText = 'Belum Absen';
+    if (!foundToday) {
+        document.getElementById('status-masuk-val').innerText = 'Belum Absen';
+        document.getElementById('status-masuk-val').className = 'status-row-val empty';
+        document.getElementById('status-pulang-val').innerText = 'Belum Absen';
+        document.getElementById('status-pulang-val').className = 'status-row-val empty';
+    }
     if (!container.innerHTML) container.innerHTML = `<p class="empty-state">Belum ada riwayat</p>`;
 }
 
-// Laporan Guru: 30 hari saja (bukan 365!)
+function chipMasukClass(status) {
+    if (!status) return 'chip-hadir';
+    if (status.includes('Terlambat')) return 'chip-late';
+    if (status.includes('Lebih Awal')) return 'chip-awal';
+    return 'chip-hadir';
+}
+function chipPulangClass(status) {
+    if (!status) return 'chip-hadir';
+    if (status.includes('Lebih Awal')) return 'chip-pulang-awal';
+    return 'chip-hadir';
+}
+
+// ══════════════════════════════════════════════════════════
+// LAPORAN GURU — 30 hari
+// ══════════════════════════════════════════════════════════
 async function fetchReport() {
     const user      = auth.currentUser;
     const container = document.getElementById('report-container');
@@ -827,24 +1126,40 @@ async function fetchReport() {
         )
     );
 
-    const results = settled
-        .filter(r => r.status === 'fulfilled' && r.value)
-        .map(r => r.value);
-
+    const results = settled.filter(r => r.status === 'fulfilled' && r.value).map(r => r.value);
     container.innerHTML = '';
+
     for (const { tgl, data } of results) {
+        const masukHTML = data.masuk ? `
+            <div class="activity-row">
+                <div class="activity-row-wrap">
+                    <span class="activity-type">Masuk</span>
+                    <span class="activity-status-chip ${chipMasukClass(data.masuk.status)}">${data.masuk.status}</span>
+                </div>
+                <span class="activity-time">${data.masuk.waktu}</span>
+            </div>` : '';
+
+        const pulangHTML = data.pulang ? `
+            <div class="activity-row" style="margin-top:6px;">
+                <div class="activity-row-wrap">
+                    <span class="activity-type">Pulang</span>
+                    <span class="activity-status-chip ${chipPulangClass(data.pulang.status)}">${data.pulang.status}</span>
+                </div>
+                <span class="activity-time pulang">${data.pulang.waktu}</span>
+            </div>` : '';
+
         container.innerHTML += `
             <div class="activity-card">
-                <div>
-                    <p class="activity-date">${tgl}</p>
-                    <p class="activity-status">${data.status || 'Hadir'}</p>
-                </div>
-                <span class="activity-time">${data.waktu}</span>
+                <p class="activity-date">${tgl}</p>
+                ${masukHTML}${pulangHTML}
             </div>`;
     }
     if (!container.innerHTML) container.innerHTML = `<p class="empty-state">Belum ada data 30 hari terakhir</p>`;
 }
 
+// ══════════════════════════════════════════════════════════
+// ADMIN STATS
+// ══════════════════════════════════════════════════════════
 function fetchAdminStats() {
     get(ref(db, 'users')).then(snap => {
         if (snap.exists()) {
@@ -854,12 +1169,15 @@ function fetchAdminStats() {
     });
     const today = new Date().toISOString().split('T')[0];
     get(ref(db, `absensi/${today}`)).then(snap => {
-        document.getElementById('admin-hadir-today').innerText = snap.exists() ? Object.keys(snap.val()).length : 0;
+        if (!snap.exists()) { document.getElementById('admin-hadir-today').innerText = 0; return; }
+        // Hitung yang sudah absen masuk
+        const hadir = Object.values(snap.val()).filter(v => v.masuk).length;
+        document.getElementById('admin-hadir-today').innerText = hadir;
     });
 }
 
 function populateFilter() {
-    const now    = new Date();
+    const now     = new Date();
     const bulanEl = document.getElementById('admin-filter-bulan');
     const tahunEl = document.getElementById('admin-filter-tahun');
     const namaBulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
@@ -877,7 +1195,9 @@ function populateFilter() {
     }
 }
 
-// FIX #7: gunakan onlyOnce:true secara konsisten
+// ══════════════════════════════════════════════════════════
+// ADMIN REPORT — tampilkan masuk & pulang
+// ══════════════════════════════════════════════════════════
 window.fetchAdminReport = () => {
     const bulan  = document.getElementById('admin-filter-bulan').value;
     const tahun  = document.getElementById('admin-filter-tahun').value;
@@ -904,64 +1224,154 @@ window.fetchAdminReport = () => {
             container.innerHTML += `<p class="report-day-label">${tgl}</p>`;
             Object.keys(allData[tgl]).forEach(uid => {
                 const d = allData[tgl][uid];
-                const gpsInfo = d.gps ? `${d.gps.lat.toFixed(5)}, ${d.gps.lng.toFixed(5)} (±${d.gps.acc}m)` : 'Tidak tersedia';
+                const nama = d.nama || uid;
+
+                const masukInfo  = d.masuk  ? `${d.masuk.waktu} <small>(${d.masuk.status})</small>`  : '–';
+                const pulangInfo = d.pulang ? `${d.pulang.waktu} <small>(${d.pulang.status})</small>` : '–';
+                const gpsInfo    = d.masuk && d.masuk.gps
+                    ? `${d.masuk.gps.lat.toFixed(5)}, ${d.masuk.gps.lng.toFixed(5)} (±${d.masuk.gps.acc}m)`
+                    : 'Tidak tersedia';
+
+                const masukChip = d.masuk
+                    ? `<span class="status-chip ${scChipClass(d.masuk.status)}">${d.masuk.status.substring(0, 18)}</span>`
+                    : `<span style="font-size:10px;color:var(--text-3)">–</span>`;
+
                 container.innerHTML += `
                     <div class="admin-card">
-                        <div>
-                            <p class="admin-card-name">${d.nama}</p>
-                            <p class="admin-card-meta">GPS: ${gpsInfo}</p>
+                        <div class="admin-card-top">
+                            <div>
+                                <p class="admin-card-name">${nama}</p>
+                                <p class="admin-card-meta">GPS: ${gpsInfo}</p>
+                            </div>
+                            ${masukChip}
                         </div>
-                        <div class="admin-card-chips">
-                            <span class="chip-status">${d.status || 'Hadir'}</span>
-                            <span class="chip-time">${d.waktu}</span>
+                        <div class="admin-card-times">
+                            <div class="time-chip masuk-chip">
+                                <span class="time-chip-label">Masuk</span>
+                                <span>${d.masuk ? d.masuk.waktu : '–'}</span>
+                            </div>
+                            <div class="time-chip pulang-chip">
+                                <span class="time-chip-label">Pulang</span>
+                                <span>${d.pulang ? d.pulang.waktu : '–'}</span>
+                            </div>
                         </div>
                     </div>`;
             });
         });
 
-        // FIX #11: simpan di variabel lokal, bukan window
         adminReportCache = { allDates, snap: allData, bulan, tahun };
     });
 };
 
+function scChipClass(status) {
+    if (!status) return 'sc-hadir';
+    if (status.includes('Terlambat')) return 'sc-late';
+    if (status.includes('Lebih Awal')) return 'sc-awal';
+    return 'sc-hadir';
+}
+
+// ══════════════════════════════════════════════════════════
+// ADMIN JADWAL — Atur jadwal per guru
+// ══════════════════════════════════════════════════════════
+async function fetchJadwalList() {
+    const container = document.getElementById('jadwal-list');
+    container.innerHTML = `<p class="empty-state">Memuat daftar guru…</p>`;
+
+    const snap = await get(ref(db, 'users'));
+    if (!snap.exists()) { container.innerHTML = `<p class="empty-state">Tidak ada data</p>`; return; }
+
+    container.innerHTML = '';
+    const users = snap.val();
+
+    Object.keys(users).forEach(uid => {
+        const u = users[uid];
+        if (u.role !== 'guru') return;
+
+        const jMasuk  = (u.jadwal && u.jadwal.masuk)  ? u.jadwal.masuk  : '07:20';
+        const jPulang = (u.jadwal && u.jadwal.pulang) ? u.jadwal.pulang : '12:00';
+
+        container.innerHTML += `
+            <div class="jadwal-user-card">
+                <p class="jadwal-user-name">${u.nama}</p>
+                <p class="jadwal-current">Jadwal saat ini: Masuk ${jMasuk} · Pulang ${jPulang}</p>
+                <div class="jadwal-fields">
+                    <div class="jadwal-field">
+                        <label>Jam Masuk</label>
+                        <input type="time" id="jm-${uid}" value="${jMasuk}">
+                    </div>
+                    <div class="jadwal-field">
+                        <label>Jam Pulang</label>
+                        <input type="time" id="jp-${uid}" value="${jPulang}">
+                    </div>
+                    <button class="btn-save-jadwal" onclick="saveJadwal('${uid}', '${u.nama}')">Simpan</button>
+                </div>
+            </div>`;
+    });
+}
+
+window.saveJadwal = async (uid, nama) => {
+    const masuk  = document.getElementById(`jm-${uid}`).value;
+    const pulang = document.getElementById(`jp-${uid}`).value;
+    if (!masuk || !pulang) { showToast('Isi jam masuk dan pulang terlebih dahulu', 'warning'); return; }
+
+    await update(ref(db, `users/${uid}/jadwal`), { masuk, pulang });
+    showToast(`✅ Jadwal ${nama} berhasil disimpan`, 'success');
+    fetchJadwalList();
+};
+
+// ══════════════════════════════════════════════════════════
+// EXPORT XLSX — kolom masuk & pulang
+// ══════════════════════════════════════════════════════════
 window.exportXLSX = () => {
     if (!adminReportCache) { showToast('Data belum tersedia, pilih filter dahulu', 'warning'); return; }
     const { allDates, snap, bulan, tahun } = adminReportCache;
     const namaBulan = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
     const periodeLabel = `${namaBulan[parseInt(bulan)]} ${tahun}`;
 
+    // Rekap per guru
     const rekapMap = {};
     allDates.forEach(tgl => {
         Object.keys(snap[tgl]).forEach(uid => {
             const d = snap[tgl][uid];
-            if (!rekapMap[uid]) rekapMap[uid] = { nama: d.nama, jumlah: 0 };
-            rekapMap[uid].jumlah++;
+            if (!d.nama) return;
+            if (!rekapMap[uid]) rekapMap[uid] = { nama: d.nama, hadir: 0, terlambat: 0, pulangAwal: 0 };
+            if (d.masuk) {
+                rekapMap[uid].hadir++;
+                if (d.masuk.status && d.masuk.status.includes('Terlambat')) rekapMap[uid].terlambat++;
+            }
+            if (d.pulang && d.pulang.status && d.pulang.status.includes('Lebih Awal')) rekapMap[uid].pulangAwal++;
         });
     });
 
     const totalHari  = allDates.length || 1;
-    const rekapRows  = [['No','Nama Guru','Jumlah Hadir','Persentase']];
+    const rekapRows  = [['No','Nama Guru','Hadir','Terlambat','Pulang Lebih Awal','Persentase Hadir']];
     Object.values(rekapMap).forEach((v, i) => {
-        rekapRows.push([i+1, v.nama, v.jumlah, `${Math.round((v.jumlah/totalHari)*100)}%`]);
+        rekapRows.push([i+1, v.nama, v.hadir, v.terlambat, v.pulangAwal, `${Math.round((v.hadir/totalHari)*100)}%`]);
     });
 
-    const detailRows = [['No','Tanggal','Nama Guru','Jam Masuk','Status','GPS Lat','GPS Lng']];
+    const detailRows = [['No','Tanggal','Nama Guru','Jam Masuk','Status Masuk','Jam Pulang','Status Pulang','GPS Lat','GPS Lng']];
     let no = 1;
     allDates.forEach(tgl => {
         Object.keys(snap[tgl]).forEach(uid => {
             const d = snap[tgl][uid];
+            if (!d.nama) return;
             detailRows.push([
-                no++, tgl, d.nama, d.waktu, d.status || 'Hadir',
-                d.gps ? d.gps.lat : '', d.gps ? d.gps.lng : ''
+                no++, tgl, d.nama,
+                d.masuk  ? d.masuk.waktu   : '–',
+                d.masuk  ? d.masuk.status  : '–',
+                d.pulang ? d.pulang.waktu  : '–',
+                d.pulang ? d.pulang.status : '–',
+                d.masuk && d.masuk.gps ? d.masuk.gps.lat : '',
+                d.masuk && d.masuk.gps ? d.masuk.gps.lng : ''
             ]);
         });
     });
 
     const wb       = XLSX.utils.book_new();
     const wsRekap  = XLSX.utils.aoa_to_sheet(rekapRows);
-    wsRekap['!cols'] = [{wch:5},{wch:25},{wch:15},{wch:15}];
+    wsRekap['!cols'] = [{wch:5},{wch:25},{wch:8},{wch:12},{wch:18},{wch:18}];
     const wsDetail = XLSX.utils.aoa_to_sheet(detailRows);
-    wsDetail['!cols'] = [{wch:5},{wch:14},{wch:25},{wch:12},{wch:10},{wch:14},{wch:14}];
+    wsDetail['!cols'] = [{wch:5},{wch:14},{wch:25},{wch:12},{wch:22},{wch:12},{wch:22},{wch:14},{wch:14}];
     XLSX.utils.book_append_sheet(wb, wsRekap,  'Rekap Guru');
     XLSX.utils.book_append_sheet(wb, wsDetail, 'Detail Absensi');
 
@@ -970,6 +1380,9 @@ window.exportXLSX = () => {
     showToast(`✅ ${fileName} berhasil diunduh`, 'success');
 };
 
+// ══════════════════════════════════════════════════════════
+// PRINT — kolom masuk & pulang
+// ══════════════════════════════════════════════════════════
 window.printReport = () => {
     if (!adminReportCache) { showToast('Data belum tersedia', 'warning'); return; }
     const { allDates, snap, bulan, tahun } = adminReportCache;
@@ -980,12 +1393,15 @@ window.printReport = () => {
     allDates.forEach(tgl => {
         Object.keys(snap[tgl]).forEach(uid => {
             const d = snap[tgl][uid];
+            if (!d.nama) return;
             rows += `<tr style="background:${no%2===0?'#f8fafc':'white'}">
-                <td style="padding:8px 10px;border:1px solid #e2e8f0;color:#64748b;">${no++}</td>
-                <td style="padding:8px 10px;border:1px solid #e2e8f0;font-weight:700;">${tgl}</td>
-                <td style="padding:8px 10px;border:1px solid #e2e8f0;font-weight:700;">${d.nama}</td>
-                <td style="padding:8px 10px;border:1px solid #e2e8f0;text-align:center;color:#4F46E5;font-weight:700;">${d.waktu}</td>
-                <td style="padding:8px 10px;border:1px solid #e2e8f0;text-align:center;color:#065f46;font-weight:700;">${d.status||'Hadir'}</td>
+                <td style="padding:7px 8px;border:1px solid #e2e8f0;color:#64748b;">${no++}</td>
+                <td style="padding:7px 8px;border:1px solid #e2e8f0;font-weight:700;">${tgl}</td>
+                <td style="padding:7px 8px;border:1px solid #e2e8f0;font-weight:700;">${d.nama}</td>
+                <td style="padding:7px 8px;border:1px solid #e2e8f0;text-align:center;color:#4F46E5;font-weight:700;">${d.masuk ? d.masuk.waktu : '–'}</td>
+                <td style="padding:7px 8px;border:1px solid #e2e8f0;text-align:center;font-weight:600;font-size:10px;">${d.masuk ? d.masuk.status : '–'}</td>
+                <td style="padding:7px 8px;border:1px solid #e2e8f0;text-align:center;color:#059669;font-weight:700;">${d.pulang ? d.pulang.waktu : '–'}</td>
+                <td style="padding:7px 8px;border:1px solid #e2e8f0;text-align:center;font-weight:600;font-size:10px;">${d.pulang ? d.pulang.status : '–'}</td>
             </tr>`;
         });
     });
