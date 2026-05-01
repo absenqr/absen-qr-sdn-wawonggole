@@ -204,39 +204,40 @@
         .status-divider{height:1px;background:var(--border);margin:10px 0}
         .status-school{font-size:8px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.1em;margin-top:10px}
 
-        /* Round scan buttons */
-        .scan-wrap{padding:0 24px 28px;display:flex;gap:20px;justify-content:center}
+        /* Pill scan buttons */
+        .scan-wrap{padding:0 24px 28px;display:flex;flex-direction:column;gap:10px;width:100%}
         .scan-btn-box{
-            width:140px;height:140px;border-radius:50%;
+            width:100%;padding:15px 22px;
+            border-radius:var(--r-full);
             border:none;cursor:pointer;font-family:inherit;
-            display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
-            transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s,opacity .15s;
+            display:flex;flex-direction:row;align-items:center;justify-content:center;gap:10px;
+            transition:transform .15s cubic-bezier(.34,1.56,.64,1),box-shadow .15s,opacity .15s;
             position:relative;overflow:hidden;
         }
         .scan-btn-box::before{
             content:'';position:absolute;inset:0;
-            background:radial-gradient(circle at 35% 35%,rgba(255,255,255,.25),transparent 60%);
+            background:linear-gradient(180deg,rgba(255,255,255,.15) 0%,transparent 100%);
+            pointer-events:none;
         }
-        .scan-btn-box:active{transform:scale(.93)}
+        .scan-btn-box:active{transform:scale(.97)}
         .scan-btn-box.masuk{
-            background:linear-gradient(145deg,#6C63FF,#4F46E5);
-            box-shadow:0 16px 40px rgba(108,99,255,.4);
+            background:#4F46E5;
+            box-shadow:0 8px 24px rgba(79,70,229,.38);
         }
         .scan-btn-box.pulang{
-            background:linear-gradient(145deg,#10B981,#059669);
-            box-shadow:0 16px 40px rgba(16,185,129,.35);
+            background:#059669;
+            box-shadow:0 8px 24px rgba(5,150,105,.35);
         }
         .scan-btn-box.done{
-            background:linear-gradient(145deg,#CBD5E1,#94A3B8);
-            box-shadow:0 8px 20px rgba(0,0,0,.08);
+            background:#94A3B8;
+            box-shadow:0 4px 12px rgba(0,0,0,.1);
             cursor:not-allowed;
         }
         .scan-btn-box.done:active{transform:none}
-        .scan-btn-icon{font-size:32px;line-height:1}
-        .scan-btn-label{font-size:10px;font-weight:900;color:white;text-transform:uppercase;letter-spacing:.15em;text-align:center}
-        .scan-btn-sub{font-size:9px;font-weight:600;color:rgba(255,255,255,.7);text-align:center}
-        .scan-btn-box.done .scan-btn-label,.scan-btn-box.done .scan-btn-sub{color:rgba(255,255,255,.8)}
-        /* legacy row wrapper (not used in new layout but kept for safety) */
+        .scan-btn-icon{display:flex;align-items:center;flex-shrink:0}
+        .scan-btn-label{font-size:13px;font-weight:800;color:white;text-transform:uppercase;letter-spacing:.12em}
+        .scan-btn-sub{display:none}
+        .scan-btn-box.done .scan-btn-label{color:rgba(255,255,255,.85)}
         .scan-btn-row{display:contents}
 
         /* Activity */
@@ -526,17 +527,47 @@
             </div>
         </div>
 
-        <!-- Round scan buttons -->
-        <div class="scan-wrap" style="padding-top:24px;">
+        <!-- Pill scan buttons -->
+        <div class="scan-wrap">
             <button class="scan-btn-box masuk" id="btn-scan-masuk" onclick="startScanner('masuk')">
-                <span class="scan-btn-icon">📥</span>
+                <span class="scan-btn-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="2" y="2" width="8" height="8" rx="1.5" stroke="white" stroke-width="1.8"/>
+                        <rect x="3.5" y="3.5" width="5" height="5" rx=".8" fill="white"/>
+                        <rect x="14" y="2" width="8" height="8" rx="1.5" stroke="white" stroke-width="1.8"/>
+                        <rect x="15.5" y="3.5" width="5" height="5" rx=".8" fill="white"/>
+                        <rect x="2" y="14" width="8" height="8" rx="1.5" stroke="white" stroke-width="1.8"/>
+                        <rect x="3.5" y="15.5" width="5" height="5" rx=".8" fill="white"/>
+                        <rect x="14" y="14" width="2.5" height="2.5" rx=".4" fill="white"/>
+                        <rect x="17.5" y="14" width="2.5" height="2.5" rx=".4" fill="white"/>
+                        <rect x="21" y="14" width="2.5" height="2.5" rx=".4" fill="white"/>
+                        <rect x="14" y="17.5" width="2.5" height="2.5" rx=".4" fill="white"/>
+                        <rect x="17.5" y="17.5" width="2.5" height="2.5" rx=".4" fill="white"/>
+                        <rect x="14" y="21" width="2.5" height="2.5" rx=".4" fill="white"/>
+                        <rect x="21" y="21" width="2.5" height="2.5" rx=".4" fill="white"/>
+                    </svg>
+                </span>
                 <span class="scan-btn-label">Absen Masuk</span>
-                <span class="scan-btn-sub">Pagi / Shift 1</span>
             </button>
             <button class="scan-btn-box pulang" id="btn-scan-pulang" onclick="startScanner('pulang')">
-                <span class="scan-btn-icon">📤</span>
+                <span class="scan-btn-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="2" y="2" width="8" height="8" rx="1.5" stroke="white" stroke-width="1.8"/>
+                        <rect x="3.5" y="3.5" width="5" height="5" rx=".8" fill="white"/>
+                        <rect x="14" y="2" width="8" height="8" rx="1.5" stroke="white" stroke-width="1.8"/>
+                        <rect x="15.5" y="3.5" width="5" height="5" rx=".8" fill="white"/>
+                        <rect x="2" y="14" width="8" height="8" rx="1.5" stroke="white" stroke-width="1.8"/>
+                        <rect x="3.5" y="15.5" width="5" height="5" rx=".8" fill="white"/>
+                        <rect x="14" y="14" width="2.5" height="2.5" rx=".4" fill="white"/>
+                        <rect x="17.5" y="14" width="2.5" height="2.5" rx=".4" fill="white"/>
+                        <rect x="21" y="14" width="2.5" height="2.5" rx=".4" fill="white"/>
+                        <rect x="14" y="17.5" width="2.5" height="2.5" rx=".4" fill="white"/>
+                        <rect x="17.5" y="17.5" width="2.5" height="2.5" rx=".4" fill="white"/>
+                        <rect x="14" y="21" width="2.5" height="2.5" rx=".4" fill="white"/>
+                        <rect x="21" y="21" width="2.5" height="2.5" rx=".4" fill="white"/>
+                    </svg>
+                </span>
                 <span class="scan-btn-label">Absen Pulang</span>
-                <span class="scan-btn-sub">Akhir Tugas</span>
             </button>
         </div>
 
