@@ -402,7 +402,7 @@
         .profile-hero-grid{position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.1) 1px,transparent 1px);background-size:18px 18px;pointer-events:none}
         .profile-avatar-wrap{width:90px;height:90px;background:rgba(255,255,255,.2);border:3px solid rgba(255,255,255,.3);border-radius:30px;display:flex;align-items:center;justify-content:center;font-size:42px;box-shadow:0 16px 40px rgba(0,0,0,.2);margin-bottom:14px;backdrop-filter:blur(10px);position:relative;z-index:1}
         .profile-school{font-size:16px;font-weight:900;color:#fff;position:relative;z-index:1;text-align:center}
-        .profile-email{font-size:9px;font-weight:700;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.15em;margin-top:5px;position:relative;z-index:1;text-align:center}
+        .profile-jabatan{font-size:10px;font-weight:800;color:rgba(255,255,255,.85);text-transform:uppercase;letter-spacing:.18em;margin-top:6px;position:relative;z-index:1;text-align:center}
         .profile-role-badge{margin-top:10px;display:inline-flex;align-items:center;gap:6px;padding:7px 18px;border-radius:var(--r-full);font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.15em;background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.2);position:relative;z-index:1}
         .profile-info-card{width:100%;background:var(--surface);border-radius:var(--r-lg);padding:6px 20px;border:1.5px solid var(--border);box-shadow:var(--sh-sm);margin-bottom:14px}
         .profile-info-row{display:flex;justify-content:space-between;align-items:center;padding:13px 0;border-bottom:1px solid var(--border)}
@@ -680,7 +680,7 @@
             <div class="profile-hero-grid"></div>
             <div class="profile-avatar-wrap">👤</div>
             <p class="profile-school">SDN WAWONGGOLE</p>
-            <p class="profile-email" id="profile-email">–</p>
+            <p class="profile-jabatan" id="profile-jabatan">–</p>
             <p class="profile-role-badge" id="profile-role">–</p>
         </div>
         <div class="profile-info-card">
@@ -807,6 +807,29 @@ let currentUserRole = 'guru';
 let currentScanMode = 'masuk'; // 'masuk' | 'pulang'
 let adminReportCache = null;
 let userJadwal = { masuk: '07:20', pulang: '12:00' }; // default
+
+// ── Pemetaan jabatan berdasarkan UID ──
+const JABATAN_MAP = {
+    'uT0CndrXuYT9cK6NTRd9gWXpIoV2': 'pjok',        // RIKI ANDRIAWAN
+    'y9aWRn6ColTQ85w4F7jVGF12vLH2': 'pjok',        // MASNA
+    'ylB9m8YEfiRRPDtr2Tv1HA6skhk1': 'pai',         // MUNIA
+    'gvicMIoJnuewHf5mKfxdz7Qc7702': 'pai',         // YAMIN
+    'ABOp8YIRO8bAGzVxfkepXCbrbAE3': 'bahasa_inggris', // DEWI
+    'abkDijN3hRV68uggBgitFeCK7Av1': 'bahasa_inggris', // MARLIANING
+};
+const JABATAN_LABEL = {
+    'kelas':         'Guru Kelas',
+    'pjok':          'Guru PJOK',
+    'pai':           'Guru PAI',
+    'bahasa_inggris':'Guru Bhs. Inggris',
+};
+const JABATAN_BADGE = {
+    'kelas':         'Guru Kelas Terverifikasi',
+    'pjok':          'Guru PJOK Terverifikasi',
+    'pai':           'Guru PAI Terverifikasi',
+    'bahasa_inggris':'Guru Bhs. Inggris Terverifikasi',
+};
+let currentJabatan = 'kelas'; // default
 
 // ── Lokasi Sekolah ──
 const SCHOOL_LAT   = -3.8478612169364665;
@@ -1013,12 +1036,27 @@ onAuthStateChanged(auth, async (user) => {
     if (user) {
         showScreen('home');
         document.getElementById('bottom-nav').classList.add('visible');
-        document.getElementById('profile-email').innerText = user.email.toUpperCase();
 
         const snap = await get(ref(db, `users/${user.uid}`));
         if (snap.exists()) {
             const data = snap.val();
             currentUserRole = data.role || 'guru';
+
+            // ── Tentukan jabatan ──
+            if (currentUserRole === 'guru') {
+                // Baca dari Firebase, fallback ke UID map, fallback ke 'kelas'
+                if (data.jabatan) {
+                    currentJabatan = data.jabatan;
+                } else {
+                    currentJabatan = JABATAN_MAP[user.uid] || 'kelas';
+                    // Simpan ke Firebase agar konsisten
+                    update(ref(db, `users/${user.uid}`), { jabatan: currentJabatan });
+                }
+            } else if (currentUserRole === 'kepala_sekolah') {
+                currentJabatan = 'kepala_sekolah';
+            } else {
+                currentJabatan = 'admin';
+            }
 
             // Load jadwal dari Firebase (default jika belum ada)
             userJadwal = {
@@ -1034,28 +1072,47 @@ onAuthStateChanged(auth, async (user) => {
 
             document.getElementById('user-display').innerText = data.nama || 'Pengguna';
 
-            const roleLabel  = { admin:'🛡️ Administrator', kepala_sekolah:'🏫 Kepala Sekolah', guru:'👨‍🏫 Guru' };
-            const roleStatus = { admin:'Administrator', kepala_sekolah:'Kepala Sekolah', guru:'Guru Aktif' };
-            document.getElementById('profile-role').innerText   = roleLabel[currentUserRole]  || '👨‍🏫 Guru';
-            document.getElementById('profile-status').innerText = roleStatus[currentUserRole] || 'Guru Aktif';
+            // ── Label profil berdasarkan jabatan ──
+            const jabatanLabelMap = {
+                'kelas':          '👨‍🏫 Guru Kelas',
+                'pjok':           '🏃 Guru PJOK',
+                'pai':            '📖 Guru PAI',
+                'bahasa_inggris': '🌐 Guru Bhs. Inggris',
+                'kepala_sekolah': '🏫 Kepala Sekolah',
+                'admin':          '🛡️ Administrator',
+            };
+            const jabatanStatusMap = {
+                'kelas':          'Guru Kelas Aktif',
+                'pjok':           'Guru PJOK Aktif',
+                'pai':            'Guru PAI Aktif',
+                'bahasa_inggris': 'Guru Bhs. Inggris Aktif',
+                'kepala_sekolah': 'Kepala Sekolah',
+                'admin':          'Administrator',
+            };
+            document.getElementById('profile-role').innerText   = jabatanLabelMap[currentJabatan]   || '👨‍🏫 Guru Kelas';
+            document.getElementById('profile-status').innerText = jabatanStatusMap[currentJabatan]  || 'Guru Kelas Aktif';
+
+            // ── Tampilkan jabatan di profil hero (ganti email) ──
+            const jabEl = document.getElementById('profile-jabatan');
+            if (jabEl) jabEl.innerText = (jabatanStatusMap[currentJabatan] || 'Guru Kelas').toUpperCase();
 
             if (currentUserRole === 'admin') {
+                // Admin: hanya admin & profil, tampilkan btn-admin
                 document.getElementById('btn-admin').style.display = 'flex';
-                document.getElementById('btn-home').remove();
-                document.getElementById('btn-report').remove();
+                if (document.getElementById('btn-home')) document.getElementById('btn-home').remove();
+                if (document.getElementById('btn-report')) document.getElementById('btn-report').remove();
                 populateFilter();
                 switchTab('admin');
                 fetchAdminStats();
             } else if (currentUserRole === 'kepala_sekolah') {
-                document.getElementById('btn-admin').style.display = 'flex';
+                // Kepala sekolah: TIDAK dapat akses admin dashboard
                 document.getElementById('header-greet').innerText = 'Kepala Sekolah';
-                const tabJadwal = document.getElementById('tab-jadwal');
-                if (tabJadwal) tabJadwal.style.display = 'none';
-                populateFilter();
-                fetchAdminStats();
                 switchTab('home');
                 checkGPS();
             } else {
+                // Guru: tampilkan badge jabatan di header
+                document.getElementById('header-greet').innerText =
+                    JABATAN_BADGE[currentJabatan] || 'Guru Kelas Terverifikasi';
                 switchTab('home');
                 checkGPS();
             }
@@ -1069,8 +1126,6 @@ onAuthStateChanged(auth, async (user) => {
 window.switchTab = (tab) => {
     const tabs = currentUserRole === 'admin'
         ? ['admin','profile']
-        : currentUserRole === 'kepala_sekolah'
-        ? ['home','report','admin','profile']
         : ['home','report','profile'];
     tabs.forEach(t => {
         const btn = document.getElementById(`btn-${t}`);
@@ -1542,10 +1597,14 @@ async function fetchJadwalList() {
         const jMasuk  = (u.jadwal && u.jadwal.masuk)  ? u.jadwal.masuk  : '07:20';
         const jPulang = (u.jadwal && u.jadwal.pulang) ? u.jadwal.pulang : '12:00';
 
+        const jJabatan = u.jabatan || JABATAN_MAP[uid] || 'kelas';
+        const jabatanOptions = ['kelas','pjok','pai','bahasa_inggris']
+            .map(j => `<option value="${j}" ${jJabatan===j?'selected':''}>${JABATAN_LABEL[j]||j}</option>`)
+            .join('');
         container.innerHTML += `
             <div class="jadwal-user-card">
                 <p class="jadwal-user-name">${u.nama}</p>
-                <p class="jadwal-current">Jadwal saat ini: Masuk ${jMasuk} · Pulang ${jPulang}</p>
+                <p class="jadwal-current">Jadwal: Masuk ${jMasuk} · Pulang ${jPulang} · ${JABATAN_LABEL[jJabatan]||'Guru Kelas'}</p>
                 <div class="jadwal-fields">
                     <div class="jadwal-field">
                         <label>Jam Masuk</label>
@@ -1555,6 +1614,12 @@ async function fetchJadwalList() {
                         <label>Jam Pulang</label>
                         <input type="time" id="jp-${uid}" value="${jPulang}">
                     </div>
+                </div>
+                <div class="jadwal-fields" style="margin-top:8px;">
+                    <div class="jadwal-field" style="flex:2;">
+                        <label>Jabatan</label>
+                        <select id="jjab-${uid}" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:10px;font-family:inherit;font-size:12px;font-weight:700;color:var(--t1);outline:none;">${jabatanOptions}</select>
+                    </div>
                     <button class="btn-save-jadwal" onclick="saveJadwal('${uid}', '${u.nama}')">Simpan</button>
                 </div>
             </div>`;
@@ -1562,12 +1627,14 @@ async function fetchJadwalList() {
 }
 
 window.saveJadwal = async (uid, nama) => {
-    const masuk  = document.getElementById(`jm-${uid}`).value;
-    const pulang = document.getElementById(`jp-${uid}`).value;
+    const masuk   = document.getElementById(`jm-${uid}`).value;
+    const pulang  = document.getElementById(`jp-${uid}`).value;
+    const jabatan = document.getElementById(`jjab-${uid}`) ? document.getElementById(`jjab-${uid}`).value : 'kelas';
     if (!masuk || !pulang) { showToast('Isi jam masuk dan pulang terlebih dahulu', 'warning'); return; }
 
     await update(ref(db, `users/${uid}/jadwal`), { masuk, pulang });
-    showToast(`✅ Jadwal ${nama} berhasil disimpan`, 'success');
+    await update(ref(db, `users/${uid}`), { jabatan });
+    showToast(`✅ Data ${nama} berhasil disimpan`, 'success');
     fetchJadwalList();
 };
 
