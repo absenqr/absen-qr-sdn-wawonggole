@@ -121,6 +121,24 @@
         .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:white;border-radius:50%;animation:spin .6s linear infinite;display:none}
         .btn-auth.loading .spinner{display:block}
         .btn-auth.loading .btn-text{opacity:.7}
+        /* Tombol lihat PIN */
+        .pin-toggle{
+            background:none;border:none;cursor:pointer;padding:4px;
+            color:rgba(255,255,255,.4);line-height:0;flex-shrink:0;
+            transition:color .2s;
+        }
+        .pin-toggle:hover{color:rgba(255,255,255,.8)}
+        /* Ingat email */
+        .remember-row{
+            display:flex;align-items:center;gap:8px;
+            margin:-2px 0 10px;padding-left:2px;
+        }
+        .remember-row input[type=checkbox]{
+            width:16px;height:16px;accent-color:#a78bfa;cursor:pointer;flex-shrink:0;
+        }
+        .remember-row label{
+            font-size:11px;font-weight:600;color:rgba(255,255,255,.55);cursor:pointer;
+        }
 
         /* ═══════════════════════════════════════
            BOTTOM NAV
@@ -487,7 +505,14 @@
                 <div class="field-wrap">
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
                     <input type="password" id="login-pass" placeholder="PIN (tanggal lahir)" maxlength="9" autocomplete="current-password">
+                    <button type="button" class="pin-toggle" id="pin-toggle-btn" onclick="togglePinVisibility()" title="Lihat/sembunyikan PIN">
+                        <svg id="pin-eye-icon" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    </button>
                 </div>
+            </div>
+            <div class="remember-row">
+                <input type="checkbox" id="remember-me" checked>
+                <label for="remember-me">Ingat email saya di perangkat ini</label>
             </div>
             <button class="btn-auth" id="btn-login" onclick="handleLogin()">
                 <div class="spinner"></div>
@@ -973,6 +998,19 @@ window.checkGPS = () => {
         _gpsWatchId = null;
     }
 
+    // Fix #4: Timeout global 20 detik agar gpsChecked tidak stuck false selamanya
+    const gpsTimeout = setTimeout(() => {
+        if (!gpsChecked) {
+            if (_gpsWatchId !== null) {
+                navigator.geolocation.clearWatch(_gpsWatchId);
+                _gpsWatchId = null;
+            }
+            gpsChecked = true;
+            gpsValid = false;
+            setBadge('invalid', 'Sinyal GPS Tidak Cukup Akurat');
+        }
+    }, 20000);
+
     _gpsWatchId = navigator.geolocation.watchPosition(
         (pos) => {
             const acc   = pos.coords.accuracy;
@@ -986,12 +1024,14 @@ window.checkGPS = () => {
                 return; // tunggu update berikutnya yang lebih akurat
             }
 
-            // Akurasi sudah cukup baik — hentikan watch dan simpan hasil
+            // Akurasi sudah cukup baik — batalkan timeout, hentikan watch, simpan hasil
+            clearTimeout(gpsTimeout);
             navigator.geolocation.clearWatch(_gpsWatchId);
             _gpsWatchId = null;
 
             gpsChecked = true;
-            lastCoords = { lat, lng, acc: Math.round(acc) };
+            // Fix #5: simpan timestamp untuk deteksi data GPS kadaluarsa
+            lastCoords = { lat, lng, acc: Math.round(acc), ts: Date.now() };
 
             if (jarak <= RADIUS_METER) {
                 gpsValid = true;
@@ -1002,6 +1042,7 @@ window.checkGPS = () => {
             }
         },
         (err) => {
+            clearTimeout(gpsTimeout);
             if (_gpsWatchId !== null) {
                 navigator.geolocation.clearWatch(_gpsWatchId);
                 _gpsWatchId = null;
@@ -1038,6 +1079,28 @@ window.showToast = (msg, type = 'success', duration = 3500) => {
     t._tid = setTimeout(() => t.classList.remove('show'), duration);
 };
 
+// ══════════════════════════════════════════════════════════
+// INGAT EMAIL & LIHAT PIN
+// ══════════════════════════════════════════════════════════
+window.togglePinVisibility = () => {
+    const input = document.getElementById('login-pass');
+    const icon  = document.getElementById('pin-eye-icon');
+    const isHidden = input.type === 'password';
+    input.type = isHidden ? 'text' : 'password';
+    // Ganti ikon: mata terbuka ↔ mata tertutup
+    icon.innerHTML = isHidden
+        ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>'
+        : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>';
+};
+
+// Auto-fill email jika tersimpan
+(function loadSavedEmail() {
+    const saved = localStorage.getItem('epres_saved_email');
+    if (saved) {
+        document.getElementById('login-email').value = saved;
+    }
+})();
+
 window.handleLogin = () => {
     const email = document.getElementById('login-email').value.trim();
     const pass  = document.getElementById('login-pass').value;
@@ -1048,6 +1111,15 @@ window.handleLogin = () => {
     btn.classList.add('loading');
 
     signInWithEmailAndPassword(auth, email, pass)
+        .then(() => {
+            // Simpan atau hapus email berdasarkan pilihan checkbox
+            const remember = document.getElementById('remember-me').checked;
+            if (remember) {
+                localStorage.setItem('epres_saved_email', email);
+            } else {
+                localStorage.removeItem('epres_saved_email');
+            }
+        })
         .catch((err) => {
             btn.disabled = false;
             btn.classList.remove('loading');
@@ -1202,6 +1274,9 @@ window.startScanner = (mode) => {
     if (!gpsChecked)  { showToast('Harap tunggu, GPS sedang diperiksa…', 'warning'); return; }
     if (!gpsValid)    { showToast('❌ Anda berada di luar area sekolah.', 'error');   return; }
 
+    // Fix #3: Cegah double instance jika startScanner dipanggil ganda
+    if (html5QrCode) return;
+
     currentScanMode = mode;
 
     // Update badge di modal
@@ -1211,18 +1286,29 @@ window.startScanner = (mode) => {
 
     document.getElementById('scanner-modal').classList.add('open');
     html5QrCode = new Html5Qrcode("qr-reader");
+
+    // Fix #1: Flag untuk mencegah race condition double submit
+    let scanHandled = false;
+
     html5QrCode.start(
         { facingMode: "environment" },
         { fps: 24, qrbox: 220 },
         (text) => {
+            if (scanHandled) return;
             if (text === auth.currentUser.uid) {
+                scanHandled = true;
                 stopScanner();
                 submitAbsen(currentScanMode);
             } else {
                 showToast('⚠️ QR bukan milik Anda!', 'warning');
             }
         }
-    ).catch(console.error);
+    ).catch((err) => {
+        // Fix #2: Tampilkan error kamera ke pengguna (bukan hanya console)
+        console.error(err);
+        stopScanner();
+        showToast('❌ Kamera tidak dapat diakses. Periksa izin kamera.', 'error');
+    });
 };
 
 window.stopScanner = () => {
@@ -1277,7 +1363,17 @@ async function submitAbsen(mode) {
         status:     statusResult.status,
         keterangan: statusResult.keterangan,
     };
-    if (lastCoords) record.gps = lastCoords;
+
+    // Fix #5: Tolak GPS yang sudah kadaluarsa (> 5 menit sejak terakhir valid)
+    const GPS_STALE_MS = 5 * 60 * 1000;
+    if (lastCoords) {
+        if ((Date.now() - lastCoords.ts) > GPS_STALE_MS) {
+            showToast('⚠️ Data GPS kadaluarsa, perbarui lokasi terlebih dahulu.', 'warning');
+            checkGPS(); // mulai ulang pemeriksaan GPS otomatis
+            return;
+        }
+        record.gps = lastCoords;
+    }
 
     // Simpan ke Firebase: absensi/{tgl}/{uid}/masuk atau /pulang
     await set(ref(db, `absensi/${tgl}/${user.uid}/${mode}`), record);
