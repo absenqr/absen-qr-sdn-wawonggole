@@ -418,6 +418,19 @@
         .jadwal-field input:focus{border-color:var(--p2)}
         .btn-save-jadwal{background:linear-gradient(135deg,#6C63FF,#4F46E5);color:white;border:none;border-radius:10px;padding:10px 14px;font-family:inherit;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;transition:transform .15s;white-space:nowrap;box-shadow:0 6px 16px rgba(108,99,255,.3)}
         .btn-save-jadwal:active{transform:scale(.95)}
+        /* Jadwal per hari */
+        .btn-toggle-hari{width:100%;margin-top:12px;padding:9px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:9px;font-weight:800;color:var(--p2);text-transform:uppercase;letter-spacing:.12em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .15s}
+        .btn-toggle-hari:active{background:var(--border)}
+        .panel-hari{display:none;margin-top:10px;border-top:1.5px dashed var(--border);padding-top:12px}
+        .panel-hari.open{display:block}
+        .hari-row{display:grid;grid-template-columns:52px 1fr 1fr;gap:8px;align-items:center;margin-bottom:8px}
+        .hari-row:last-child{margin-bottom:0}
+        .hari-label{font-size:9px;font-weight:800;color:var(--t2);text-align:center;padding:6px 4px;border-radius:8px;background:var(--bg);line-height:1.3}
+        .hari-label.today-label{background:var(--p2);color:white}
+        .hari-row input[type=time]{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:8px 6px;font-family:inherit;font-size:11px;font-weight:700;color:var(--t1);outline:none;text-align:center;transition:border-color .2s}
+        .hari-row input[type=time]:focus{border-color:var(--p2)}
+        .hari-row input.today-input{border-color:var(--p2);background:#EEF2FF}
+        .jadwal-today-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:#EEF2FF;color:var(--p2);border-radius:6px;font-size:8px;font-weight:800;letter-spacing:.08em;margin-top:6px}
 
         /* ═══════════════════════════════════════
            PROFILE
@@ -727,12 +740,16 @@
                 <span class="pir-val" id="profile-status">–</span>
             </div>
             <div class="profile-info-row">
-                <span class="pir-key">Jadwal Masuk</span>
+                <span class="pir-key">Jadwal Masuk Hari Ini</span>
                 <span class="pir-val" id="profile-jadwal-masuk">–</span>
             </div>
             <div class="profile-info-row">
-                <span class="pir-key">Jadwal Pulang</span>
+                <span class="pir-key">Jadwal Pulang Hari Ini</span>
                 <span class="pir-val" id="profile-jadwal-pulang">–</span>
+            </div>
+            <div class="profile-info-row" id="profile-jadwal-hari-row">
+                <span class="pir-key">Hari</span>
+                <span class="pir-val" id="profile-hari-ini">–</span>
             </div>
             <div class="profile-info-row">
                 <span class="pir-key">Sekolah</span>
@@ -793,28 +810,14 @@
 
 <!-- ══ PRINT TEMPLATE ══ -->
 <div id="print-area" style="display:none;">
-    <div style="font-family:'Plus Jakarta Sans',sans-serif;padding:30px;max-width:900px;margin:auto;">
+    <div style="font-family:'Plus Jakarta Sans',sans-serif;padding:30px;max-width:1050px;margin:auto;">
         <div style="text-align:center;margin-bottom:24px;border-bottom:3px solid #4F46E5;padding-bottom:16px;">
             <h1 style="font-size:20px;font-weight:900;color:#0F172A;margin:0;">LAPORAN ABSENSI BULANAN</h1>
             <h2 style="font-size:16px;font-weight:700;color:#4F46E5;margin:4px 0;">SDN WAWONGGOLE</h2>
             <p id="print-periode" style="font-size:12px;color:#64748B;margin:4px 0;font-weight:600;"></p>
             <p id="print-tanggal-cetak" style="font-size:10px;color:#94A3B8;margin:0;"></p>
         </div>
-        <table id="print-table" style="width:100%;border-collapse:collapse;font-size:11px;">
-            <thead>
-                <tr style="background:#4F46E5;color:white;">
-                    <th style="padding:8px;text-align:left;border:1px solid #e2e8f0;">No</th>
-                    <th style="padding:8px;text-align:left;border:1px solid #e2e8f0;">Tanggal</th>
-                    <th style="padding:8px;text-align:left;border:1px solid #e2e8f0;">Nama Guru</th>
-                    <th style="padding:8px;text-align:center;border:1px solid #e2e8f0;">Jam Masuk</th>
-                    <th style="padding:8px;text-align:center;border:1px solid #e2e8f0;">Status Masuk</th>
-                    <th style="padding:8px;text-align:center;border:1px solid #e2e8f0;">Jam Pulang</th>
-                    <th style="padding:8px;text-align:center;border:1px solid #e2e8f0;">Status Pulang</th>
-                    <th style="padding:8px;text-align:center;border:1px solid #e2e8f0;">Koordinat GPS</th>
-                </tr>
-            </thead>
-            <tbody id="print-tbody"></tbody>
-        </table>
+        <div id="print-content"></div>
         <div style="margin-top:40px;text-align:right;">
             <p style="font-size:11px;color:#64748B;">Kepala Sekolah SDN WAWONGGOLE</p>
             <div style="height:60px;"></div>
@@ -1176,17 +1179,30 @@ onAuthStateChanged(auth, async (user) => {
                 currentJabatan = 'admin';
             }
 
-            // Load jadwal dari Firebase (default jika belum ada)
+            // Load jadwal dari Firebase — prioritaskan jadwal hari ini
+            const NAMA_HARI = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+            const hariIni   = new Date().getDay(); // 0=Minggu … 6=Sabtu
+            const defaultMasuk  = (data.jadwal && data.jadwal.masuk)  ? data.jadwal.masuk  : '07:20';
+            const defaultPulang = (data.jadwal && data.jadwal.pulang) ? data.jadwal.pulang : '12:00';
+            const jadwalHari    = data.jadwal && data.jadwal.hari && data.jadwal.hari[hariIni];
+
             userJadwal = {
-                masuk:  (data.jadwal && data.jadwal.masuk)  ? data.jadwal.masuk  : '07:20',
-                pulang: (data.jadwal && data.jadwal.pulang) ? data.jadwal.pulang : '12:00'
+                masuk:  (jadwalHari && jadwalHari.masuk)  ? jadwalHari.masuk  : defaultMasuk,
+                pulang: (jadwalHari && jadwalHari.pulang) ? jadwalHari.pulang : defaultPulang
             };
+
+            const adaJadwalKhusus = jadwalHari && (jadwalHari.masuk || jadwalHari.pulang);
 
             // Tampilkan jadwal di home dan profil
             document.getElementById('jadwal-masuk-display').innerText = userJadwal.masuk;
             document.getElementById('jadwal-pulang-display').innerText = userJadwal.pulang;
-            document.getElementById('profile-jadwal-masuk').innerText = userJadwal.masuk;
-            document.getElementById('profile-jadwal-pulang').innerText = userJadwal.pulang;
+            document.getElementById('profile-jadwal-masuk').innerText =
+                userJadwal.masuk + (adaJadwalKhusus ? ' ✦' : '');
+            document.getElementById('profile-jadwal-pulang').innerText =
+                userJadwal.pulang + (adaJadwalKhusus ? ' ✦' : '');
+            const hariEl = document.getElementById('profile-hari-ini');
+            if (hariEl) hariEl.innerText = NAMA_HARI[hariIni] +
+                (adaJadwalKhusus ? ' (jadwal khusus)' : ' (jadwal default)');
 
             document.getElementById('user-display').innerText = data.nama || 'Pengguna';
 
@@ -1708,7 +1724,13 @@ window.fetchAdminReport = () => {
             });
         });
 
-        adminReportCache = { allDates, snap: allData, bulan, tahun };
+        // Load jadwal guru untuk dipakai saat cetak
+        get(ref(db, 'users')).then(usersSnap => {
+            const usersData = usersSnap.exists() ? usersSnap.val() : {};
+            adminReportCache = { allDates, snap: allData, bulan, tahun, usersData };
+        }).catch(() => {
+            adminReportCache = { allDates, snap: allData, bulan, tahun, usersData: {} };
+        });
     });
 };
 
@@ -1731,29 +1753,49 @@ async function fetchJadwalList() {
 
     container.innerHTML = '';
     const users = snap.val();
+    const NAMA_HARI_PENDEK = ['Sen','Sel','Rab','Kam','Jum','Sab'];
+    const HARI_KERJA = [1,2,3,4,5,6]; // Senin–Sabtu
+    const hariIniNum = new Date().getDay();
 
     Object.keys(users).forEach(uid => {
         const u = users[uid];
-        if (u.role !== 'guru') return;
+        if (u.role !== 'guru' && u.role !== 'kepala_sekolah') return;
 
         const jMasuk  = (u.jadwal && u.jadwal.masuk)  ? u.jadwal.masuk  : '07:20';
         const jPulang = (u.jadwal && u.jadwal.pulang) ? u.jadwal.pulang : '12:00';
-
         const jJabatan = u.jabatan || JABATAN_MAP[uid] || 'kelas';
-        const jabatanOptions = ['kelas','pjok','pai','bahasa_inggris']
+        const jabatanOptions = ['kelas','pjok','pai','bahasa_inggris','kepala_sekolah']
             .map(j => `<option value="${j}" ${jJabatan===j?'selected':''}>${JABATAN_LABEL[j]||j}</option>`)
             .join('');
+
+        // Baris grid per hari
+        let hariRows = '';
+        HARI_KERJA.forEach(h => {
+            const hData   = (u.jadwal && u.jadwal.hari && u.jadwal.hari[h]) || {};
+            const hMasuk  = hData.masuk  || jMasuk;
+            const hPulang = hData.pulang || jPulang;
+            const isToday = h === hariIniNum;
+            hariRows += `
+            <div class="hari-row">
+                <div class="hari-label${isToday ? ' today-label' : ''}">
+                    ${NAMA_HARI_PENDEK[h-1]}${isToday ? '<br><span style="font-size:7px">Hari ini</span>' : ''}
+                </div>
+                <input type="time" id="jhm-${uid}-${h}" value="${hMasuk}" class="${isToday ? 'today-input' : ''}">
+                <input type="time" id="jhp-${uid}-${h}" value="${hPulang}" class="${isToday ? 'today-input' : ''}">
+            </div>`;
+        });
+
         container.innerHTML += `
             <div class="jadwal-user-card">
                 <p class="jadwal-user-name">${u.nama}</p>
-                <p class="jadwal-current">Jadwal: Masuk ${jMasuk} · Pulang ${jPulang} · ${JABATAN_LABEL[jJabatan]||'Guru Kelas'}</p>
+                <p class="jadwal-current">Default: Masuk ${jMasuk} · Pulang ${jPulang} · ${JABATAN_LABEL[jJabatan]||'Guru Kelas'}</p>
                 <div class="jadwal-fields">
                     <div class="jadwal-field">
-                        <label>Jam Masuk</label>
+                        <label>Jam Masuk Default</label>
                         <input type="time" id="jm-${uid}" value="${jMasuk}">
                     </div>
                     <div class="jadwal-field">
-                        <label>Jam Pulang</label>
+                        <label>Jam Pulang Default</label>
                         <input type="time" id="jp-${uid}" value="${jPulang}">
                     </div>
                 </div>
@@ -1764,9 +1806,28 @@ async function fetchJadwalList() {
                     </div>
                     <button class="btn-save-jadwal" onclick="saveJadwal('${uid}', '${u.nama}')">Simpan</button>
                 </div>
+                <button class="btn-toggle-hari" onclick="togglePanelHari('${uid}')">
+                    <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                    Atur Jadwal Per Hari (Sen–Sab)
+                </button>
+                <div class="panel-hari" id="panel-hari-${uid}">
+                    <div style="display:grid;grid-template-columns:52px 1fr 1fr;gap:8px;margin-bottom:6px;">
+                        <div></div>
+                        <p style="font-size:8px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;text-align:center;">Masuk</p>
+                        <p style="font-size:8px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;text-align:center;">Pulang</p>
+                    </div>
+                    ${hariRows}
+                    <button class="btn-save-jadwal" style="width:100%;margin-top:14px;" onclick="saveJadwalHari('${uid}', '${u.nama}')">
+                        💾 Simpan Jadwal Per Hari
+                    </button>
+                </div>
             </div>`;
     });
 }
+
+window.togglePanelHari = (uid) => {
+    document.getElementById(`panel-hari-${uid}`).classList.toggle('open');
+};
 
 window.saveJadwal = async (uid, nama) => {
     const masuk   = document.getElementById(`jm-${uid}`).value;
@@ -1776,8 +1837,22 @@ window.saveJadwal = async (uid, nama) => {
 
     await update(ref(db, `users/${uid}/jadwal`), { masuk, pulang });
     await update(ref(db, `users/${uid}`), { jabatan });
-    showToast(`✅ Data ${nama} berhasil disimpan`, 'success');
+    showToast(`✅ Jadwal default ${nama} disimpan`, 'success');
     fetchJadwalList();
+};
+
+window.saveJadwalHari = async (uid, nama) => {
+    // Kumpulkan jadwal per hari (Senin=1 … Sabtu=6)
+    const hariData = {};
+    [1,2,3,4,5,6].forEach(h => {
+        const m = document.getElementById(`jhm-${uid}-${h}`);
+        const p = document.getElementById(`jhp-${uid}-${h}`);
+        if (m && p && m.value && p.value) {
+            hariData[h] = { masuk: m.value, pulang: p.value };
+        }
+    });
+    await update(ref(db, `users/${uid}/jadwal/hari`), hariData);
+    showToast(`✅ Jadwal per hari ${nama} disimpan`, 'success');
 };
 
 // ══════════════════════════════════════════════════════════
@@ -1868,41 +1943,136 @@ window.exportXLSX = () => {
 // PRINT — kolom masuk & pulang
 // ══════════════════════════════════════════════════════════
 window.printReport = () => {
-    if (!adminReportCache) { showToast('Data belum tersedia', 'warning'); return; }
-    const { allDates, snap, bulan, tahun } = adminReportCache;
+    if (!adminReportCache) { showToast('Data belum tersedia, pilih filter dahulu', 'warning'); return; }
+    const { allDates, snap, bulan, tahun, usersData } = adminReportCache;
     const namaBulan = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
     document.getElementById('print-periode').innerText = `Periode: ${namaBulan[parseInt(bulan)]} ${tahun}`;
     document.getElementById('print-tanggal-cetak').innerText = `Dicetak: ${new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}`;
 
-    // FIX: urutkan tanggal secara kronologis (sinkron dengan exportXLSX)
     const sortedDates = [...allDates].sort();
 
-    let rows = ''; let no = 1;
+    // ── Helper functions ──
+    const HARI_NAMA = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+
+    function formatWaktu(w) {
+        if (!w) return '–';
+        return w.replace('.', ':');
+    }
+    function formatTanggal(dateStr) {
+        const [y, m, d] = dateStr.split('-');
+        return `${d}-${m}-${y}`;
+    }
+    function getNamaHari(dateStr) {
+        const [y, m, d] = dateStr.split('-').map(Number);
+        return HARI_NAMA[new Date(y, m - 1, d).getDay()];
+    }
+    function parseMenit(keterangan) {
+        if (!keterangan || keterangan === 'Tepat waktu') return 0;
+        const match = keterangan.match(/(\d+)/);
+        return match ? parseInt(match[1]) : 0;
+    }
+    function getJadwalGuru(uid, dateStr) {
+        const ud = usersData && usersData[uid];
+        const defaultMasuk  = (ud && ud.jadwal && ud.jadwal.masuk)  ? ud.jadwal.masuk  : '07:00';
+        const defaultPulang = (ud && ud.jadwal && ud.jadwal.pulang) ? ud.jadwal.pulang : '14:00';
+        const [y, mo, da] = dateStr.split('-').map(Number);
+        const dayNum = new Date(y, mo - 1, da).getDay();
+        const jh = ud && ud.jadwal && ud.jadwal.hari && ud.jadwal.hari[dayNum];
+        return {
+            masuk:  (jh && jh.masuk)  ? jh.masuk  : defaultMasuk,
+            pulang: (jh && jh.pulang) ? jh.pulang : defaultPulang,
+        };
+    }
+
+    // ── Kelompokkan data per guru ──
+    const teacherMap = {};
     sortedDates.forEach(tgl => {
         Object.keys(snap[tgl]).forEach(uid => {
             const d = snap[tgl][uid];
             if (!d.nama) return;
-            // FIX: tambah kolom GPS agar sinkron dengan sheet Detail XLSX
-            const gpsInfo = (d.masuk && d.masuk.gps)
-                ? `${d.masuk.gps.lat.toFixed(6)}, ${d.masuk.gps.lng.toFixed(6)} (±${d.masuk.gps.acc}m)`
-                : '–';
-            rows += `<tr style="background:${no%2===0?'#f8fafc':'white'}">
-                <td style="padding:7px 8px;border:1px solid #e2e8f0;color:#64748b;">${no++}</td>
-                <td style="padding:7px 8px;border:1px solid #e2e8f0;font-weight:700;">${tgl}</td>
-                <td style="padding:7px 8px;border:1px solid #e2e8f0;font-weight:700;">${d.nama}</td>
-                <td style="padding:7px 8px;border:1px solid #e2e8f0;text-align:center;color:#4F46E5;font-weight:700;">${d.masuk ? d.masuk.waktu : '–'}</td>
-                <td style="padding:7px 8px;border:1px solid #e2e8f0;text-align:center;font-weight:600;font-size:10px;">${d.masuk ? d.masuk.status : '–'}</td>
-                <td style="padding:7px 8px;border:1px solid #e2e8f0;text-align:center;color:#059669;font-weight:700;">${d.pulang ? d.pulang.waktu : '–'}</td>
-                <td style="padding:7px 8px;border:1px solid #e2e8f0;text-align:center;font-weight:600;font-size:10px;">${d.pulang ? d.pulang.status : '–'}</td>
-                <td style="padding:7px 8px;border:1px solid #e2e8f0;text-align:center;font-size:9px;color:#64748b;">${gpsInfo}</td>
-            </tr>`;
+            if (!teacherMap[uid]) teacherMap[uid] = { nama: d.nama, rows: [] };
+            teacherMap[uid].rows.push({ tgl, d });
         });
     });
-    document.getElementById('print-tbody').innerHTML = rows;
+
+    // ── Style helpers ──
+    const thBase = `padding:7px 5px;border:1px solid #94A3B8;background:#4F46E5;color:white;font-size:8.5px;font-weight:800;text-align:center;letter-spacing:.04em;line-height:1.4;`;
+    function td(val, align, extra) {
+        return `<td style="padding:6px 5px;border:1px solid #E2E8F0;font-size:9.5px;text-align:${align||'center'};${extra||''}">${val}</td>`;
+    }
+
+    // ── Build HTML per guru ──
+    let html = '';
+    Object.entries(teacherMap).forEach(([uid, { nama, rows }], gi) => {
+        const jumlahHadir = rows.filter(r => r.d.masuk).length;
+
+        let tbodyRows = '';
+        rows.forEach(({ tgl, d }, i) => {
+            const jadwal      = getJadwalGuru(uid, tgl);
+            const absenMasuk  = formatWaktu(d.masuk  ? d.masuk.waktu  : null);
+            const absenPulang = formatWaktu(d.pulang ? d.pulang.waktu : null);
+            const menitMasuk  = d.masuk  ? parseMenit(d.masuk.keterangan)  : 0;
+            const menitPulang = d.pulang ? parseMenit(d.pulang.keterangan) : 0;
+
+            // Warna baris selang-seling
+            const rowBg = i % 2 === 0 ? 'white' : '#F8FAFC';
+
+            // Warna kolom TELAT/CEPAT — merah jika terlambat, hijau jika cepat/tepat
+            let colorMasuk = '#0F172A';
+            if (d.masuk) {
+                if (d.masuk.status && d.masuk.status.includes('Terlambat')) colorMasuk = '#DC2626';
+                else if (menitMasuk > 0) colorMasuk = '#059669';
+            }
+            // Warna kolom PSW/LEWAT WAKTU — biru jika lewat waktu, oranye jika PSW
+            let colorPulang = '#0F172A';
+            if (d.pulang) {
+                if (d.pulang.status && d.pulang.status.includes('Lebih Awal')) colorPulang = '#D97706';
+                else if (menitPulang > 0) colorPulang = '#2563EB';
+            }
+
+            tbodyRows += `<tr style="background:${rowBg}">
+                ${td(formatTanggal(tgl), 'center')}
+                ${td(getNamaHari(tgl), 'center')}
+                ${td(jadwal.masuk, 'center', 'font-weight:700;')}
+                ${td(absenMasuk, 'center', 'font-weight:700;color:#4F46E5;')}
+                ${td(d.masuk ? menitMasuk : 0, 'center', `font-weight:700;color:${colorMasuk};`)}
+                ${td(jadwal.pulang, 'center', 'font-weight:700;')}
+                ${td(absenPulang, 'center', 'font-weight:700;color:#059669;')}
+                ${td(d.pulang ? menitPulang : 0, 'center', `font-weight:700;color:${colorPulang};`)}
+                ${td('', 'left')}
+            </tr>`;
+        });
+
+        html += `
+        <div style="margin-bottom:36px;${gi > 0 ? 'page-break-before:auto;' : ''}">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+                <p style="font-size:12px;font-weight:800;color:#0F172A;border-left:4px solid #4F46E5;padding-left:8px;">
+                    ${nama}
+                </p>
+                <p style="font-size:9px;color:#64748B;font-weight:600;">Hadir: ${jumlahHadir} hari dari ${rows.length} hari data</p>
+            </div>
+            <table style="width:100%;border-collapse:collapse;">
+                <thead>
+                    <tr>
+                        <th style="${thBase}">TANGGAL</th>
+                        <th style="${thBase}">HARI</th>
+                        <th style="${thBase}">JAM MASUK</th>
+                        <th style="${thBase}">ABSEN MASUK</th>
+                        <th style="${thBase}">TELAT/CEPAT<br>(Menit)</th>
+                        <th style="${thBase}">JAM PULANG</th>
+                        <th style="${thBase}">ABSEN PULANG</th>
+                        <th style="${thBase}">PSW/LEWAT WAKTU<br>(Menit)</th>
+                        <th style="${thBase}">KETERANGAN</th>
+                    </tr>
+                </thead>
+                <tbody>${tbodyRows}</tbody>
+            </table>
+        </div>`;
+    });
+
+    document.getElementById('print-content').innerHTML = html;
     document.getElementById('print-area').style.display = 'block';
 
-    // FIX: gunakan onafterprint agar print-area disembunyikan setelah dialog
-    // print benar-benar ditutup, bukan pakai setTimeout yang tidak reliable
     const hideAfterPrint = () => {
         document.getElementById('print-area').style.display = 'none';
         window.removeEventListener('afterprint', hideAfterPrint);
