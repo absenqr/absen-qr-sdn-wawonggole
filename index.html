@@ -274,6 +274,81 @@
         /* Activity */
         .section-header{padding:0 24px;display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
         .section-title{font-size:10px;font-weight:900;color:var(--t1);text-transform:uppercase;letter-spacing:.2em}
+
+        /* ── Tombol Laporkan Ketidakhadiran ── */
+        .btn-alasan-wrap{padding:0 24px 20px}
+        .btn-alasan{
+            width:100%;padding:15px 20px;
+            background:rgba(239,68,68,.08);
+            border:1.5px dashed rgba(239,68,68,.35);
+            border-radius:16px;
+            font-family:inherit;font-size:13px;font-weight:700;
+            color:#DC2626;cursor:pointer;
+            display:flex;align-items:center;justify-content:center;gap:9px;
+            transition:background .2s,border-color .2s;
+        }
+        .btn-alasan:active{background:rgba(239,68,68,.15)}
+        .btn-alasan.sudah-lapor{
+            background:rgba(234,179,8,.08);
+            border-color:rgba(234,179,8,.4);
+            color:#B45309;
+        }
+        .modal-overlay{
+            display:none;position:fixed;inset:0;
+            background:rgba(0,0,0,.5);
+            z-index:300;
+            align-items:flex-end;justify-content:center;
+            backdrop-filter:blur(4px);
+        }
+        .modal-overlay.open{display:flex;animation:fadeIn .2s ease}
+        @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+        .modal-sheet{
+            width:100%;max-width:390px;
+            background:#fff;
+            border-radius:28px 28px 0 0;
+            padding:28px 24px 40px;
+            animation:slideUp .3s cubic-bezier(.16,1,.3,1);
+        }
+        @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+        .modal-handle{width:40px;height:4px;border-radius:4px;background:#E2E8F0;margin:0 auto 24px}
+        .modal-title{font-size:18px;font-weight:800;color:#0F172A;margin-bottom:6px}
+        .modal-sub{font-size:12px;color:#64748B;margin-bottom:20px}
+        .alasan-chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+        .alasan-chip{
+            padding:8px 16px;border-radius:20px;
+            background:#F1F5F9;border:1.5px solid transparent;
+            font-family:inherit;font-size:12px;font-weight:700;
+            color:#475569;cursor:pointer;transition:all .15s;
+        }
+        .alasan-chip.selected{background:#FEF2F2;border-color:#DC2626;color:#DC2626}
+        .alasan-textarea{
+            width:100%;min-height:90px;
+            border:1.5px solid #E2E8F0;border-radius:14px;
+            padding:12px 14px;font-family:inherit;
+            font-size:13px;color:#0F172A;
+            resize:none;outline:none;
+            transition:border-color .2s;
+            margin-bottom:16px;
+        }
+        .alasan-textarea:focus{border-color:#6C63FF}
+        .alasan-textarea::placeholder{color:#94A3B8}
+        .btn-submit-alasan{
+            width:100%;padding:16px;
+            background:linear-gradient(135deg,#DC2626,#EF4444);
+            color:white;border:none;border-radius:14px;
+            font-family:inherit;font-size:13px;font-weight:800;
+            cursor:pointer;transition:opacity .15s;
+        }
+        .btn-submit-alasan:active{opacity:.85}
+        .btn-submit-alasan:disabled{opacity:.5;cursor:not-allowed}
+        .btn-hapus-alasan{
+            width:100%;padding:13px;margin-top:8px;
+            background:none;border:1.5px solid #E2E8F0;
+            border-radius:14px;font-family:inherit;
+            font-size:12px;font-weight:700;color:#94A3B8;
+            cursor:pointer;transition:all .15s;
+        }
+        .btn-hapus-alasan:active{background:#FEF2F2;color:#DC2626;border-color:#DC2626}
         .activity-list{padding:0 24px}
         .activity-card{
             background:var(--surface);border-radius:var(--r-md);padding:14px 18px;
@@ -622,6 +697,14 @@
             </button>
         </div>
 
+
+        <!-- ── Tombol Laporkan Ketidakhadiran ── -->
+        <div class="btn-alasan-wrap">
+            <button class="btn-alasan" id="btn-alasan" onclick="openAlasanModal()">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                <span id="btn-alasan-label">Laporkan Ketidakhadiran</span>
+            </button>
+        </div>
         <div class="section-header"><p class="section-title">Aktivitas Terakhir</p></div>
         <div class="activity-list" id="home-history"></div>
     </section>
@@ -846,6 +929,8 @@ const db   = getDatabase(app);
 
 let html5QrCode     = null;
 let currentUserRole = 'guru';
+let currentUser = null;
+let currentUserNama = '';
 let currentScanMode = 'masuk'; // 'masuk' | 'pulang'
 let adminReportCache = null;
 let userJadwal = { masuk: '07:20', pulang: '12:00' }; // default
@@ -1156,6 +1241,7 @@ onAuthStateChanged(auth, async (user) => {
 
     if (user) {
         showScreen('home');
+        currentUser = user;
         document.getElementById('bottom-nav').classList.add('visible');
 
         const snap = await get(ref(db, `users/${user.uid}`));
@@ -1205,6 +1291,7 @@ onAuthStateChanged(auth, async (user) => {
                 (adaJadwalKhusus ? ' (jadwal khusus)' : ' (jadwal default)');
 
             document.getElementById('user-display').innerText = data.nama || 'Pengguna';
+            currentUserNama = data.nama || '';
 
             // ── Label profil berdasarkan jabatan ──
             const jabatanLabelMap = {
@@ -1243,12 +1330,14 @@ onAuthStateChanged(auth, async (user) => {
                 document.getElementById('header-greet').innerText = 'Kepala Sekolah';
                 switchTab('home');
                 checkGPS();
+                loadAlasanHariIni();
             } else {
                 // Guru: tampilkan badge jabatan di header
                 document.getElementById('header-greet').innerText =
                     JABATAN_BADGE[currentJabatan] || 'Guru Kelas Terverifikasi';
                 switchTab('home');
                 checkGPS();
+                loadAlasanHariIni();
             }
         }
     } else {
@@ -1856,128 +1945,237 @@ window.saveJadwalHari = async (uid, nama) => {
 };
 
 // ══════════════════════════════════════════════════════════
-// EXPORT XLSX — 1 sheet, header sesuai permintaan
+// LIBUR NASIONAL — data lokal 2024–2026 sebagai fallback offline
+// Jika ada internet → data diambil otomatis dari API (berlaku untuk
+// semua tahun termasuk 2027, 2028, dst. tanpa perlu update file)
+// API: https://date.nager.at/api/v3/PublicHolidays/{year}/ID
 // ══════════════════════════════════════════════════════════
-window.exportXLSX = () => {
-    if (!adminReportCache) { showToast('Data belum tersedia, pilih filter dahulu', 'warning'); return; }
-    const { allDates, snap, bulan, tahun } = adminReportCache;
-    const namaBulan = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-    const periodeLabel = `${namaBulan[parseInt(bulan)]} ${tahun}`;
-
-    // Urutkan tanggal secara kronologis
-    const sortedDates = [...allDates].sort();
-
-    // Helper: format tanggal dari YYYY-MM-DD ke DD-MM-YYYY
-    function formatTanggal(dateStr) {
-        const [y, m, d] = dateStr.split('-');
-        return `${d}-${m}-${y}`;
-    }
-
-    // Helper: ambil nama hari dari tanggal
-    const NAMA_HARI = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-    function getNamaHari(dateStr) {
-        const [y, m, d] = dateStr.split('-').map(Number);
-        return NAMA_HARI[new Date(y, m - 1, d).getDay()];
-    }
-
-    // Helper: format waktu (ganti titik dengan titik dua jika perlu)
-    function formatWaktu(w) {
-        if (!w) return '–';
-        return w.replace('.', ':');
-    }
-
-    // Bangun baris data — 1 baris per entri absensi
-    const rows = [['TANGGAL', 'HARI', 'JAM MASUK', 'JAM PULANG', 'ALASAN TIDAK HADIR', 'DESKRIPSI']];
-
-    sortedDates.forEach(tgl => {
-        Object.keys(snap[tgl]).forEach(uid => {
-            const d = snap[tgl][uid];
-            if (!d.nama) return;
-
-            const jamMasuk  = d.masuk  ? formatWaktu(d.masuk.waktu)  : '–';
-            const jamPulang = d.pulang ? formatWaktu(d.pulang.waktu) : '–';
-
-            // ALASAN TIDAK HADIR: gunakan field alasan/izin jika ada, fallback ke 'Tidak Hadir'
-            const alasan = d.alasan || d.izin || ((!d.masuk) ? 'Tidak Hadir' : '');
-
-            // DESKRIPSI: gabungkan status masuk & pulang
-            const bagianDeskripsi = [
-                d.masuk  && d.masuk.status  ? d.masuk.status  : '',
-                d.pulang && d.pulang.status ? d.pulang.status : ''
-            ].filter(Boolean).join(' | ');
-
-            rows.push([
-                formatTanggal(tgl),
-                getNamaHari(tgl),
-                jamMasuk,
-                jamPulang,
-                alasan,
-                bagianDeskripsi
-            ]);
-        });
-    });
-
-    const wb = XLSX.utils.book_new();
-
-    // Satu sheet saja
-    const ws = XLSX.utils.aoa_to_sheet(rows);
-    ws['!cols'] = [{wch:14},{wch:10},{wch:12},{wch:12},{wch:22},{wch:30}];
-    // Freeze baris header agar tidak ikut scroll
-    ws['!views'] = [{ state: 'frozen', ySplit: 1 }];
-
-    XLSX.utils.book_append_sheet(wb, ws, 'Data Absensi');
-
-    const fileName = `Absensi_SDN_Wawonggole_${periodeLabel.replaceAll(' ', '_')}.xlsx`;
-    XLSX.writeFile(wb, fileName);
-    showToast(`✅ ${fileName} berhasil diunduh`, 'success');
+const LIBUR_NASIONAL = {
+    // 2024
+    '2024-01-01':'Tahun Baru Masehi','2024-02-08':'Isra Mi\'raj','2024-02-10':'Tahun Baru Imlek',
+    '2024-03-11':'Hari Raya Nyepi','2024-04-08':'Wafat Isa Al-Masih','2024-04-09':'Cuti Bersama',
+    '2024-04-10':'Idul Fitri 1445 H','2024-04-11':'Idul Fitri 1445 H','2024-04-12':'Cuti Bersama',
+    '2024-04-15':'Cuti Bersama','2024-05-01':'Hari Buruh','2024-05-09':'Kenaikan Isa Al-Masih',
+    '2024-05-23':'Hari Raya Waisak','2024-05-24':'Cuti Bersama','2024-06-01':'Hari Lahir Pancasila',
+    '2024-06-17':'Idul Adha 1445 H','2024-06-18':'Cuti Bersama','2024-07-07':'Tahun Baru Islam 1446 H',
+    '2024-08-17':'HUT RI ke-79','2024-09-16':'Maulid Nabi SAW','2024-12-25':'Hari Raya Natal',
+    '2024-12-26':'Cuti Bersama Natal',
+    // 2025
+    '2025-01-01':'Tahun Baru Masehi','2025-01-27':'Isra Mi\'raj','2025-01-28':'Cuti Bersama',
+    '2025-01-29':'Tahun Baru Imlek','2025-03-28':'Cuti Bersama','2025-03-29':'Hari Raya Nyepi',
+    '2025-03-30':'Idul Fitri 1446 H','2025-03-31':'Idul Fitri 1446 H','2025-04-01':'Cuti Bersama',
+    '2025-04-02':'Cuti Bersama','2025-04-04':'Cuti Bersama','2025-04-18':'Wafat Isa Al-Masih',
+    '2025-05-01':'Hari Buruh','2025-05-12':'Hari Raya Waisak','2025-05-13':'Cuti Bersama',
+    '2025-05-29':'Kenaikan Isa Al-Masih','2025-06-01':'Hari Lahir Pancasila',
+    '2025-06-06':'Idul Adha 1446 H','2025-06-27':'Tahun Baru Islam 1447 H',
+    '2025-08-17':'HUT RI ke-80','2025-09-05':'Maulid Nabi SAW',
+    '2025-12-25':'Hari Raya Natal','2025-12-26':'Cuti Bersama Natal',
+    // 2026
+    '2026-01-01':'Tahun Baru Masehi','2026-01-16':'Isra Mi\'raj',
+    '2026-02-17':'Tahun Baru Imlek','2026-03-18':'Hari Raya Nyepi',
+    '2026-03-19':'Idul Fitri 1447 H','2026-03-20':'Idul Fitri 1447 H',
+    '2026-04-03':'Wafat Isa Al-Masih','2026-05-01':'Hari Buruh',
+    '2026-05-14':'Kenaikan Isa Al-Masih','2026-05-27':'Idul Adha 1447 H',
+    '2026-05-31':'Hari Raya Waisak','2026-06-01':'Hari Lahir Pancasila',
+    '2026-06-17':'Tahun Baru Islam 1448 H','2026-08-17':'HUT RI ke-81',
+    '2026-08-25':'Maulid Nabi SAW','2026-12-25':'Hari Raya Natal',
 };
 
+// ── Cache tahun yang sudah di-fetch ──
+const _liburCache = {};
+
+// ── Fetch otomatis dari API, fallback ke data lokal jika gagal ──
+async function fetchLiburNasional(year) {
+    const y = String(year);
+    if (_liburCache[y]) return; // sudah pernah di-fetch, skip
+    try {
+        showToast('🗓️ Memuat data hari libur nasional…', 'info');
+        const res = await fetch(`https://date.nager.at/api/v3/PublicHolidays/${y}/ID`);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const list = await res.json();
+        list.forEach(item => {
+            // Gunakan localName (nama Indonesia) jika tersedia, fallback ke name
+            LIBUR_NASIONAL[item.date] = item.localName || item.name;
+        });
+        _liburCache[y] = true;
+        console.info(`[Libur] ${list.length} hari libur ${y} berhasil dimuat dari API`);
+    } catch (err) {
+        // Tidak ada internet atau API error — gunakan data lokal yang sudah ada
+        _liburCache[y] = true; // tandai agar tidak retry terus
+        console.warn(`[Libur] Gagal fetch API tahun ${y}, menggunakan data lokal:`, err.message);
+    }
+}
+
 // ══════════════════════════════════════════════════════════
-// PRINT — kolom masuk & pulang
+// SHARED HELPERS — dipakai oleh exportXLSX & printReport
 // ══════════════════════════════════════════════════════════
-window.printReport = () => {
+function sharedParseMenit(keterangan) {
+    if (!keterangan || keterangan === 'Tepat waktu') return 0;
+    const match = keterangan.match(/(\d+)/);
+    return match ? parseInt(match[1]) : 0;
+}
+// Nilai TELAT/CEPAT: negatif = telat, positif = cepat, 0 = tepat
+function sharedTelatCepat(d) {
+    if (!d.masuk) return 0;
+    const menit = sharedParseMenit(d.masuk.keterangan);
+    if (d.masuk.status && d.masuk.status.includes('Terlambat')) return menit > 0 ? -menit : 0;
+    return menit > 0 ? menit : 0;
+}
+// Nilai PSW/LEWAT WAKTU: negatif = PSW, positif = lewat waktu, 0 = tepat
+function sharedPswLewat(d) {
+    if (!d.pulang) return 0;
+    const menit = sharedParseMenit(d.pulang.keterangan);
+    if (d.pulang.status && d.pulang.status.includes('Lebih Awal')) return menit > 0 ? -menit : 0;
+    return menit > 0 ? menit : 0;
+}
+// Format menit dengan tanda + / - / 0
+function sharedFormatMenit(val) {
+    if (val > 0) return `+${val}`;
+    if (val < 0) return `${val}`;
+    return '0';
+}
+// Format waktu: kembalikan '0' jika null
+function sharedFormatWaktu(w) {
+    if (!w) return '0';
+    return w.replace('.', ':');
+}
+// Format tanggal YYYY-MM-DD → DD-MM-YYYY
+function sharedFormatTanggal(dateStr) {
+    const [y, m, d] = dateStr.split('-');
+    return `${d}-${m}-${y}`;
+}
+// Nama hari
+const _HARI_NAMA = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+function sharedNamaHari(dateStr) {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return _HARI_NAMA[new Date(y, m - 1, d).getDay()];
+}
+// Jadwal guru berdasarkan uid & tanggal
+function sharedJadwal(usersData, uid, dateStr) {
+    const ud = usersData && usersData[uid];
+    const defMasuk  = (ud && ud.jadwal && ud.jadwal.masuk)  ? ud.jadwal.masuk  : '07:00';
+    const defPulang = (ud && ud.jadwal && ud.jadwal.pulang) ? ud.jadwal.pulang : '14:00';
+    const [y, mo, da] = dateStr.split('-').map(Number);
+    const dayNum = new Date(y, mo - 1, da).getDay();
+    const jh = ud && ud.jadwal && ud.jadwal.hari && ud.jadwal.hari[dayNum];
+    return {
+        masuk:  (jh && jh.masuk)  ? jh.masuk  : defMasuk,
+        pulang: (jh && jh.pulang) ? jh.pulang : defPulang,
+    };
+}
+
+// ══════════════════════════════════════════════════════════
+// ALASAN TIDAK HADIR — guru melaporkan ketidakhadiran sendiri
+// Firebase path: absensi/{tgl}/{uid}/alasanTidakHadir
+// ══════════════════════════════════════════════════════════
+let _selectedAlasan = null;
+
+window.openAlasanModal = async function() {
+    if (!currentUser) return;
+    const tgl = new Date().toLocaleDateString("sv-SE");
+    // Reset state chip
+    _selectedAlasan = null;
+    document.querySelectorAll("#alasan-chips .alasan-chip").forEach(c => c.classList.remove("selected"));
+    document.getElementById("alasan-detail").value = "";
+    document.getElementById("btn-hapus-alasan").style.display = "none";
+    document.getElementById("modal-alasan-sub").innerText = "Pilih alasan dan tambahkan keterangan jika perlu.";
+    // Cek apakah sudah ada laporan hari ini
+    try {
+        const snap = await get(ref(db, `absensi/${tgl}/${currentUser.uid}/alasanTidakHadir`));
+        if (snap.exists()) {
+            const data = snap.val();
+            _selectedAlasan = data.tipe;
+            document.querySelectorAll("#alasan-chips .alasan-chip").forEach(c => {
+                if (c.innerText.includes(data.tipe)) c.classList.add("selected");
+            });
+            document.getElementById("alasan-detail").value = data.detail || "";
+            document.getElementById("btn-hapus-alasan").style.display = "block";
+            document.getElementById("modal-alasan-sub").innerText = `Laporan tersimpan: ${data.tipe}. Anda dapat mengubah atau menghapusnya.`;
+        }
+    } catch(e) { console.warn("Load alasan:", e); }
+    document.getElementById("modal-alasan").classList.add("open");
+};
+
+window.closeAlasanModal = function(e) {
+    if (!e || e.target === document.getElementById("modal-alasan")) {
+        document.getElementById("modal-alasan").classList.remove("open");
+    }
+};
+
+window.pilihChip = function(el, tipe) {
+    document.querySelectorAll("#alasan-chips .alasan-chip").forEach(c => c.classList.remove("selected"));
+    el.classList.add("selected");
+    _selectedAlasan = tipe;
+};
+
+window.submitAlasanTidakHadir = async function() {
+    if (!currentUser) return;
+    if (!_selectedAlasan) { showToast("Pilih alasan terlebih dahulu", "warning"); return; }
+    const tgl    = new Date().toLocaleDateString("sv-SE");
+    const detail = document.getElementById("alasan-detail").value.trim();
+    const btn    = document.getElementById("btn-submit-alasan");
+    btn.disabled = true;
+    try {
+        await set(ref(db, `absensi/${tgl}/${currentUser.uid}/alasanTidakHadir`), {
+            tipe: _selectedAlasan, detail, waktu: new Date().toLocaleTimeString("id-ID", {hour:"2-digit",minute:"2-digit"})
+        });
+        await set(ref(db, `absensi/${tgl}/${currentUser.uid}/nama`), currentUserNama || currentUser.displayName || "Guru");
+        document.getElementById("modal-alasan").classList.remove("open");
+        updateTombolAlasan(true, _selectedAlasan);
+        showToast(`✅ Laporan ketidakhadiran (${_selectedAlasan}) tersimpan`, "success");
+    } catch(e) {
+        showToast("Gagal menyimpan: " + e.message, "error");
+    } finally { btn.disabled = false; }
+};
+
+window.hapusAlasanTidakHadir = async function() {
+    if (!currentUser) return;
+    const tgl = new Date().toLocaleDateString("sv-SE");
+    try {
+        await set(ref(db, `absensi/${tgl}/${currentUser.uid}/alasanTidakHadir`), null);
+        document.getElementById("modal-alasan").classList.remove("open");
+        updateTombolAlasan(false, null);
+        showToast("Laporan ketidakhadiran dihapus", "info");
+    } catch(e) { showToast("Gagal menghapus: " + e.message, "error"); }
+};
+
+function updateTombolAlasan(sudahLapor, tipe) {
+    const btn   = document.getElementById("btn-alasan");
+    const label = document.getElementById("btn-alasan-label");
+    if (!btn) return;
+    if (sudahLapor && tipe) {
+        btn.classList.add("sudah-lapor");
+        label.innerText = `⚠️ Sudah lapor: ${tipe} — Ubah`;
+    } else {
+        btn.classList.remove("sudah-lapor");
+        label.innerText = "Laporkan Ketidakhadiran";
+    }
+}
+
+// Cek laporan hari ini saat halaman dimuat
+async function loadAlasanHariIni() {
+    if (!currentUser) return;
+    const tgl = new Date().toLocaleDateString("sv-SE");
+    try {
+        const snap = await get(ref(db, `absensi/${tgl}/${currentUser.uid}/alasanTidakHadir`));
+        if (snap.exists()) updateTombolAlasan(true, snap.val().tipe);
+    } catch(e) {}
+}
+
+// ══════════════════════════════════════════════════════════
+// EXPORT XLSX — 1 sheet, struktur sama dengan PDF per guru
+// ══════════════════════════════════════════════════════════
+window.exportXLSX = async () => {
     if (!adminReportCache) { showToast('Data belum tersedia, pilih filter dahulu', 'warning'); return; }
     const { allDates, snap, bulan, tahun, usersData } = adminReportCache;
     const namaBulan = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-    document.getElementById('print-periode').innerText = `Periode: ${namaBulan[parseInt(bulan)]} ${tahun}`;
-    document.getElementById('print-tanggal-cetak').innerText = `Dicetak: ${new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}`;
-
+    const periodeLabel = `${namaBulan[parseInt(bulan)]} ${tahun}`;
     const sortedDates = [...allDates].sort();
 
-    // ── Helper functions ──
-    const HARI_NAMA = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+    // Fetch hari libur nasional secara otomatis untuk tahun ini
+    await fetchLiburNasional(tahun);
 
-    function formatWaktu(w) {
-        if (!w) return '–';
-        return w.replace('.', ':');
-    }
-    function formatTanggal(dateStr) {
-        const [y, m, d] = dateStr.split('-');
-        return `${d}-${m}-${y}`;
-    }
-    function getNamaHari(dateStr) {
-        const [y, m, d] = dateStr.split('-').map(Number);
-        return HARI_NAMA[new Date(y, m - 1, d).getDay()];
-    }
-    function parseMenit(keterangan) {
-        if (!keterangan || keterangan === 'Tepat waktu') return 0;
-        const match = keterangan.match(/(\d+)/);
-        return match ? parseInt(match[1]) : 0;
-    }
-    function getJadwalGuru(uid, dateStr) {
-        const ud = usersData && usersData[uid];
-        const defaultMasuk  = (ud && ud.jadwal && ud.jadwal.masuk)  ? ud.jadwal.masuk  : '07:00';
-        const defaultPulang = (ud && ud.jadwal && ud.jadwal.pulang) ? ud.jadwal.pulang : '14:00';
-        const [y, mo, da] = dateStr.split('-').map(Number);
-        const dayNum = new Date(y, mo - 1, da).getDay();
-        const jh = ud && ud.jadwal && ud.jadwal.hari && ud.jadwal.hari[dayNum];
-        return {
-            masuk:  (jh && jh.masuk)  ? jh.masuk  : defaultMasuk,
-            pulang: (jh && jh.pulang) ? jh.pulang : defaultPulang,
-        };
-    }
-
-    // ── Kelompokkan data per guru ──
+    // Kelompokkan per guru
     const teacherMap = {};
     sortedDates.forEach(tgl => {
         Object.keys(snap[tgl]).forEach(uid => {
@@ -1988,51 +2186,130 @@ window.printReport = () => {
         });
     });
 
-    // ── Style helpers ──
+    const COL_HEADERS = [
+        'TANGGAL','HARI','JAM MASUK','ABSEN MASUK',
+        'TELAT/CEPAT (Menit)','JAM PULANG','ABSEN PULANG',
+        'PSW/LEWAT WAKTU (Menit)','KETERANGAN'
+    ];
+
+    const allRows  = [];
+    const merges   = [];
+    let   rowIdx   = 0;
+
+    Object.entries(teacherMap).forEach(([uid, { nama, rows }], gi) => {
+        // Baris kosong antar guru
+        if (gi > 0) { allRows.push(Array(9).fill('')); rowIdx++; }
+
+        // Baris nama guru (di-merge sepanjang 9 kolom)
+        const jumlahHadir = rows.filter(r => r.d.masuk).length;
+        allRows.push([`${nama}     |  Hadir: ${jumlahHadir} dari ${rows.length} hari`, ...Array(8).fill('')]);
+        merges.push({ s: { r: rowIdx, c: 0 }, e: { r: rowIdx, c: 8 } });
+        rowIdx++;
+
+        // Baris header kolom
+        allRows.push([...COL_HEADERS]);
+        rowIdx++;
+
+        // Baris data per tanggal
+        rows.forEach(({ tgl, d }) => {
+            const jadwal     = sharedJadwal(usersData, uid, tgl);
+            const telatCepat = sharedTelatCepat(d);
+            const pswLewat   = sharedPswLewat(d);
+            allRows.push([
+                sharedFormatTanggal(tgl),
+                sharedNamaHari(tgl),
+                jadwal.masuk,
+                sharedFormatWaktu(d.masuk  ? d.masuk.waktu  : null),
+                sharedFormatMenit(telatCepat),
+                jadwal.pulang,
+                sharedFormatWaktu(d.pulang ? d.pulang.waktu : null),
+                sharedFormatMenit(pswLewat),
+                (LIBUR_NASIONAL[tgl] || (d.alasanTidakHadir ? (d.alasanTidakHadir.tipe + (d.alasanTidakHadir.detail ? ': ' + d.alasanTidakHadir.detail : '')) : '-')),
+            ]);
+            rowIdx++;
+        });
+    });
+
+    const wb = XLSX.utils.book_new();
+    const ws = XLSX.utils.aoa_to_sheet(allRows);
+    ws['!cols']   = [{wch:13},{wch:9},{wch:11},{wch:12},{wch:20},{wch:11},{wch:13},{wch:24},{wch:28}];
+    ws['!merges'] = merges;
+
+    XLSX.utils.book_append_sheet(wb, ws, 'Absensi');
+    const fileName = `Absensi_SDN_Wawonggole_${periodeLabel.replaceAll(' ', '_')}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+    showToast(`✅ ${fileName} berhasil diunduh`, 'success');
+};
+
+// ══════════════════════════════════════════════════════════
+// PRINT — kolom masuk & pulang (PDF)
+// ══════════════════════════════════════════════════════════
+window.printReport = async () => {
+    if (!adminReportCache) { showToast('Data belum tersedia, pilih filter dahulu', 'warning'); return; }
+    const { allDates, snap, bulan, tahun, usersData } = adminReportCache;
+    const namaBulan = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    document.getElementById('print-periode').innerText = `Periode: ${namaBulan[parseInt(bulan)]} ${tahun}`;
+    document.getElementById('print-tanggal-cetak').innerText = `Dicetak: ${new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}`;
+
+    const sortedDates = [...allDates].sort();
+    // Fetch hari libur nasional secara otomatis untuk tahun ini
+    await fetchLiburNasional(tahun);
+
+
+    // Kelompokkan per guru
+    const teacherMap = {};
+    sortedDates.forEach(tgl => {
+        Object.keys(snap[tgl]).forEach(uid => {
+            const d = snap[tgl][uid];
+            if (!d.nama) return;
+            if (!teacherMap[uid]) teacherMap[uid] = { nama: d.nama, rows: [] };
+            teacherMap[uid].rows.push({ tgl, d });
+        });
+    });
+
+    // Style helpers
     const thBase = `padding:7px 5px;border:1px solid #94A3B8;background:#4F46E5;color:white;font-size:8.5px;font-weight:800;text-align:center;letter-spacing:.04em;line-height:1.4;`;
     function td(val, align, extra) {
         return `<td style="padding:6px 5px;border:1px solid #E2E8F0;font-size:9.5px;text-align:${align||'center'};${extra||''}">${val}</td>`;
     }
 
-    // ── Build HTML per guru ──
+    // Build HTML per guru
     let html = '';
     Object.entries(teacherMap).forEach(([uid, { nama, rows }], gi) => {
         const jumlahHadir = rows.filter(r => r.d.masuk).length;
 
         let tbodyRows = '';
         rows.forEach(({ tgl, d }, i) => {
-            const jadwal      = getJadwalGuru(uid, tgl);
-            const absenMasuk  = formatWaktu(d.masuk  ? d.masuk.waktu  : null);
-            const absenPulang = formatWaktu(d.pulang ? d.pulang.waktu : null);
-            const menitMasuk  = d.masuk  ? parseMenit(d.masuk.keterangan)  : 0;
-            const menitPulang = d.pulang ? parseMenit(d.pulang.keterangan) : 0;
+            const jadwal     = sharedJadwal(usersData, uid, tgl);
+            const absenMasuk = sharedFormatWaktu(d.masuk  ? d.masuk.waktu  : null);
+            const absenPulang= sharedFormatWaktu(d.pulang ? d.pulang.waktu : null);
+            const telatCepat = sharedTelatCepat(d);
+            const pswLewat   = sharedPswLewat(d);
+            const keterangan = LIBUR_NASIONAL[tgl] || (d.alasanTidakHadir ? (d.alasanTidakHadir.tipe + (d.alasanTidakHadir.detail ? ': ' + d.alasanTidakHadir.detail : '')) : '–');
 
             // Warna baris selang-seling
             const rowBg = i % 2 === 0 ? 'white' : '#F8FAFC';
 
-            // Warna kolom TELAT/CEPAT — merah jika terlambat, hijau jika cepat/tepat
-            let colorMasuk = '#0F172A';
-            if (d.masuk) {
-                if (d.masuk.status && d.masuk.status.includes('Terlambat')) colorMasuk = '#DC2626';
-                else if (menitMasuk > 0) colorMasuk = '#059669';
-            }
-            // Warna kolom PSW/LEWAT WAKTU — biru jika lewat waktu, oranye jika PSW
-            let colorPulang = '#0F172A';
-            if (d.pulang) {
-                if (d.pulang.status && d.pulang.status.includes('Lebih Awal')) colorPulang = '#D97706';
-                else if (menitPulang > 0) colorPulang = '#2563EB';
-            }
+            // Warna TELAT/CEPAT: merah = telat (-), hijau = cepat (+), abu = tepat
+            let colorMasuk = '#475569';
+            if (telatCepat < 0) colorMasuk = '#DC2626';
+            else if (telatCepat > 0) colorMasuk = '#059669';
+
+            // Warna PSW/LEWAT WAKTU: oranye = PSW (-), biru = lewat waktu (+), abu = tepat
+            let colorPulang = '#475569';
+            if (pswLewat < 0) colorPulang = '#D97706';
+            else if (pswLewat > 0) colorPulang = '#2563EB';
 
             tbodyRows += `<tr style="background:${rowBg}">
-                ${td(formatTanggal(tgl), 'center')}
-                ${td(getNamaHari(tgl), 'center')}
+                ${td(sharedFormatTanggal(tgl), 'center')}
+                ${td(sharedNamaHari(tgl), 'center')}
                 ${td(jadwal.masuk, 'center', 'font-weight:700;')}
-                ${td(absenMasuk, 'center', 'font-weight:700;color:#4F46E5;')}
-                ${td(d.masuk ? menitMasuk : 0, 'center', `font-weight:700;color:${colorMasuk};`)}
+                ${td(absenMasuk, 'center', `font-weight:700;color:${absenMasuk==='0'?'#94A3B8':'#4F46E5'};`)}
+                ${td(sharedFormatMenit(telatCepat), 'center', `font-weight:700;color:${colorMasuk};`)}
                 ${td(jadwal.pulang, 'center', 'font-weight:700;')}
-                ${td(absenPulang, 'center', 'font-weight:700;color:#059669;')}
-                ${td(d.pulang ? menitPulang : 0, 'center', `font-weight:700;color:${colorPulang};`)}
-                ${td('', 'left')}
+                ${td(absenPulang, 'center', `font-weight:700;color:${absenPulang==='0'?'#94A3B8':'#059669'};`)}
+                ${td(sharedFormatMenit(pswLewat), 'center', `font-weight:700;color:${colorPulang};`)}
+                ${td(keterangan, 'left', 'font-size:8.5px;color:#475569;')}
             </tr>`;
         });
 
@@ -2075,4 +2352,23 @@ window.printReport = () => {
     window.print();
 };
 </script>
+
+    <!-- ══ MODAL ALASAN TIDAK HADIR ══ -->
+    <div class="modal-overlay" id="modal-alasan" onclick="closeAlasanModal(event)">
+        <div class="modal-sheet">
+            <div class="modal-handle"></div>
+            <p class="modal-title">Laporkan Ketidakhadiran</p>
+            <p class="modal-sub" id="modal-alasan-sub">Pilih alasan dan tambahkan keterangan jika perlu.</p>
+            <div class="alasan-chips" id="alasan-chips">
+                <button class="alasan-chip" onclick="pilihChip(this,'Sakit')">🤒 Sakit</button>
+                <button class="alasan-chip" onclick="pilihChip(this,'Izin')">✋ Izin</button>
+                <button class="alasan-chip" onclick="pilihChip(this,'Dinas Luar')">🚗 Dinas Luar</button>
+                <button class="alasan-chip" onclick="pilihChip(this,'Keperluan Keluarga')">👨‍👩‍👧 Keperluan Keluarga</button>
+                <button class="alasan-chip" onclick="pilihChip(this,'Lainnya')">📝 Lainnya</button>
+            </div>
+            <textarea class="alasan-textarea" id="alasan-detail" placeholder="Keterangan tambahan (opsional)…" maxlength="200"></textarea>
+            <button class="btn-submit-alasan" id="btn-submit-alasan" onclick="submitAlasanTidakHadir()">Simpan Laporan</button>
+            <button class="btn-hapus-alasan" id="btn-hapus-alasan" onclick="hapusAlasanTidakHadir()" style="display:none">Hapus Laporan</button>
+        </div>
+    </div>
 </body>
