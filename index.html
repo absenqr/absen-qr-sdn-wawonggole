@@ -1991,6 +1991,17 @@ const LIBUR_NASIONAL = {
 const _liburCache = {};
 
 // ── Fetch otomatis dari API, fallback ke data lokal jika gagal ──
+// ── Cache libur khusus dari Firebase ──
+let LIBUR_KHUSUS = {};
+async function fetchLiburKhususDB() {
+    try {
+        const snap = await get(ref(db, 'libur_khusus'));
+        if (snap.exists()) LIBUR_KHUSUS = snap.val();
+    } catch(e) {
+        console.warn('[LiburKhusus] Gagal fetch:', e.message);
+    }
+}
+
 async function fetchLiburNasional(year) {
     const y = String(year);
     if (_liburCache[y]) return; // sudah pernah di-fetch, skip
@@ -2180,6 +2191,7 @@ window.exportXLSX = async () => {
 
     // Fetch hari libur nasional secara otomatis untuk tahun ini
     await fetchLiburNasional(tahun);
+    await fetchLiburKhususDB();
 
     // Kelompokkan per guru
     const teacherMap = {};
@@ -2230,7 +2242,7 @@ window.exportXLSX = async () => {
                 jadwal.pulang,
                 sharedFormatWaktu(d.pulang ? d.pulang.waktu : null),
                 sharedFormatMenit(pswLewat),
-                (LIBUR_NASIONAL[tgl] || (d.alasanTidakHadir ? (d.alasanTidakHadir.tipe + (d.alasanTidakHadir.detail ? ': ' + d.alasanTidakHadir.detail : '')) : '-')),
+                (LIBUR_KHUSUS[tgl] || LIBUR_NASIONAL[tgl] || (d.alasanTidakHadir ? (d.alasanTidakHadir.tipe + (d.alasanTidakHadir.detail ? ': ' + d.alasanTidakHadir.detail : '')) : '-')),
             ]);
             rowIdx++;
         });
@@ -2260,6 +2272,7 @@ window.printReport = async () => {
     const sortedDates = [...allDates].sort();
     // Fetch hari libur nasional secara otomatis untuk tahun ini
     await fetchLiburNasional(tahun);
+    await fetchLiburKhususDB();
 
 
     // Kelompokkan per guru
@@ -2291,7 +2304,7 @@ window.printReport = async () => {
             const absenPulang= sharedFormatWaktu(d.pulang ? d.pulang.waktu : null);
             const telatCepat = sharedTelatCepat(d);
             const pswLewat   = sharedPswLewat(d);
-            const keterangan = LIBUR_NASIONAL[tgl] || (d.alasanTidakHadir ? (d.alasanTidakHadir.tipe + (d.alasanTidakHadir.detail ? ': ' + d.alasanTidakHadir.detail : '')) : '–');
+            const keterangan = LIBUR_KHUSUS[tgl] || LIBUR_NASIONAL[tgl] || (d.alasanTidakHadir ? (d.alasanTidakHadir.tipe + (d.alasanTidakHadir.detail ? ': ' + d.alasanTidakHadir.detail : '')) : '–');
 
             // Warna baris selang-seling
             const rowBg = i % 2 === 0 ? 'white' : '#F8FAFC';
