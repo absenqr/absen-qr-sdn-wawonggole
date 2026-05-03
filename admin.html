@@ -318,9 +318,24 @@ tr:hover td { background:#F9FAFB; }
     width:100%;
     min-height:100vh;
     display:flex;
+    align-items:center;
+    justify-content:center;
     background:linear-gradient(135deg,#0D1117 0%,#1a1040 50%,#0f2850 100%);
     position:relative;
     overflow:hidden;
+}
+.login-wrapper {
+    display:flex;
+    align-items:stretch;
+    width:100%;
+    max-width:880px;
+    min-height:520px;
+    border-radius:24px;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,.1);
+    box-shadow:0 40px 80px rgba(0,0,0,.5);
+    position:relative;
+    z-index:1;
 }
 .login-bg-grid {
     position:absolute;inset:0;
@@ -336,14 +351,16 @@ tr:hover td { background:#F9FAFB; }
 
 /* ── Kolom Kiri: Branding ── */
 .login-left {
-    flex:1;
+    width:380px;
+    flex-shrink:0;
     display:flex;
     flex-direction:column;
     align-items:center;
     justify-content:center;
-    padding:60px 48px;
+    padding:52px 40px;
     position:relative;
     z-index:1;
+    background:rgba(255,255,255,.03);
 }
 .login-divider {
     width:1px;
@@ -395,14 +412,15 @@ tr:hover td { background:#F9FAFB; }
 
 /* ── Kolom Kanan: Form ── */
 .login-right {
-    width:460px;
+    flex:1;
     flex-shrink:0;
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:60px 48px;
+    padding:52px 44px;
     position:relative;
     z-index:1;
+    background:rgba(255,255,255,.04);
 }
 .login-card {
     width:100%;
@@ -554,6 +572,7 @@ tr:hover td { background:#F9FAFB; }
     <div class="login-orb orb1"></div>
     <div class="login-orb orb2"></div>
 
+    <div class="login-wrapper">
     <!-- KOLOM KIRI: Branding -->
     <div class="login-left">
         <div class="login-logo-img-wrap">
@@ -598,6 +617,7 @@ tr:hover td { background:#F9FAFB; }
             <p class="login-note">Halaman ini hanya untuk administrator · SDN Wawonggole</p>
         </div>
     </div>
+    </div><!-- end login-wrapper -->
 </div>
 
 <!-- ══════════════ APP SHELL ══════════════
