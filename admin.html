@@ -480,7 +480,14 @@ tr:hover td { background:#F9FAFB; }
 /* ── EMPTY & LOADING ── */
 .empty { text-align:center; padding:40px 20px; color:var(--ink3); font-size:13px; }
 .spinner-wrap { text-align:center; padding:32px; }
-.spin {
+.libur-item{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-radius:10px;background:var(--bg);border:1px solid var(--line);margin-bottom:8px;}
+.libur-tgl{font-size:12px;font-weight:700;color:var(--prim);font-family:'DM Mono',monospace;}
+.libur-ket{font-size:13px;font-weight:600;color:var(--ink);margin-top:2px;}
+.libur-info{flex:1;}
+.btn-hapus-libur{background:var(--err-l);border:none;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:11px;font-weight:700;color:var(--err);transition:background .15s;white-space:nowrap;margin-left:12px;}
+.btn-hapus-libur:hover{background:var(--err);color:white;}
+
+
     width:28px; height:28px;
     border:3px solid var(--line);
     border-top-color:var(--prim);
@@ -653,6 +660,10 @@ tr:hover td { background:#F9FAFB; }
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
                 Atur Jadwal
             </div>
+            <div class="sb-item" onclick="showPanel('libur')">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                Libur Khusus
+            </div>
             <div class="sb-section" style="margin-top:8px;">Export</div>
             <div class="sb-item" onclick="showPanel('laporan');setTimeout(()=>doExport(),300)">
                 <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -814,6 +825,52 @@ tr:hover td { background:#F9FAFB; }
                 </div>
             </div>
 
+            <!-- ══ LIBUR KHUSUS ══ -->
+            <div class="panel" id="panel-libur">
+                <div class="card" style="margin-bottom:16px;">
+                    <div class="card-head">
+                        <div>
+                            <div class="card-title">Tambah Libur Khusus</div>
+                            <div class="card-sub">Libur daerah, libur dinas, atau libur lainnya di luar libur nasional</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+                            <div class="field-group" style="flex:1;min-width:160px;">
+                                <label class="field-label">Tanggal Libur</label>
+                                <input type="date" id="libur-tgl" style="width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:10px;font-family:inherit;font-size:13px;font-weight:600;color:var(--ink);outline:none;">
+                            </div>
+                            <div class="field-group" style="flex:2;min-width:200px;">
+                                <label class="field-label">Keterangan Libur</label>
+                                <input type="text" id="libur-ket" placeholder="Contoh: Libur HUT Kab. Konawe" style="width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:10px;font-family:inherit;font-size:13px;font-weight:600;color:var(--ink);outline:none;">
+                            </div>
+                            <button class="btn btn-prim" onclick="tambahLibur()" style="height:42px;white-space:nowrap;">
+                                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                Tambah
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-head">
+                        <div>
+                            <div class="card-title">Daftar Libur Khusus</div>
+                            <div class="card-sub">Libur yang sudah ditambahkan admin</div>
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn btn-ghost" onclick="fetchLiburKhusus()">
+                                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.08-5.96"/></svg>
+                                Refresh
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="libur-list"><div class="spinner-wrap"><div class="spin"></div></div></div>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 </div>
@@ -952,16 +1009,19 @@ window.showPanel = (name) => {
     document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
     document.getElementById(`panel-${name}`).classList.add('active');
 
-    const idx = ['dashboard','laporan','jadwal'].indexOf(name);
+    const idx = ['dashboard','laporan','jadwal','libur'].indexOf(name);
     document.querySelectorAll('.sb-item')[idx]?.classList.add('active');
 
     const titles = {
         dashboard: ['Dashboard','Ringkasan data absensi hari ini'],
         laporan:   ['Laporan Absensi','Filter dan export data absensi'],
         jadwal:    ['Atur Jadwal','Kelola jadwal masuk & pulang guru'],
+        libur:     ['Libur Khusus','Kelola hari libur daerah dan dinas'],
     };
     document.getElementById('topbar-title').textContent = titles[name][0];
     document.getElementById('topbar-sub').textContent   = titles[name][1];
+
+    if (name === 'libur') fetchLiburKhusus();
 };
 
 // ══════════════════════════════════════════
@@ -1114,17 +1174,19 @@ window.fetchLaporan = async () => {
     const el     = document.getElementById('laporan-table');
     el.innerHTML = `<div class="spinner-wrap"><div class="spin"></div></div>`;
 
-    const [abSnap, usSnap] = await Promise.all([
+    const [abSnap, usSnap, lbSnap] = await Promise.all([
         get(ref(db,'absensi')),
         get(ref(db,'users')),
+        get(ref(db,'libur_khusus')),
     ]);
 
     if (!abSnap.exists()) { el.innerHTML = `<div class="empty">Tidak ada data absensi</div>`; return; }
 
-    const allData  = abSnap.val();
-    const users    = usSnap.exists() ? usSnap.val() : {};
-    usersCache     = users;
-    const allDates = Object.keys(allData).filter(d => d.startsWith(prefix)).sort();
+    const allData    = abSnap.val();
+    const users      = usSnap.exists() ? usSnap.val() : {};
+    const liburKhusus = lbSnap.exists() ? lbSnap.val() : {};
+    usersCache       = users;
+    const allDates   = Object.keys(allData).filter(d => d.startsWith(prefix)).sort();
 
     if (allDates.length === 0) {
         el.innerHTML = `<div class="empty">Tidak ada data untuk ${NAMA_BULAN[parseInt(bulan)]} ${tahun}</div>`;
@@ -1152,7 +1214,9 @@ window.fetchLaporan = async () => {
             const chipCls = !d.masuk ? 'chip-gray' : masukStatus?.includes('Terlambat') ? 'chip-warn' : 'chip-ok';
             const chipTxt = !d.masuk ? 'Belum' : masukStatus?.includes('Terlambat') ? 'Terlambat' : 'Tepat';
 
-            const keterangan = d.alasanTidakHadir
+            const keterangan = liburKhusus[tgl]
+                ? liburKhusus[tgl]
+                : d.alasanTidakHadir
                 ? (d.alasanTidakHadir.tipe + (d.alasanTidakHadir.detail ? ': '+d.alasanTidakHadir.detail : ''))
                 : '–';
 
@@ -1455,6 +1519,54 @@ function namaHari(s) {
     const [y,m,d] = s.split('-').map(Number);
     return NAMA_HARI[new Date(y,m-1,d).getDay()];
 }
+
+// ══════════════════════════════════════════
+// LIBUR KHUSUS
+// ══════════════════════════════════════════
+window.fetchLiburKhusus = async () => {
+    const el = document.getElementById('libur-list');
+    el.innerHTML = `<div class="spinner-wrap"><div class="spin"></div></div>`;
+    const snap = await get(ref(db, 'libur_khusus'));
+    if (!snap.exists()) {
+        el.innerHTML = `<div class="empty">Belum ada libur khusus yang ditambahkan</div>`;
+        return;
+    }
+    const data = snap.val();
+    const sorted = Object.entries(data).sort(([a],[b]) => a.localeCompare(b));
+    el.innerHTML = sorted.map(([tgl, ket]) => {
+        const [y,m,d] = tgl.split('-');
+        const tglFmt = `${d}-${m}-${y}`;
+        const hariIdx = new Date(y, m-1, d).getDay();
+        const namaHariStr = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][hariIdx];
+        return `<div class="libur-item">
+            <div class="libur-info">
+                <div class="libur-tgl">${tglFmt} · ${namaHariStr}</div>
+                <div class="libur-ket">${ket}</div>
+            </div>
+            <button class="btn-hapus-libur" onclick="hapusLibur('${tgl}','${ket}')">🗑 Hapus</button>
+        </div>`;
+    }).join('');
+};
+
+window.tambahLibur = async () => {
+    const tgl = document.getElementById('libur-tgl').value;
+    const ket = document.getElementById('libur-ket').value.trim();
+    if (!tgl) { showToast('Pilih tanggal libur terlebih dahulu', 'warning'); return; }
+    if (!ket) { showToast('Isi keterangan libur', 'warning'); return; }
+    await update(ref(db, 'libur_khusus'), { [tgl]: ket });
+    showToast(`✅ Libur ${tgl} berhasil ditambahkan`, 'success');
+    document.getElementById('libur-tgl').value = '';
+    document.getElementById('libur-ket').value = '';
+    fetchLiburKhusus();
+};
+
+window.hapusLibur = async (tgl, ket) => {
+    if (!confirm(`Hapus libur "${ket}" pada ${tgl}?`)) return;
+    const { remove } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js");
+    await remove(ref(db, `libur_khusus/${tgl}`));
+    showToast(`🗑 Libur ${tgl} dihapus`, 'info');
+    fetchLiburKhusus();
+};
 
 // ── Toast ──
 window.showToast = (msg, type='info') => {
