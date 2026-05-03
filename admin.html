@@ -408,7 +408,49 @@ tr:hover td { background:#F9FAFB; }
     text-align:center; font-size:10px; color:rgba(255,255,255,.2);
     margin-top:20px;
 }
-
+/* ── LOGIN LOGO CENTER ── */
+.login-logo-center {
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    margin-bottom:28px;
+}
+.login-logo-img-wrap {
+    width:110px; height:110px;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom:14px;
+    background:rgba(255,255,255,0.05);
+    box-shadow:
+        0 0 0 2px rgba(255,255,255,0.15),
+        0 8px 32px rgba(0,0,0,0.5),
+        0 0 40px rgba(108,99,255,0.4),
+        0 0 80px rgba(6,182,212,0.2),
+        inset 0 1px 0 rgba(255,255,255,0.15);
+}
+.login-logo-img {
+    width:85%; height:85%;
+    object-fit:contain;
+    border-radius:50%;
+    filter:
+        drop-shadow(0 4px 16px rgba(0,0,0,0.6))
+        drop-shadow(0 0 20px rgba(6,182,212,0.5))
+        drop-shadow(0 0 40px rgba(108,99,255,0.4));
+    mix-blend-mode:screen;
+}
+.login-logo-title {
+    font-size:20px; font-weight:800;
+    color:#fff; display:block;
+    text-align:center;
+    margin-bottom:4px;
+}
+.login-logo-sub {
+    font-size:11px;
+    color:rgba(255,255,255,.4);
+    text-align:center;
+    text-transform:uppercase;
+    letter-spacing:.08em;
+}
 /* ── EMPTY & LOADING ── */
 .empty { text-align:center; padding:40px 20px; color:var(--ink3); font-size:13px; }
 .spinner-wrap { text-align:center; padding:32px; }
@@ -504,12 +546,13 @@ tr:hover td { background:#F9FAFB; }
     <div class="login-orb orb1"></div>
     <div class="login-orb orb2"></div>
     <div class="login-card">
-        <div class="login-logo">
-            <div class="login-logo-icon">🏫</div>
-            <div class="login-logo-text">
-                <strong>Admin Panel</strong>
-                <span>SDN WAWONGGOLE · E-Presensi</span>
+        <div class="login-logo-center">
+            <div class="login-logo-img-wrap">
+                <img src="<img src="logo.png" ...>" alt="Logo SDN Wawonggole" class="login-logo-img">
             </div>
+            <strong class="login-logo-title">Admin Panel</strong>
+            <span class="login-logo-sub">SDN WAWONGGOLE · E-Presensi</span>
+        </div>
         </div>
         <p class="login-title">Selamat Datang</p>
         <p class="login-sub">Masuk menggunakan akun administrator</p>
