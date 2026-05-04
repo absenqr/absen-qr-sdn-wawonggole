@@ -1337,6 +1337,7 @@ onAuthStateChanged(auth, async (user) => {
                 switchTab('home');
                 checkGPS();
                 loadAlasanHariIni();
+                cekLiburHariIni();
             } else {
                 // Guru: tampilkan badge jabatan di header
                 document.getElementById('header-greet').innerText =
@@ -1344,6 +1345,7 @@ onAuthStateChanged(auth, async (user) => {
                 switchTab('home');
                 checkGPS();
                 loadAlasanHariIni();
+                cekLiburHariIni();
             }
         }
     } else {
@@ -1379,9 +1381,18 @@ window.switchAdminTab = (tab) => {
 // ══════════════════════════════════════════════════════════
 // SCANNER — dual mode masuk / pulang
 // ══════════════════════════════════════════════════════════
-window.startScanner = (mode) => {
+window.startScanner = async (mode) => {
     if (currentUserRole === 'admin') { showToast('Admin tidak memiliki akses absensi.', 'error'); return; }
     if (currentUserRole !== 'guru' && currentUserRole !== 'kepala_sekolah') { showToast('Akses absensi tidak diizinkan.', 'error'); return; }
+    // Cek hari libur sebelum scan
+    const today = new Date().toISOString().split('T')[0];
+    const isLiburKhusus = (() => { try { return !!LIBUR_KHUSUS[today]; } catch(e){ return false; } })();
+    const isLiburNasional = !!LIBUR_NASIONAL[today];
+    if (isLiburKhusus || isLiburNasional) {
+        const ket = LIBUR_KHUSUS[today] || LIBUR_NASIONAL[today];
+        showToast(`🎌 Hari ini libur: ${ket}. Absensi tidak diperlukan.`, 'warning');
+        return;
+    }
     if (!gpsChecked)  { showToast('Harap tunggu, GPS sedang diperiksa…', 'warning'); return; }
     if (!gpsValid)    { showToast('❌ Anda berada di luar area sekolah.', 'error');   return; }
 
@@ -1441,6 +1452,12 @@ async function submitAbsen(mode) {
     const user = auth.currentUser;
     const now  = new Date();
     const tgl  = now.toISOString().split('T')[0];
+    // Double-check: tolak submit jika hari libur
+    const isLiburHariIni = LIBUR_KHUSUS[tgl] || LIBUR_NASIONAL[tgl];
+    if (isLiburHariIni) {
+        showToast(`🎌 Hari ini libur: ${isLiburHariIni}. Absensi tidak dapat diproses.`, 'warning');
+        return;
+    }
     // Format jam pakai titik sesuai konvensi sistem: "07.15"
     const jam  = now.getHours().toString().padStart(2,'0') + '.' + now.getMinutes().toString().padStart(2,'0');
     const nama = document.getElementById('user-display').innerText;
@@ -1518,6 +1535,46 @@ function updateScanButton(mode, state) {
         const sub = btn.querySelector('.scan-btn-sub');
         if (sub) sub.innerText = 'Sudah Absen';
     }
+}
+
+// ── Nonaktifkan tombol absen saat hari libur ──
+function setLiburMode(keteranganLibur) {
+    ['masuk','pulang'].forEach(mode => {
+        const btn = document.getElementById(`btn-scan-${mode}`);
+        if (!btn) return;
+        btn.classList.remove(mode);
+        btn.classList.add('done');
+        btn.disabled = true;
+        btn.onclick = null;
+        const label = btn.querySelector('.scan-btn-label');
+        const sub   = btn.querySelector('.scan-btn-sub');
+        if (label) label.innerText = '🎌 Hari Libur';
+        if (sub)   sub.innerText   = keteranganLibur || 'Tidak ada absensi';
+    });
+    let banner = document.getElementById('libur-banner');
+    if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'libur-banner';
+        banner.style.cssText = 'margin:12px 0;padding:14px 16px;background:linear-gradient(135deg,rgba(124,58,237,.13),rgba(79,70,229,.13));border:1px solid rgba(124,58,237,.27);border-radius:14px;text-align:center;font-size:13px;font-weight:700;color:#7C3AED;';
+        const btnArea = document.getElementById('btn-scan-masuk')?.parentElement;
+        if (btnArea) btnArea.insertAdjacentElement('beforebegin', banner);
+    }
+    banner.innerHTML = `🎌 <strong>${keteranganLibur || 'Hari Libur'}</strong> — Absensi tidak diperlukan hari ini`;
+}
+
+// ── Cek apakah hari ini libur (nasional atau khusus) ──
+async function cekLiburHariIni() {
+    const today = new Date().toISOString().split('T')[0];
+    try {
+        const snap = await get(ref(db, 'libur_khusus'));
+        if (snap.exists()) {
+            const data = snap.val();
+            if (data[today]) { setLiburMode(data[today]); return true; }
+        }
+    } catch(e) { /* rules belum ada */ }
+    const keterNasional = LIBUR_NASIONAL[today];
+    if (keterNasional) { setLiburMode(keterNasional); return true; }
+    return false;
 }
 
 // ══════════════════════════════════════════════════════════
