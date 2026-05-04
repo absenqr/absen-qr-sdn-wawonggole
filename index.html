@@ -104,14 +104,13 @@
             background:rgba(255,255,255,.1);
             border-radius:var(--r-md);
             border:1.5px solid rgba(255,255,255,.15);
-            display:flex;align-items:center;gap:10px;
-            padding:0 4px 0 16px;
-            overflow:hidden;
+            display:flex;align-items:stretch;gap:10px;
+            padding:0 0 0 16px;
             transition:border-color .2s,background .2s;
         }
         .field-wrap:focus-within{border-color:rgba(167,139,250,.7);background:rgba(255,255,255,.14);box-shadow:0 0 0 4px rgba(108,99,255,.15)}
-        .field-wrap svg{flex-shrink:0;opacity:.4}
-        .field-wrap input{flex:1;border:none;outline:none;font-family:inherit;font-size:14px;font-weight:600;color:#fff;padding:16px 0;background:transparent}
+        .field-wrap svg{flex-shrink:0;opacity:.4;align-self:center}
+        .field-wrap input{flex:1;border:none;outline:none;font-family:inherit;font-size:14px;font-weight:600;color:#fff;padding:16px 0;background:transparent;align-self:center}
         .field-wrap input::placeholder{color:rgba(255,255,255,.3);font-weight:500}
         .btn-auth{
             width:100%;padding:17px;
@@ -131,12 +130,13 @@
         /* Tombol lihat PIN */
         .pin-toggle{
             background:none;border:none;cursor:pointer;
-            padding:10px 14px;
+            padding:0 16px;
             margin:0;
             color:rgba(255,255,255,.4);line-height:0;flex-shrink:0;
             transition:color .2s;
             display:flex;align-items:center;justify-content:center;
-            min-width:44px;min-height:44px;
+            align-self:stretch;
+            min-width:48px;
             -webkit-tap-highlight-color:transparent;
             border-radius:0 calc(var(--r-md) - 1.5px) calc(var(--r-md) - 1.5px) 0;
         }
