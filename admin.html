@@ -547,6 +547,70 @@ tr:hover td { background:#F9FAFB; }
     color:var(--ink2);
 }
 
+/* ── KALENDER ── */
+.kal-grid {
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+    gap:4px;
+}
+.kal-head {
+    text-align:center;
+    font-size:9px;font-weight:800;
+    text-transform:uppercase;letter-spacing:.08em;
+    color:var(--ink3);
+    padding:8px 4px;
+    background:var(--bg);
+    border-radius:6px;
+}
+.kal-day {
+    min-height:68px;
+    border-radius:10px;
+    border:1.5px solid var(--line);
+    padding:6px;
+    cursor:pointer;
+    transition:all .15s;
+    position:relative;
+    background:var(--white);
+}
+.kal-day:hover { border-color:var(--prim); transform:scale(1.02); }
+.kal-day.minggu { background:#F8FAFC; cursor:default; }
+.kal-day.today { background:#EEF2FF; border-color:#6366F1; }
+.kal-day.libur-nasional { background:#FEE2E2; border-color:#EF4444; cursor:default; }
+.kal-day.libur-khusus { background:#FDF4FF; border-color:#A855F7; }
+.kal-day.libur-baru { background:#F0FDF4; border-color:#22C55E; }
+.kal-day.empty { background:transparent; border-color:transparent; cursor:default; pointer-events:none; }
+.kal-tgl {
+    font-size:13px;font-weight:800;
+    color:var(--ink);
+    display:block;
+    margin-bottom:3px;
+}
+.kal-day.minggu .kal-tgl { color:#CBD5E1; }
+.kal-day.libur-nasional .kal-tgl { color:#DC2626; }
+.kal-day.libur-khusus .kal-tgl { color:#9333EA; }
+.kal-day.libur-baru .kal-tgl { color:#16A34A; }
+.kal-ket {
+    font-size:8px;font-weight:700;
+    line-height:1.3;
+    color:var(--ink3);
+    word-break:break-word;
+}
+.kal-day.libur-nasional .kal-ket { color:#EF4444; }
+.kal-day.libur-khusus .kal-ket { color:#A855F7; }
+.kal-day.libur-baru .kal-ket { color:#22C55E; }
+.kal-hapus {
+    position:absolute;top:4px;right:4px;
+    background:rgba(239,68,68,.15);
+    border:none;border-radius:4px;
+    color:#EF4444;font-size:9px;font-weight:800;
+    padding:2px 5px;cursor:pointer;
+    display:none;
+    transition:background .15s;
+}
+.kal-day.libur-khusus:hover .kal-hapus,
+.kal-day.libur-baru:hover .kal-hapus { display:block; }
+.kal-hapus:hover { background:rgba(239,68,68,.3); }
+
 /* ── PRINT ── */
 @media print {
     #login-page, #sidebar, #topbar, .card-actions, .filter-row .btn,
@@ -827,42 +891,58 @@ tr:hover td { background:#F9FAFB; }
 
             <!-- ══ LIBUR KHUSUS ══ -->
             <div class="panel" id="panel-libur">
+                <!-- KALENDER BULANAN -->
                 <div class="card" style="margin-bottom:16px;">
                     <div class="card-head">
                         <div>
-                            <div class="card-title">Tambah Libur Khusus</div>
-                            <div class="card-sub">Libur daerah, libur dinas, atau libur lainnya di luar libur nasional</div>
+                            <div class="card-title">Kelola Hari Libur Khusus</div>
+                            <div class="card-sub">Klik tanggal pada kalender untuk menandai hari libur. Dapat menandai banyak hari sekaligus.</div>
+                        </div>
+                        <div class="card-actions">
+                            <select id="kal-bulan" onchange="renderKalender()" style="border:1.5px solid var(--line);border-radius:8px;padding:7px 10px;font-family:inherit;font-size:12px;font-weight:600;color:var(--ink);background:var(--white);outline:none;"></select>
+                            <select id="kal-tahun" onchange="renderKalender()" style="border:1.5px solid var(--line);border-radius:8px;padding:7px 10px;font-family:inherit;font-size:12px;font-weight:600;color:var(--ink);background:var(--white);outline:none;"></select>
+                            <button class="btn btn-ghost" onclick="renderKalender()">
+                                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.08-5.96"/></svg>
+                                Refresh
+                            </button>
                         </div>
                     </div>
                     <div class="card-body">
-                        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
-                            <div class="field-group" style="flex:1;min-width:160px;">
-                                <label class="field-label">Tanggal Libur</label>
-                                <input type="date" id="libur-tgl" style="width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:10px;font-family:inherit;font-size:13px;font-weight:600;color:var(--ink);outline:none;">
+                        <!-- Legenda -->
+                        <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;font-size:11px;font-weight:700;">
+                            <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;border-radius:3px;background:#EEF2FF;border:1.5px solid #6366F1;display:inline-block;"></span>Hari Ini</span>
+                            <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;border-radius:3px;background:#FEE2E2;border:1.5px solid #EF4444;display:inline-block;"></span>Libur Nasional</span>
+                            <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;border-radius:3px;background:#FDF4FF;border:1.5px solid #A855F7;display:inline-block;"></span>Libur Khusus (Admin)</span>
+                            <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;border-radius:3px;background:#F0FDF4;border:1.5px solid #22C55E;display:inline-block;"></span>Libur Baru (Belum Simpan)</span>
+                            <span style="display:flex;align-items:center;gap:6px;color:#94A3B8;"><span style="width:12px;height:12px;border-radius:3px;background:#F8FAFC;border:1.5px solid #E2E8F0;display:inline-block;"></span>Hari Kerja</span>
+                            <span style="display:flex;align-items:center;gap:6px;color:#94A3B8;"><span style="width:12px;height:12px;border-radius:3px;background:#F1F5F9;display:inline-block;"></span>Minggu</span>
+                        </div>
+                        <!-- Kalender Grid -->
+                        <div id="kalender-wrap"></div>
+                        <!-- Dialog keterangan -->
+                        <div id="libur-dialog" style="display:none;margin-top:16px;padding:16px;background:var(--bg);border:1.5px solid var(--prim);border-radius:12px;">
+                            <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--prim);margin-bottom:10px;" id="dialog-tgl-label">Tanggal</div>
+                            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                                <input type="text" id="dialog-ket" placeholder="Keterangan libur (contoh: Libur HUT Kab. Konawe)" style="flex:1;min-width:200px;border:1.5px solid var(--line);border-radius:8px;padding:9px 12px;font-family:inherit;font-size:13px;font-weight:600;color:var(--ink);background:var(--white);outline:none;">
+                                <button class="btn btn-prim" onclick="konfirmasiTambahLibur()">✅ Tandai Libur</button>
+                                <button class="btn btn-ghost" onclick="tutupDialog()">Batal</button>
                             </div>
-                            <div class="field-group" style="flex:2;min-width:200px;">
-                                <label class="field-label">Keterangan Libur</label>
-                                <input type="text" id="libur-ket" placeholder="Contoh: Libur HUT Kab. Konawe" style="width:100%;background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:10px;font-family:inherit;font-size:13px;font-weight:600;color:var(--ink);outline:none;">
-                            </div>
-                            <button class="btn btn-prim" onclick="tambahLibur()" style="height:42px;white-space:nowrap;">
-                                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-                                Tambah
-                            </button>
+                        </div>
+                        <!-- Tombol simpan massal -->
+                        <div id="bulk-save-wrap" style="display:none;margin-top:16px;padding:14px 16px;background:var(--ok-l);border:1.5px solid var(--ok);border-radius:12px;display:none;align-items:center;gap:12px;flex-wrap:wrap;">
+                            <span style="font-size:12px;font-weight:700;color:#065F46;flex:1;" id="bulk-info">0 hari libur baru ditandai</span>
+                            <button class="btn btn-ok" onclick="simpanSemuaLibur()">💾 Simpan Semua ke Firebase</button>
+                            <button class="btn btn-ghost" onclick="batalSemuaLibur()">✕ Batal</button>
                         </div>
                     </div>
                 </div>
 
+                <!-- DAFTAR LIBUR TERSIMPAN -->
                 <div class="card">
                     <div class="card-head">
                         <div>
-                            <div class="card-title">Daftar Libur Khusus</div>
-                            <div class="card-sub">Libur yang sudah ditambahkan admin</div>
-                        </div>
-                        <div class="card-actions">
-                            <button class="btn btn-ghost" onclick="fetchLiburKhusus()">
-                                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.08-5.96"/></svg>
-                                Refresh
-                            </button>
+                            <div class="card-title">Daftar Libur Khusus Tersimpan</div>
+                            <div class="card-sub">Libur yang sudah disimpan ke Firebase</div>
                         </div>
                     </div>
                     <div class="card-body">
@@ -1021,7 +1101,7 @@ window.showPanel = (name) => {
     document.getElementById('topbar-title').textContent = titles[name][0];
     document.getElementById('topbar-sub').textContent   = titles[name][1];
 
-    if (name === 'libur') fetchLiburKhusus();
+    if (name === 'libur') { initKalender(); renderKalender(); }
 };
 
 // ══════════════════════════════════════════
@@ -1524,58 +1604,252 @@ function namaHari(s) {
 // ══════════════════════════════════════════
 // LIBUR KHUSUS
 // ══════════════════════════════════════════
+// ══════════════════════════════════════════
+// KALENDER LIBUR — State
+// ══════════════════════════════════════════
+let kalState = {
+    liburKhusus: {},    // data dari Firebase
+    liburBaru:   {},    // data baru belum disimpan
+    liburHapus:  [],    // tgl yg akan dihapus
+    tglDipilih:  null,
+};
+const LIBUR_NASIONAL_ADMIN = {
+    '2026-01-01':'Tahun Baru 2026','2026-01-27':'Isra Mikraj','2026-01-29':'Tahun Baru Imlek',
+    '2026-03-28':'Hari Suci Nyepi','2026-04-03':'Wafat Isa Almasih','2026-04-05':'Paskah',
+    '2026-04-20':'Idul Fitri 1447 H','2026-04-21':'Idul Fitri 1447 H','2026-05-01':'Hari Buruh',
+    '2026-05-14':'Kenaikan Isa Almasih','2026-05-23':'Hari Raya Waisak','2026-06-27':'Idul Adha',
+    '2026-07-17':'Tahun Baru Hijriah','2026-08-17':'HUT Kemerdekaan RI',
+    '2026-09-25':'Maulid Nabi Muhammad SAW','2026-12-25':'Hari Raya Natal',
+};
+const NAMA_BLN_ADMIN = ['','Januari','Februari','Maret','April','Mei','Juni',
+    'Juli','Agustus','September','Oktober','November','Desember'];
+
+// Init filter kalender
+function initKalender() {
+    const now  = new Date();
+    const bEl  = document.getElementById('kal-bulan');
+    const tEl  = document.getElementById('kal-tahun');
+    if (!bEl) return;
+    bEl.innerHTML = NAMA_BLN_ADMIN.slice(1).map((n,i) =>
+        `<option value="${i+1}" ${i+1===now.getMonth()+1?'selected':''}>${n}</option>`
+    ).join('');
+    const yr = now.getFullYear();
+    tEl.innerHTML = [yr-1,yr,yr+1].map(y =>
+        `<option value="${y}" ${y===yr?'selected':''}>${y}</option>`
+    ).join('');
+}
+
+window.renderKalender = async () => {
+    const bulan = parseInt(document.getElementById('kal-bulan').value);
+    const tahun = parseInt(document.getElementById('kal-tahun').value);
+    const wrap  = document.getElementById('kalender-wrap');
+    wrap.innerHTML = `<div class="spinner-wrap"><div class="spin"></div></div>`;
+    tutupDialog();
+
+    // Fetch libur khusus dari Firebase
+    try {
+        const snap = await get(ref(db, 'libur_khusus'));
+        kalState.liburKhusus = snap.exists() ? snap.val() : {};
+    } catch(e) { kalState.liburKhusus = {}; }
+
+    kalState.liburBaru  = {};
+    kalState.tglDipilih = null;
+    updateBulkSave();
+    renderKalenderGrid(bulan, tahun);
+    renderDaftarLibur();
+};
+
+function renderKalenderGrid(bulan, tahun) {
+    const wrap   = document.getElementById('kalender-wrap');
+    const today  = new Date().toISOString().split('T')[0];
+    const HARI   = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+
+    // Header hari
+    let html = `<div class="kal-grid" style="margin-bottom:4px;">`;
+    HARI.forEach(h => html += `<div class="kal-head">${h}</div>`);
+    html += `</div><div class="kal-grid">`;
+
+    // Padding awal bulan
+    const firstDay = new Date(tahun, bulan-1, 1).getDay();
+    for (let i = 0; i < firstDay; i++) html += `<div class="kal-day empty"></div>`;
+
+    // Hari-hari dalam bulan
+    const lastDate = new Date(tahun, bulan, 0).getDate();
+    for (let d = 1; d <= lastDate; d++) {
+        const tgl     = `${tahun}-${String(bulan).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+        const dayIdx  = new Date(tahun, bulan-1, d).getDay();
+        const isMinggu   = dayIdx === 0;
+        const isToday    = tgl === today;
+        const isNasional = !!LIBUR_NASIONAL_ADMIN[tgl];
+        const isKhusus   = !!kalState.liburKhusus[tgl] && !kalState.liburBaru[tgl];
+        const isBaru     = !!kalState.liburBaru[tgl];
+        const isHapus    = kalState.liburHapus.includes(tgl);
+
+        let cls = 'kal-day';
+        if (isMinggu)   cls += ' minggu';
+        else if (isBaru) cls += ' libur-baru';
+        else if (isKhusus && !isHapus) cls += ' libur-khusus';
+        else if (isNasional) cls += ' libur-nasional';
+        if (isToday)    cls += ' today';
+
+        const ket = kalState.liburBaru[tgl] || kalState.liburKhusus[tgl] || LIBUR_NASIONAL_ADMIN[tgl] || '';
+        const onclick = (isMinggu || isNasional) ? '' : `onclick="klikTanggal('${tgl}')"`;
+        const hapusBtn = (isKhusus || isBaru) ?
+            `<button class="kal-hapus" onclick="event.stopPropagation();hapusLiburKal('${tgl}')">✕</button>` : '';
+
+        html += `<div class="${cls}" ${onclick}>
+            ${hapusBtn}
+            <span class="kal-tgl">${d}</span>
+            <span class="kal-ket">${ket}</span>
+        </div>`;
+    }
+    html += `</div>`;
+    wrap.innerHTML = html;
+}
+
+window.klikTanggal = (tgl) => {
+    const [y,m,d] = tgl.split('-');
+    const namaHari = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][new Date(y,m-1,d).getDay()];
+    const tglFmt = `${d} ${NAMA_BLN_ADMIN[parseInt(m)]} ${y} · ${namaHari}`;
+    kalState.tglDipilih = tgl;
+    document.getElementById('dialog-tgl-label').textContent = `📅 ${tglFmt}`;
+    const ketExisting = kalState.liburBaru[tgl] || kalState.liburKhusus[tgl] || '';
+    document.getElementById('dialog-ket').value = ketExisting;
+    document.getElementById('libur-dialog').style.display = 'block';
+    document.getElementById('dialog-ket').focus();
+};
+
+window.tutupDialog = () => {
+    document.getElementById('libur-dialog').style.display = 'none';
+    kalState.tglDipilih = null;
+};
+
+window.konfirmasiTambahLibur = () => {
+    const tgl = kalState.tglDipilih;
+    const ket = document.getElementById('dialog-ket').value.trim();
+    if (!tgl) return;
+    if (!ket) { showToast('Isi keterangan libur terlebih dahulu', 'warning'); return; }
+    kalState.liburBaru[tgl] = ket;
+    // Hapus dari daftar hapus jika ada
+    kalState.liburHapus = kalState.liburHapus.filter(t => t !== tgl);
+    tutupDialog();
+    updateBulkSave();
+    const bulan = parseInt(document.getElementById('kal-bulan').value);
+    const tahun = parseInt(document.getElementById('kal-tahun').value);
+    renderKalenderGrid(bulan, tahun);
+};
+
+window.hapusLiburKal = (tgl) => {
+    if (kalState.liburBaru[tgl]) {
+        delete kalState.liburBaru[tgl];
+    } else if (kalState.liburKhusus[tgl]) {
+        kalState.liburHapus.push(tgl);
+        delete kalState.liburKhusus[tgl];
+    }
+    updateBulkSave();
+    const bulan = parseInt(document.getElementById('kal-bulan').value);
+    const tahun = parseInt(document.getElementById('kal-tahun').value);
+    renderKalenderGrid(bulan, tahun);
+};
+
+function updateBulkSave() {
+    const wrap  = document.getElementById('bulk-save-wrap');
+    const info  = document.getElementById('bulk-info');
+    const total = Object.keys(kalState.liburBaru).length + kalState.liburHapus.length;
+    if (total === 0) {
+        wrap.style.display = 'none';
+    } else {
+        wrap.style.display = 'flex';
+        const baru   = Object.keys(kalState.liburBaru).length;
+        const hapus  = kalState.liburHapus.length;
+        const parts  = [];
+        if (baru)  parts.push(`${baru} libur baru ditandai`);
+        if (hapus) parts.push(`${hapus} libur akan dihapus`);
+        info.textContent = parts.join(' · ');
+    }
+}
+
+window.simpanSemuaLibur = async () => {
+    try {
+        const updates = {};
+        // Tambah yang baru
+        Object.entries(kalState.liburBaru).forEach(([tgl, ket]) => {
+            updates[`libur_khusus/${tgl}`] = ket;
+        });
+        if (Object.keys(updates).length > 0) {
+            const { ref: dbRef, update: dbUpdate } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js");
+            await dbUpdate(ref(db, '/'), updates);
+        }
+        // Hapus yang ditandai hapus
+        const { remove } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js");
+        for (const tgl of kalState.liburHapus) {
+            await remove(ref(db, `libur_khusus/${tgl}`));
+        }
+        const total = Object.keys(kalState.liburBaru).length + kalState.liburHapus.length;
+        showToast(`✅ ${total} perubahan berhasil disimpan ke Firebase`, 'success');
+        kalState.liburBaru  = {};
+        kalState.liburHapus = [];
+        updateBulkSave();
+        renderKalender();
+    } catch(e) {
+        showToast('❌ Gagal menyimpan: ' + e.message, 'error');
+    }
+};
+
+window.batalSemuaLibur = () => {
+    kalState.liburBaru  = {};
+    kalState.liburHapus = [];
+    updateBulkSave();
+    renderKalender();
+};
+
 window.fetchLiburKhusus = async () => {
+    renderDaftarLibur();
+};
+
+async function renderDaftarLibur() {
     const el = document.getElementById('libur-list');
-    el.innerHTML = `<div class="spinner-wrap"><div class="spin"></div></div>`;
     try {
         const snap = await get(ref(db, 'libur_khusus'));
         if (!snap.exists()) {
             el.innerHTML = `<div class="empty">Belum ada libur khusus yang ditambahkan</div>`;
             return;
         }
-        const data = snap.val();
+        const data   = snap.val();
         const sorted = Object.entries(data).sort(([a],[b]) => a.localeCompare(b));
         el.innerHTML = sorted.map(([tgl, ket]) => {
             const [y,m,d] = tgl.split('-');
-            const tglFmt = `${d}-${m}-${y}`;
-            const hariIdx = new Date(y, m-1, d).getDay();
-            const namaHariStr = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][hariIdx];
+            const tglFmt  = `${d}-${m}-${y}`;
+            const hariIdx = new Date(y,m-1,d).getDay();
+            const namaH   = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][hariIdx];
             return `<div class="libur-item">
                 <div class="libur-info">
-                    <div class="libur-tgl">${tglFmt} · ${namaHariStr}</div>
+                    <div class="libur-tgl">${tglFmt} · ${namaH}</div>
                     <div class="libur-ket">${ket}</div>
                 </div>
-                <button class="btn-hapus-libur" onclick="hapusLibur('${tgl}','${ket}')">🗑 Hapus</button>
+                <button class="btn-hapus-libur" onclick="hapusLiburItem('${tgl}','${ket}')">🗑 Hapus</button>
             </div>`;
         }).join('');
     } catch(e) {
-        el.innerHTML = `<div class="empty" style="color:var(--err);">⚠️ Akses ditolak. Tambahkan <code>libur_khusus</code> ke Firebase Rules terlebih dahulu.</div>`;
+        el.innerHTML = `<div class="empty" style="color:var(--err);">⚠️ Akses ditolak. Tambahkan <code>libur_khusus</code> ke Firebase Rules.</div>`;
     }
-};
+}
 
-window.tambahLibur = async () => {
-    const tgl = document.getElementById('libur-tgl').value;
-    const ket = document.getElementById('libur-ket').value.trim();
-    if (!tgl) { showToast('Pilih tanggal libur terlebih dahulu', 'warning'); return; }
-    if (!ket) { showToast('Isi keterangan libur', 'warning'); return; }
-    try {
-        await update(ref(db, 'libur_khusus'), { [tgl]: ket });
-        showToast(`✅ Libur ${tgl} berhasil ditambahkan`, 'success');
-        document.getElementById('libur-tgl').value = '';
-        document.getElementById('libur-ket').value = '';
-        fetchLiburKhusus();
-    } catch(e) {
-        showToast('❌ Gagal menyimpan. Tambahkan libur_khusus ke Firebase Rules.', 'error');
-    }
-};
-
-window.hapusLibur = async (tgl, ket) => {
+window.hapusLiburItem = async (tgl, ket) => {
     if (!confirm(`Hapus libur "${ket}" pada ${tgl}?`)) return;
-    const { remove } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js");
-    await remove(ref(db, `libur_khusus/${tgl}`));
-    showToast(`🗑 Libur ${tgl} dihapus`, 'info');
-    fetchLiburKhusus();
+    try {
+        const { remove } = await import("https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js");
+        await remove(ref(db, `libur_khusus/${tgl}`));
+        showToast(`🗑 Libur ${tgl} dihapus`, 'info');
+        renderDaftarLibur();
+        renderKalender();
+    } catch(e) {
+        showToast('❌ Gagal menghapus: ' + e.message, 'error');
+    }
 };
+
+// Backward compat
+window.hapusLibur = window.hapusLiburItem;
 
 // ── Toast ──
 window.showToast = (msg, type='info') => {
