@@ -104,7 +104,9 @@
             background:rgba(255,255,255,.1);
             border-radius:var(--r-md);
             border:1.5px solid rgba(255,255,255,.15);
-            display:flex;align-items:center;gap:10px;padding:0 16px;
+            display:flex;align-items:center;gap:10px;
+            padding:0 4px 0 16px;
+            overflow:hidden;
             transition:border-color .2s,background .2s;
         }
         .field-wrap:focus-within{border-color:rgba(167,139,250,.7);background:rgba(255,255,255,.14);box-shadow:0 0 0 4px rgba(108,99,255,.15)}
@@ -129,25 +131,38 @@
         /* Tombol lihat PIN */
         .pin-toggle{
             background:none;border:none;cursor:pointer;
-            padding:8px;
+            padding:10px 14px;
             margin:0;
             color:rgba(255,255,255,.4);line-height:0;flex-shrink:0;
             transition:color .2s;
             display:flex;align-items:center;justify-content:center;
-            min-width:36px;min-height:36px;
+            min-width:44px;min-height:44px;
             -webkit-tap-highlight-color:transparent;
+            border-radius:0 calc(var(--r-md) - 1.5px) calc(var(--r-md) - 1.5px) 0;
         }
         .pin-toggle:hover{color:rgba(255,255,255,.8)}
+        .pin-toggle:active{color:rgba(255,255,255,1)}
         /* Sembunyikan tombol mata bawaan browser/WebView */
         input[type="password"]::-ms-reveal,
         input[type="password"]::-ms-clear,
         input[type="password"]::-webkit-contacts-auto-fill-button,
-        input[type="password"]::-webkit-credentials-auto-fill-button { display:none !important; }
+        input[type="password"]::-webkit-credentials-auto-fill-button,
+        input[type="password"]::-webkit-textfield-decoration-container,
+        input[type="password"]::-webkit-clear-button { display:none !important; }
         /* Pastikan input password tidak punya padding kanan ekstra di WebView */
         .field-wrap input[type="password"],
         .field-wrap input[type="text"] {
             -webkit-appearance:none;
             appearance:none;
+            padding-right:0 !important;
+        }
+        /* Hapus ikon autofill bawaan di Android Chrome/WebView */
+        .field-wrap input::-webkit-contacts-auto-fill-button,
+        .field-wrap input::-webkit-credentials-auto-fill-button {
+            visibility:hidden;
+            display:none !important;
+            pointer-events:none;
+            height:0;width:0;margin:0;
         }
         /* Ingat email */
         .remember-row{
