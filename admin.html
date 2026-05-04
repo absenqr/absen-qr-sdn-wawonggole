@@ -1174,11 +1174,12 @@ window.fetchLaporan = async () => {
     const el     = document.getElementById('laporan-table');
     el.innerHTML = `<div class="spinner-wrap"><div class="spin"></div></div>`;
 
-    const [abSnap, usSnap, lbSnap] = await Promise.all([
+    const [abSnap, usSnap] = await Promise.all([
         get(ref(db,'absensi')),
         get(ref(db,'users')),
-        get(ref(db,'libur_khusus')),
     ]);
+    let lbSnap = null;
+    try { lbSnap = await get(ref(db,'libur_khusus')); } catch(e) { /* rules belum ada */ }
 
     if (!abSnap.exists()) { el.innerHTML = `<div class="empty">Tidak ada data absensi</div>`; return; }
 
@@ -1526,26 +1527,30 @@ function namaHari(s) {
 window.fetchLiburKhusus = async () => {
     const el = document.getElementById('libur-list');
     el.innerHTML = `<div class="spinner-wrap"><div class="spin"></div></div>`;
-    const snap = await get(ref(db, 'libur_khusus'));
-    if (!snap.exists()) {
-        el.innerHTML = `<div class="empty">Belum ada libur khusus yang ditambahkan</div>`;
-        return;
+    try {
+        const snap = await get(ref(db, 'libur_khusus'));
+        if (!snap.exists()) {
+            el.innerHTML = `<div class="empty">Belum ada libur khusus yang ditambahkan</div>`;
+            return;
+        }
+        const data = snap.val();
+        const sorted = Object.entries(data).sort(([a],[b]) => a.localeCompare(b));
+        el.innerHTML = sorted.map(([tgl, ket]) => {
+            const [y,m,d] = tgl.split('-');
+            const tglFmt = `${d}-${m}-${y}`;
+            const hariIdx = new Date(y, m-1, d).getDay();
+            const namaHariStr = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][hariIdx];
+            return `<div class="libur-item">
+                <div class="libur-info">
+                    <div class="libur-tgl">${tglFmt} · ${namaHariStr}</div>
+                    <div class="libur-ket">${ket}</div>
+                </div>
+                <button class="btn-hapus-libur" onclick="hapusLibur('${tgl}','${ket}')">🗑 Hapus</button>
+            </div>`;
+        }).join('');
+    } catch(e) {
+        el.innerHTML = `<div class="empty" style="color:var(--err);">⚠️ Akses ditolak. Tambahkan <code>libur_khusus</code> ke Firebase Rules terlebih dahulu.</div>`;
     }
-    const data = snap.val();
-    const sorted = Object.entries(data).sort(([a],[b]) => a.localeCompare(b));
-    el.innerHTML = sorted.map(([tgl, ket]) => {
-        const [y,m,d] = tgl.split('-');
-        const tglFmt = `${d}-${m}-${y}`;
-        const hariIdx = new Date(y, m-1, d).getDay();
-        const namaHariStr = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][hariIdx];
-        return `<div class="libur-item">
-            <div class="libur-info">
-                <div class="libur-tgl">${tglFmt} · ${namaHariStr}</div>
-                <div class="libur-ket">${ket}</div>
-            </div>
-            <button class="btn-hapus-libur" onclick="hapusLibur('${tgl}','${ket}')">🗑 Hapus</button>
-        </div>`;
-    }).join('');
 };
 
 window.tambahLibur = async () => {
@@ -1553,11 +1558,15 @@ window.tambahLibur = async () => {
     const ket = document.getElementById('libur-ket').value.trim();
     if (!tgl) { showToast('Pilih tanggal libur terlebih dahulu', 'warning'); return; }
     if (!ket) { showToast('Isi keterangan libur', 'warning'); return; }
-    await update(ref(db, 'libur_khusus'), { [tgl]: ket });
-    showToast(`✅ Libur ${tgl} berhasil ditambahkan`, 'success');
-    document.getElementById('libur-tgl').value = '';
-    document.getElementById('libur-ket').value = '';
-    fetchLiburKhusus();
+    try {
+        await update(ref(db, 'libur_khusus'), { [tgl]: ket });
+        showToast(`✅ Libur ${tgl} berhasil ditambahkan`, 'success');
+        document.getElementById('libur-tgl').value = '';
+        document.getElementById('libur-ket').value = '';
+        fetchLiburKhusus();
+    } catch(e) {
+        showToast('❌ Gagal menyimpan. Tambahkan libur_khusus ke Firebase Rules.', 'error');
+    }
 };
 
 window.hapusLibur = async (tgl, ket) => {
