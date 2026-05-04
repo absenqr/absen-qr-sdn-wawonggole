@@ -1275,48 +1275,79 @@ window.fetchLaporan = async () => {
         return;
     }
 
+    // ── Hitung semua hari libur di bulan ini yang tidak punya data absensi ──
+    const allDatesSet = new Set(allDates);
+    const daysInMonth = new Date(parseInt(tahun), parseInt(bulan), 0).getDate();
+    const liburRows = []; // tanggal libur tanpa absensi apapun
+    for (let dd = 1; dd <= daysInMonth; dd++) {
+        const tgl = `${tahun}-${bulan}-${String(dd).padStart(2,'0')}`;
+        const namaLibur = liburKhusus[tgl] || LIBUR_NASIONAL_ADMIN[tgl];
+        if (namaLibur && !allDatesSet.has(tgl)) {
+            liburRows.push({ tgl, namaLibur });
+        }
+    }
+
     let rows = '';
     let total = 0;
-    allDates.forEach(tgl => {
-        Object.keys(allData[tgl]).forEach(uid => {
-            const d    = allData[tgl][uid];
-            const u    = users[uid] || {};
-            const nama = d.nama || u.nama || uid;
-            const jab  = JABATAN_LABEL[u.jabatan] || 'Guru Kelas';
-            const jadwal = getJadwal(users, uid, tgl);
 
-            const masukWaktu  = d.masuk?.waktu  || '–';
-            const pulangWaktu = d.pulang?.waktu || '–';
-            const masukStatus = d.masuk?.status || null;
+    // ── Gabungkan: baris libur kosong + baris absensi biasa, lalu sort ──
+    const semua = [
+        ...liburRows.map(({ tgl, namaLibur }) => ({ tgl, type: 'libur', namaLibur })),
+        ...allDates.flatMap(tgl =>
+            Object.entries(allData[tgl]).map(([uid, d]) => ({ tgl, type: 'absen', uid, d }))
+        ),
+    ].sort((a, b) => a.tgl < b.tgl ? -1 : a.tgl > b.tgl ? 1 : 0);
 
-            const telatCepat = calcTelatCepat(d);
-            const pswLewat   = calcPswLewat(d);
-
-            const chipCls = !d.masuk ? 'chip-gray' : masukStatus?.includes('Terlambat') ? 'chip-warn' : 'chip-ok';
-            const chipTxt = !d.masuk ? 'Belum' : masukStatus?.includes('Terlambat') ? 'Terlambat' : 'Tepat';
-
-            const keterangan = liburKhusus[tgl]
-                ? liburKhusus[tgl]
-                : d.alasanTidakHadir
-                ? (d.alasanTidakHadir.tipe + (d.alasanTidakHadir.detail ? ': '+d.alasanTidakHadir.detail : ''))
-                : '–';
-
-            rows += `<tr>
-                <td class="td-mono">${formatTgl(tgl)}</td>
-                <td style="color:var(--ink3);font-size:11px;">${namaHari(tgl)}</td>
-                <td class="td-name">${nama}</td>
-                <td style="font-size:11px;color:var(--ink3);">${jab}</td>
-                <td class="td-mono">${jadwal.masuk}</td>
-                <td class="td-mono" style="color:${masukWaktu==='–'?'var(--ink3)':'var(--prim)'};font-weight:700;">${masukWaktu}</td>
-                <td class="td-mono" style="color:${telatCepat<0?'var(--err)':telatCepat>0?'var(--ok)':'var(--ink3)'};font-weight:700;">${fmtMenit(telatCepat)}</td>
-                <td class="td-mono">${jadwal.pulang}</td>
-                <td class="td-mono" style="color:${pulangWaktu==='–'?'var(--ink3)':'var(--ok)'};font-weight:700;">${pulangWaktu}</td>
-                <td class="td-mono" style="color:${pswLewat<0?'var(--warn)':pswLewat>0?'var(--cyan)':'var(--ink3)'};font-weight:700;">${fmtMenit(pswLewat)}</td>
-                <td><span class="chip ${chipCls}">${chipTxt}</span></td>
-                <td style="font-size:10px;color:var(--ink3);max-width:160px;">${keterangan}</td>
+    semua.forEach(item => {
+        if (item.type === 'libur') {
+            // Baris khusus hari libur (tidak ada absensi sama sekali)
+            rows += `<tr style="background:#FDF4FF;">
+                <td class="td-mono">${formatTgl(item.tgl)}</td>
+                <td style="color:var(--ink3);font-size:11px;">${namaHari(item.tgl)}</td>
+                <td colspan="10" style="font-size:11px;font-weight:700;color:#7C3AED;padding-left:12px;">
+                    🎉 Hari Libur — ${item.namaLibur}
+                </td>
             </tr>`;
-            total++;
-        });
+            return;
+        }
+
+        const { tgl, uid, d } = item;
+        const u    = users[uid] || {};
+        const nama = d.nama || u.nama || uid;
+        const jab  = JABATAN_LABEL[u.jabatan] || 'Guru Kelas';
+        const jadwal = getJadwal(users, uid, tgl);
+
+        const masukWaktu  = d.masuk?.waktu  || '–';
+        const pulangWaktu = d.pulang?.waktu || '–';
+        const masukStatus = d.masuk?.status || null;
+
+        const telatCepat = calcTelatCepat(d);
+        const pswLewat   = calcPswLewat(d);
+
+        const chipCls = !d.masuk ? 'chip-gray' : masukStatus?.includes('Terlambat') ? 'chip-warn' : 'chip-ok';
+        const chipTxt = !d.masuk ? 'Belum' : masukStatus?.includes('Terlambat') ? 'Terlambat' : 'Tepat';
+
+        // ── Keterangan: cek libur khusus, libur nasional, lalu alasan guru ──
+        const keterangan = liburKhusus[tgl] || LIBUR_NASIONAL_ADMIN[tgl]
+            || (d.alasanTidakHadir
+                ? (d.alasanTidakHadir.tipe + (d.alasanTidakHadir.detail ? ': '+d.alasanTidakHadir.detail : ''))
+                : '–');
+
+        rows += `<tr>
+            <td class="td-mono">${formatTgl(tgl)}</td>
+            <td style="color:var(--ink3);font-size:11px;">${namaHari(tgl)}</td>
+            <td class="td-name">${nama}</td>
+            <td style="font-size:11px;color:var(--ink3);">${jab}</td>
+            <td class="td-mono">${jadwal.masuk}</td>
+            <td class="td-mono" style="color:${masukWaktu==='–'?'var(--ink3)':'var(--prim)'};font-weight:700;">${masukWaktu}</td>
+            <td class="td-mono" style="color:${telatCepat<0?'var(--err)':telatCepat>0?'var(--ok)':'var(--ink3)'};font-weight:700;">${fmtMenit(telatCepat)}</td>
+            <td class="td-mono">${jadwal.pulang}</td>
+            <td class="td-mono" style="color:${pulangWaktu==='–'?'var(--ink3)':'var(--ok)'};font-weight:700;">${pulangWaktu}</td>
+            <td class="td-mono" style="color:${pswLewat<0?'var(--warn)':pswLewat>0?'var(--cyan)':'var(--ink3)'};font-weight:700;">${fmtMenit(pswLewat)}</td>
+            <td><span class="chip ${chipCls}">${chipTxt}</span></td>
+            <td style="font-size:10px;color:var(--ink3);max-width:160px;">${keterangan}</td>
+        </tr>`;
+        total++;
     });
 
     el.innerHTML = `
@@ -1331,7 +1362,8 @@ window.fetchLaporan = async () => {
         </table>`;
 
     document.getElementById('lap-count').textContent = `${total} catatan`;
-    reportCache = { allDates, allData, users, bulan, tahun };
+    // Simpan liburKhusus ke cache agar doExport & doPrint bisa pakai
+    reportCache = { allDates, allData, users, bulan, tahun, liburKhusus };
 };
 
 // ══════════════════════════════════════════
@@ -1339,18 +1371,53 @@ window.fetchLaporan = async () => {
 // ══════════════════════════════════════════
 window.doExport = () => {
     if (!reportCache) { showToast('Pilih filter laporan terlebih dahulu', 'warning'); return; }
-    const { allDates, allData, users, bulan, tahun } = reportCache;
+    const { allDates, allData, users, bulan, tahun, liburKhusus = {} } = reportCache;
     const periodeLabel = `${NAMA_BULAN[parseInt(bulan)]} ${tahun}`;
 
     const header = ['Tanggal','Hari','Nama','Jabatan','Jadwal Masuk','Absen Masuk',
         'Telat/Cepat (menit)','Jadwal Pulang','Absen Pulang','PSW/Lewat (menit)','Status','Keterangan'];
 
+    // ── Kumpulkan semua guru aktif untuk mengisi baris hari libur ──
+    const allDatesSet = new Set(allDates);
+    const guruList = Object.entries(users).filter(([, u]) =>
+        u.role === 'guru' || u.role === 'kepala_sekolah'
+    );
+
+    // ── Hitung hari libur di bulan ini yang tidak ada absensinya ──
+    const daysInMonth = new Date(parseInt(tahun), parseInt(bulan), 0).getDate();
+    const extraLiburRows = [];
+    for (let dd = 1; dd <= daysInMonth; dd++) {
+        const tgl = `${tahun}-${bulan}-${String(dd).padStart(2,'0')}`;
+        const namaLibur = liburKhusus[tgl] || LIBUR_NASIONAL_ADMIN[tgl];
+        if (namaLibur && !allDatesSet.has(tgl)) {
+            guruList.forEach(([uid, u]) => {
+                const jadwal = getJadwal(users, uid, tgl);
+                extraLiburRows.push([
+                    formatTgl(tgl), namaHari(tgl),
+                    u.nama || uid,
+                    JABATAN_LABEL[u.jabatan] || 'Guru Kelas',
+                    jadwal.masuk, '–',
+                    '–', jadwal.pulang, '–', '–',
+                    'Hari Libur',
+                    namaLibur,
+                ]);
+            });
+        }
+    }
+
     const rows = [header];
+
+    // ── Baris absensi biasa (dengan keterangan diperbaiki) ──
     allDates.forEach(tgl => {
         Object.keys(allData[tgl]).forEach(uid => {
             const d = allData[tgl][uid];
             const u = users[uid] || {};
             const jadwal = getJadwal(users, uid, tgl);
+            // Keterangan: cek libur khusus → libur nasional → alasan guru
+            const ket = liburKhusus[tgl] || LIBUR_NASIONAL_ADMIN[tgl]
+                || (d.alasanTidakHadir
+                    ? (d.alasanTidakHadir.tipe + (d.alasanTidakHadir.detail ? ': '+d.alasanTidakHadir.detail : ''))
+                    : '–');
             rows.push([
                 formatTgl(tgl), namaHari(tgl),
                 d.nama || u.nama || uid,
@@ -1360,13 +1427,18 @@ window.doExport = () => {
                 jadwal.pulang, d.pulang?.waktu || '–',
                 fmtMenit(calcPswLewat(d)),
                 d.masuk?.status || 'Belum Absen',
-                d.alasanTidakHadir ? (d.alasanTidakHadir.tipe + (d.alasanTidakHadir.detail ? ': '+d.alasanTidakHadir.detail : '')) : '–',
+                ket,
             ]);
         });
     });
 
+    // ── Gabungkan baris libur ke dalam urutan yang benar ──
+    const allRows = [...rows.slice(1), ...extraLiburRows].sort((a, b) =>
+        a[0] < b[0] ? -1 : a[0] > b[0] ? 1 : (a[2] < b[2] ? -1 : 1)
+    );
+
     const wb  = XLSX.utils.book_new();
-    const ws  = XLSX.utils.aoa_to_sheet(rows);
+    const ws  = XLSX.utils.aoa_to_sheet([header, ...allRows]);
     ws['!cols'] = [10,8,20,16,10,10,12,10,10,12,14,24].map(w => ({wch:w}));
     XLSX.utils.book_append_sheet(wb, ws, 'Absensi');
     const fname = `Absensi_SDN_Wawonggole_${periodeLabel.replace(' ','_')}.xlsx`;
@@ -1379,34 +1451,68 @@ window.doExport = () => {
 // ══════════════════════════════════════════
 window.doPrint = () => {
     if (!reportCache) { showToast('Pilih filter laporan terlebih dahulu', 'warning'); return; }
-    const { allDates, allData, users, bulan, tahun } = reportCache;
+    const { allDates, allData, users, bulan, tahun, liburKhusus = {} } = reportCache;
     const periodeLabel = `${NAMA_BULAN[parseInt(bulan)]} ${tahun}`;
 
     document.getElementById('print-periode-label').textContent = `Periode: ${periodeLabel}`;
     document.getElementById('print-cetak-tgl').textContent =
         `Dicetak: ${new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}`;
 
+    // ── Bangun guruMap dari data absensi biasa ──
     const guruMap = {};
+    const allDatesSet = new Set(allDates);
     allDates.forEach(tgl => {
         Object.keys(allData[tgl]).forEach(uid => {
             const d = allData[tgl][uid];
             if (!d.nama && !users[uid]?.nama) return;
             if (!guruMap[uid]) guruMap[uid] = { nama: d.nama || users[uid]?.nama || uid, rows:[] };
-            guruMap[uid].rows.push({tgl, d});
+            guruMap[uid].rows.push({ tgl, d, isLibur: false });
         });
     });
+
+    // ── Tambahkan baris hari libur yang tidak ada absensinya ──
+    const daysInMonth = new Date(parseInt(tahun), parseInt(bulan), 0).getDate();
+    for (let dd = 1; dd <= daysInMonth; dd++) {
+        const tgl = `${tahun}-${bulan}-${String(dd).padStart(2,'0')}`;
+        const namaLibur = liburKhusus[tgl] || LIBUR_NASIONAL_ADMIN[tgl];
+        if (namaLibur && !allDatesSet.has(tgl)) {
+            Object.entries(users).forEach(([uid, u]) => {
+                if (u.role !== 'guru' && u.role !== 'kepala_sekolah') return;
+                if (!guruMap[uid]) guruMap[uid] = { nama: u.nama || uid, rows: [] };
+                guruMap[uid].rows.push({ tgl, d: {}, isLibur: true, namaLibur });
+            });
+        }
+    }
+
+    // ── Sort tiap guru berdasarkan tanggal ──
+    Object.values(guruMap).forEach(g => g.rows.sort((a,b) => a.tgl < b.tgl ? -1 : 1));
 
     const thS = `padding:6px 8px;border:1px solid #94A3B8;background:#4F46E5;color:white;font-size:8px;font-weight:800;text-align:center;`;
     const tdS = (align, extra='') => `padding:5px 8px;border:1px solid #E2E8F0;font-size:9px;text-align:${align};${extra}`;
 
     let html = '';
     Object.entries(guruMap).forEach(([uid,{nama,rows}],gi) => {
-        const hadir = rows.filter(r => r.d.masuk).length;
+        const hadir   = rows.filter(r => !r.isLibur && r.d.masuk).length;
+        const libur   = rows.filter(r => r.isLibur).length;
         let tbody = '';
-        rows.forEach(({tgl,d},i) => {
+        rows.forEach(({tgl, d, isLibur, namaLibur}, i) => {
+            const bg = i%2===0?'white':'#F8FAFC';
+            if (isLibur) {
+                // Baris hari libur
+                tbody += `<tr style="background:#FDF4FF;">
+                    <td style="${tdS('center')}">${formatTgl(tgl)}</td>
+                    <td style="${tdS('center')}">${namaHari(tgl)}</td>
+                    <td colspan="7" style="${tdS('left','color:#7C3AED;font-weight:700;font-size:8px;')}">
+                        🎉 Hari Libur — ${namaLibur}
+                    </td>
+                </tr>`;
+                return;
+            }
             const jadwal = getJadwal(users, uid, tgl);
             const tc = calcTelatCepat(d), pl = calcPswLewat(d);
-            const bg = i%2===0?'white':'#F8FAFC';
+            // Keterangan: cek libur khusus → libur nasional → alasan guru
+            const ket = liburKhusus[tgl] || LIBUR_NASIONAL_ADMIN[tgl]
+                || (d.alasanTidakHadir ? d.alasanTidakHadir.tipe : '–');
             tbody += `<tr style="background:${bg}">
                 <td style="${tdS('center')}">${formatTgl(tgl)}</td>
                 <td style="${tdS('center')}">${namaHari(tgl)}</td>
@@ -1416,14 +1522,15 @@ window.doPrint = () => {
                 <td style="${tdS('center','font-weight:700;')}">${jadwal.pulang}</td>
                 <td style="${tdS('center','font-weight:700;color:#059669;')}">${d.pulang?.waktu||'–'}</td>
                 <td style="${tdS('center',`font-weight:700;color:${pl<0?'#D97706':pl>0?'#2563EB':'#94A3B8'};`)}">${fmtMenit(pl)}'</td>
-                <td style="${tdS('left','font-size:8px;color:#475569;')}">${d.alasanTidakHadir?(d.alasanTidakHadir.tipe):'–'}</td>
+                <td style="${tdS('left','font-size:8px;color:#475569;')}">${ket}</td>
             </tr>`;
         });
 
+        const libKet = libur > 0 ? ` · Libur: ${libur} hari` : '';
         html += `<div style="margin-bottom:28px;${gi>0?'page-break-before:auto;':''}">
             <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
                 <p style="font-size:12px;font-weight:800;color:#0F172A;border-left:4px solid #4F46E5;padding-left:8px;">${nama}</p>
-                <p style="font-size:9px;color:#64748B;">Hadir: ${hadir} dari ${rows.length} hari</p>
+                <p style="font-size:9px;color:#64748B;">Hadir: ${hadir} dari ${rows.length} hari${libKet}</p>
             </div>
             <table style="width:100%;border-collapse:collapse;">
                 <thead><tr>
