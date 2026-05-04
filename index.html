@@ -1412,6 +1412,16 @@ window.switchAdminTab = (tab) => {
 window.startScanner = (mode) => {
     if (currentUserRole === 'admin') { showToast('Admin tidak memiliki akses absensi.', 'error'); return; }
     if (currentUserRole !== 'guru' && currentUserRole !== 'kepala_sekolah') { showToast('Akses absensi tidak diizinkan.', 'error'); return; }
+
+    // ── Cek hari libur sebelum izinkan scan ──
+    const todayStr  = new Date().toISOString().split('T')[0];
+    const namaLibur = getNamaLibur(todayStr);
+    if (namaLibur) {
+        showToast(`🎉 Hari ini libur (${namaLibur}), tidak perlu absen.`, 'warning');
+        applyHolidayUI(namaLibur);
+        return;
+    }
+
     if (!gpsChecked)  { showToast('Harap tunggu, GPS sedang diperiksa…', 'warning'); return; }
     if (!gpsValid)    { showToast('❌ Anda berada di luar area sekolah.', 'error');   return; }
 
@@ -1566,6 +1576,12 @@ async function fetchHistory() {
     }
 
     const today  = dates[0];
+
+    // Pastikan data hari libur sudah termuat sebelum render
+    const tahunHistory = new Date().getFullYear();
+    await fetchLiburNasional(tahunHistory);
+    await fetchLiburKhususDB();
+
     const dbRef  = ref(db);
 
     const settled = await Promise.allSettled(
@@ -1597,7 +1613,20 @@ async function fetchHistory() {
             }
         }
 
-        // Render activity card
+        // Render activity card — cek apakah tanggal ini hari libur
+        const namaLiburTgl = getNamaLibur(tgl);
+        if (namaLiburTgl) {
+            container.innerHTML += `
+                <div class="activity-card" style="border-left:3px solid #7C3AED;">
+                    <p class="activity-date">${tgl}</p>
+                    <div class="activity-row">
+                        <span class="activity-type" style="color:#7C3AED;font-weight:700;">🎉 Hari Libur</span>
+                        <span class="activity-time" style="color:#7C3AED;">${namaLiburTgl}</span>
+                    </div>
+                </div>`;
+            continue;
+        }
+
         const masukHTML = data.masuk ? `
             <div class="activity-row">
                 <div class="activity-row-wrap">
@@ -1625,10 +1654,16 @@ async function fetchHistory() {
     }
 
     if (!foundToday) {
-        document.getElementById('status-masuk-val').innerText = 'Belum Absen';
-        document.getElementById('status-masuk-val').className = 'status-row-val empty';
-        document.getElementById('status-pulang-val').innerText = 'Belum Absen';
-        document.getElementById('status-pulang-val').className = 'status-row-val empty';
+        // Cek apakah hari ini adalah hari libur
+        const namaLiburHariIni = getNamaLibur(today);
+        if (namaLiburHariIni) {
+            applyHolidayUI(namaLiburHariIni);
+        } else {
+            document.getElementById('status-masuk-val').innerText = 'Belum Absen';
+            document.getElementById('status-masuk-val').className = 'status-row-val empty';
+            document.getElementById('status-pulang-val').innerText = 'Belum Absen';
+            document.getElementById('status-pulang-val').className = 'status-row-val empty';
+        }
     }
     if (!container.innerHTML) container.innerHTML = `<p class="empty-state">Belum ada riwayat</p>`;
 }
@@ -2051,6 +2086,49 @@ async function fetchLiburNasional(year) {
         _liburCache[y] = true; // tandai agar tidak retry terus
         console.warn(`[Libur] Gagal fetch API tahun ${y}, menggunakan data lokal:`, err.message);
     }
+}
+
+// ══════════════════════════════════════════════════════════
+// LIBUR HELPERS — cek hari libur untuk UI
+// ══════════════════════════════════════════════════════════
+
+/**
+ * Kembalikan nama hari libur untuk tanggal tgl (format YYYY-MM-DD),
+ * atau null jika bukan hari libur.
+ */
+function getNamaLibur(tgl) {
+    return LIBUR_KHUSUS[tgl] || LIBUR_NASIONAL[tgl] || null;
+}
+
+/**
+ * Terapkan tampilan "Hari Libur" ke home screen:
+ * - Status card menampilkan nama libur
+ * - Kedua tombol scan dinonaktifkan dengan label "Hari Libur"
+ */
+function applyHolidayUI(namaLibur) {
+    // Update eyebrow
+    const eyebrow = document.querySelector('.status-eyebrow');
+    if (eyebrow) eyebrow.textContent = '🎉 Hari Libur';
+
+    // Update status rows
+    const masukEl  = document.getElementById('status-masuk-val');
+    const pulangEl = document.getElementById('status-pulang-val');
+    if (masukEl)  { masukEl.innerText  = namaLibur; masukEl.className  = 'status-row-val'; masukEl.style.color  = '#7C3AED'; }
+    if (pulangEl) { pulangEl.innerText = namaLibur; pulangEl.className = 'status-row-val'; pulangEl.style.color = '#7C3AED'; }
+
+    // Nonaktifkan tombol scan
+    ['masuk','pulang'].forEach(mode => {
+        const btn = document.getElementById(`btn-scan-${mode}`);
+        if (!btn) return;
+        btn.disabled  = true;
+        btn.onclick   = null;
+        btn.style.opacity = '0.45';
+        btn.style.cursor  = 'not-allowed';
+        const label = btn.querySelector('.scan-btn-label');
+        if (label) label.textContent = '🎉 Hari Libur';
+        const sub = btn.querySelector('.scan-btn-sub');
+        if (sub)   sub.textContent   = namaLibur;
+    });
 }
 
 // ══════════════════════════════════════════════════════════
