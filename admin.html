@@ -1437,6 +1437,14 @@ onAuthStateChanged(auth, async (user) => {
 function showLoginPage() {
   document.getElementById('login-page').style.display = 'flex';
   document.getElementById('app').style.display        = 'none';
+
+  // Reset tombol login ke kondisi awal.
+  // Pada path login SUKSES, catch tidak terpanggil sehingga tombol tidak pernah di-reset.
+  // Akibatnya saat logout dan kembali ke halaman login, tombol masih disabled + 'Memverifikasi…'.
+  const btn = document.getElementById('btn-login');
+  const txt = document.getElementById('btn-login-text');
+  if (btn) btn.disabled = false;
+  if (txt) txt.textContent = 'Masuk ke Panel Admin';
 }
 
 function showAppPage() {
