@@ -6,6 +6,8 @@
 <title>Admin Panel · E-Presensi SDN Wawonggole</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 /* ════════════════════════════════════════
    DESIGN TOKENS
@@ -819,6 +821,122 @@ tr:hover td { background: #F9FAFB; }
   .stats-grid { grid-template-columns: 1fr 1fr; }
   .override-form { grid-template-columns: 1fr; }
 }
+/* ════════════════════════════════════════
+   QR SCANNER & QR DISPLAY
+════════════════════════════════════════ */
+/* Modal QR Viewer (tampilkan QR guru) */
+.modal-qr-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 0;
+}
+.modal-qr-box {
+  padding: 14px;
+  background: #fff;
+  border-radius: 14px;
+  border: 1.5px solid var(--line);
+  box-shadow: 0 4px 20px rgba(79,70,229,.1);
+  display: inline-block;
+}
+.modal-qr-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--ink);
+  text-align: center;
+}
+.modal-qr-meta {
+  font-size: 11px;
+  color: var(--ink3);
+  text-align: center;
+}
+.modal-qr-uid {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--ink3);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 5px 10px;
+  word-break: break-all;
+  text-align: center;
+  max-width: 220px;
+}
+.modal-qr-note {
+  font-size: 11px;
+  color: var(--ink3);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* QR Scanner modal */
+.scanner-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.scanner-video-box {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #000;
+  aspect-ratio: 1;
+  border: 2px solid var(--prim);
+}
+.scanner-video-box video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.scanner-video-box canvas { display: none; }
+.scanner-crosshair {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.scanner-crosshair::before,
+.scanner-crosshair::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  border: 3px solid rgba(108,99,255,.8);
+  border-radius: 8px;
+}
+.scanner-crosshair::before { width: 55%; height: 55%; }
+.scanner-crosshair::after  { width: 30%; height: 30%; background: rgba(108,99,255,.05); }
+.scanner-anim-line {
+  position: absolute;
+  left: 22.5%; right: 22.5%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--prim2), transparent);
+  animation: scan-line 2s ease-in-out infinite;
+  top: 50%;
+}
+@keyframes scan-line {
+  0%   { top: 22.5%; opacity: 1; }
+  50%  { opacity: 1; }
+  100% { top: 77.5%; opacity: .3; }
+}
+.scanner-status {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--ink2);
+  text-align: center;
+  min-height: 20px;
+}
+.scanner-status.success { color: var(--ok); }
+.scanner-status.error   { color: var(--err); }
+
+/* Btn QR in guru card */
+.btn-qr { background: var(--purple-l); color: var(--purple); border: 1px solid rgba(139,92,246,.3); }
+.btn-qr:hover { background: #DDD6FE; }
+
 </style>
 </head>
 <body>
@@ -933,6 +1051,16 @@ tr:hover td { background: #F9FAFB; }
           <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
         Libur Khusus
+      </div>
+      <div class="sb-section" style="margin-top:8px;">Presensi QR</div>
+      <div class="sb-item" onclick="openQRScanner()">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+          <path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+          <rect x="7" y="7" width="3" height="3"/><rect x="14" y="7" width="3" height="3"/>
+          <rect x="7" y="14" width="3" height="3"/><rect x="14" y="14" width="3" height="3"/>
+        </svg>
+        Scan QR Absen
       </div>
       <div class="sb-section" style="margin-top:8px;">Export</div>
       <div class="sb-item" onclick="showPanel('laporan'); setTimeout(doExport, 300)">
@@ -1058,6 +1186,15 @@ tr:hover td { background: #F9FAFB; }
               <div class="card-sub">Kelola nama dan jabatan guru</div>
             </div>
             <div class="card-actions">
+              <button class="btn btn-prim" onclick="openQRScanner()">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+                  <path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+                  <rect x="7" y="7" width="3" height="3"/><rect x="14" y="7" width="3" height="3"/>
+                  <rect x="7" y="14" width="3" height="3"/><rect x="14" y="14" width="3" height="3"/>
+                </svg>
+                Scan QR Absen
+              </button>
               <button class="btn btn-ghost" onclick="fetchGuruList()">
                 <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                   <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.08-5.96"/>
@@ -1312,6 +1449,72 @@ tr:hover td { background: #F9FAFB; }
 </div>
 
 <div id="toast"></div>
+
+<!-- ════════════════════════════════════════
+     MODAL: QR VIEWER (tampilkan QR guru)
+════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-qr-viewer" onclick="if(event.target===this) closeQRViewer()">
+  <div class="modal-box" style="max-width:340px;">
+    <div class="modal-title">🔲 QR Code Guru</div>
+    <div class="modal-sub" id="modal-qr-viewer-sub">QR Code untuk presensi</div>
+    <div class="modal-qr-body">
+      <div class="modal-qr-name" id="modal-qr-guru-name">–</div>
+      <div class="modal-qr-meta" id="modal-qr-guru-meta">–</div>
+      <div class="modal-qr-box">
+        <div id="modal-qr-canvas"></div>
+      </div>
+      <div class="modal-qr-uid" id="modal-qr-uid-text">–</div>
+      <div class="modal-qr-note">Admin gunakan tombol <strong>Scan QR Absen</strong><br>untuk men-scan QR code ini</div>
+    </div>
+    <div class="modal-actions" style="justify-content:center;">
+      <button class="btn btn-ghost" onclick="closeQRViewer()">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     MODAL: QR SCANNER
+════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-qr-scanner" onclick="if(event.target===this) closeQRScanner()">
+  <div class="modal-box" style="max-width:420px;">
+    <div class="modal-title">📷 Scan QR Absen</div>
+    <div class="modal-sub">Arahkan kamera ke QR code guru untuk mencatat kehadiran</div>
+
+    <!-- Pilih tipe absen -->
+    <div style="display:flex;gap:8px;margin-bottom:14px;justify-content:center;">
+      <button class="btn" id="scan-type-masuk" onclick="setScanType('masuk')"
+        style="background:var(--ok-l);color:var(--ok);border:2px solid var(--ok);font-weight:800;">
+        ⬆️ Masuk
+      </button>
+      <button class="btn" id="scan-type-pulang" onclick="setScanType('pulang')"
+        style="background:var(--bg);color:var(--ink3);border:2px solid var(--line);font-weight:800;">
+        ⬇️ Pulang
+      </button>
+    </div>
+
+    <div class="scanner-wrap">
+      <div class="scanner-video-box" id="scanner-video-box">
+        <video id="qr-video" autoplay playsinline muted></video>
+        <canvas id="qr-canvas"></canvas>
+        <div class="scanner-crosshair">
+          <div class="scanner-anim-line"></div>
+        </div>
+      </div>
+      <div class="scanner-status" id="scanner-status">Menginisialisasi kamera…</div>
+    </div>
+
+    <!-- Hasil scan terakhir -->
+    <div id="scan-result-box" style="display:none;margin-top:10px;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);">
+      <div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px;">HASIL SCAN TERAKHIR</div>
+      <div id="scan-result-nama" style="font-size:14px;font-weight:800;color:var(--ink);">–</div>
+      <div id="scan-result-info" style="font-size:11px;color:var(--ink3);margin-top:3px;">–</div>
+    </div>
+
+    <div class="modal-actions" style="justify-content:center;margin-top:14px;">
+      <button class="btn btn-ghost" onclick="closeQRScanner()">Tutup Scanner</button>
+    </div>
+  </div>
+</div>
 
 <!-- ════════════════════════════════════════
      JAVASCRIPT MODULE
@@ -1685,6 +1888,15 @@ window.fetchGuruList = async () => {
           <div class="guru-meta">${jab} · ${jm}–${jp} · ${htjStr}${ovStr}</div>
         </div>
         <div class="guru-actions">
+          <button class="btn btn-qr" style="font-size:10px;" onclick="showGuruQR('${uid}')">
+            <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+              <path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/>
+              <path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
+              <rect x="7" y="7" width="3" height="3"/><rect x="14" y="7" width="3" height="3"/>
+              <rect x="7" y="14" width="3" height="3"/><rect x="14" y="14" width="3" height="3"/>
+            </svg>
+            QR
+          </button>
           <button class="btn btn-ghost" onclick="openEditGuru('${uid}')">✏️ Edit</button>
           <button class="btn btn-cyan" style="font-size:10px;" onclick="showPanel('jadwal')">🗓 Jadwal</button>
         </div>
@@ -1720,6 +1932,226 @@ window.submitEditGuru = async () => {
     showToast('❌ Gagal menyimpan: ' + err.message, 'error');
   }
 };
+
+// ─────────────────────────────────────────
+// QR CODE VIEWER (tampilkan QR per guru)
+// ─────────────────────────────────────────
+let _adminQRInstance = null;
+
+window.showGuruQR = (uid) => {
+  const u = state.users?.[uid];
+  if (!u) return;
+  const jab = JABATAN_LABEL[u.jabatan] || 'Guru';
+
+  document.getElementById('modal-qr-guru-name').textContent = u.nama || uid;
+  document.getElementById('modal-qr-guru-meta').textContent = jab;
+  document.getElementById('modal-qr-uid-text').textContent  = uid;
+
+  const wrap = document.getElementById('modal-qr-canvas');
+  if (_adminQRInstance) {
+    try { _adminQRInstance.clear(); } catch (_) {}
+    wrap.innerHTML = '';
+  }
+  _adminQRInstance = new QRCode(wrap, {
+    text: uid,
+    width:  180,
+    height: 180,
+    colorDark:  '#0D1117',
+    colorLight: '#FFFFFF',
+    correctLevel: QRCode.CorrectLevel.H,
+  });
+
+  document.getElementById('modal-qr-viewer').classList.add('open');
+};
+
+window.closeQRViewer = () => {
+  document.getElementById('modal-qr-viewer').classList.remove('open');
+};
+
+// ─────────────────────────────────────────
+// QR SCANNER
+// ─────────────────────────────────────────
+let _scanStream     = null;
+let _scanAnimFrame  = null;
+let _scanCooldown   = false;
+let _scanType       = 'masuk';  // 'masuk' | 'pulang'
+
+window.setScanType = (type) => {
+  _scanType = type;
+  const btnM = document.getElementById('scan-type-masuk');
+  const btnP = document.getElementById('scan-type-pulang');
+  if (type === 'masuk') {
+    btnM.style.cssText = 'background:var(--ok-l);color:var(--ok);border:2px solid var(--ok);font-weight:800;';
+    btnP.style.cssText = 'background:var(--bg);color:var(--ink3);border:2px solid var(--line);font-weight:800;';
+  } else {
+    btnM.style.cssText = 'background:var(--bg);color:var(--ink3);border:2px solid var(--line);font-weight:800;';
+    btnP.style.cssText = 'background:var(--prim-l);color:var(--prim);border:2px solid var(--prim);font-weight:800;';
+  }
+};
+
+window.openQRScanner = () => {
+  _scanCooldown = false;
+  setScanType('masuk');
+  document.getElementById('scan-result-box').style.display = 'none';
+  document.getElementById('modal-qr-scanner').classList.add('open');
+  startScanner();
+};
+
+window.closeQRScanner = () => {
+  stopScanner();
+  document.getElementById('modal-qr-scanner').classList.remove('open');
+};
+
+async function startScanner() {
+  const statusEl = document.getElementById('scanner-status');
+  const video    = document.getElementById('qr-video');
+  statusEl.className = 'scanner-status';
+  statusEl.textContent = 'Meminta akses kamera…';
+
+  try {
+    _scanStream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 640 } }
+    });
+    video.srcObject = _scanStream;
+    await video.play();
+    statusEl.textContent = 'Arahkan kamera ke QR code guru…';
+    scanLoop();
+  } catch (err) {
+    statusEl.className = 'scanner-status error';
+    if (err.name === 'NotAllowedError') {
+      statusEl.textContent = '❌ Akses kamera ditolak. Izinkan kamera di browser Anda.';
+    } else if (err.name === 'NotFoundError') {
+      statusEl.textContent = '❌ Tidak ada kamera yang ditemukan.';
+    } else {
+      statusEl.textContent = '❌ Gagal mengakses kamera: ' + err.message;
+    }
+  }
+}
+
+function stopScanner() {
+  if (_scanAnimFrame) { cancelAnimationFrame(_scanAnimFrame); _scanAnimFrame = null; }
+  if (_scanStream)    { _scanStream.getTracks().forEach(t => t.stop()); _scanStream = null; }
+  const video = document.getElementById('qr-video');
+  if (video) { video.srcObject = null; }
+}
+
+function scanLoop() {
+  const video  = document.getElementById('qr-video');
+  const canvas = document.getElementById('qr-canvas');
+  if (!video || !canvas || !_scanStream) return;
+
+  const ctx = canvas.getContext('2d');
+
+  function tick() {
+    if (!_scanStream) return;
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      canvas.width  = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, imageData.width, imageData.height, {
+        inversionAttempts: 'dontInvert',
+      });
+      if (code && !_scanCooldown) {
+        handleQRScan(code.data);
+      }
+    }
+    _scanAnimFrame = requestAnimationFrame(tick);
+  }
+  tick();
+}
+
+async function handleQRScan(uid) {
+  if (_scanCooldown) return;
+  _scanCooldown = true;
+
+  const statusEl   = document.getElementById('scanner-status');
+  const resultBox  = document.getElementById('scan-result-box');
+  const resultNama = document.getElementById('scan-result-nama');
+  const resultInfo = document.getElementById('scan-result-info');
+
+  // Cek apakah uid ada di daftar guru
+  if (!state.users) {
+    try {
+      const snap = await get(ref(db, 'users'));
+      state.users = snap.exists() ? snap.val() : {};
+    } catch (_) { state.users = {}; }
+  }
+
+  const u = state.users?.[uid];
+  if (!u || (u.role !== 'guru' && u.role !== 'kepala_sekolah')) {
+    statusEl.className = 'scanner-status error';
+    statusEl.textContent = '❌ QR tidak dikenali atau bukan akun guru';
+    resultNama.textContent = 'Tidak dikenali';
+    resultInfo.textContent = uid.substring(0, 20) + '…';
+    resultBox.style.display = 'block';
+    resultBox.style.borderColor = 'var(--err)';
+    setTimeout(() => { _scanCooldown = false; statusEl.className = 'scanner-status'; statusEl.textContent = 'Arahkan kamera ke QR code guru…'; }, 3000);
+    return;
+  }
+
+  const nama = u.nama || uid;
+  const jab  = JABATAN_LABEL[u.jabatan] || 'Guru';
+
+  // Rekam absensi
+  const now   = new Date();
+  const hh    = String(now.getHours()).padStart(2,'0');
+  const mm    = String(now.getMinutes()).padStart(2,'0');
+  const waktu = `${hh}:${mm}`;
+  const today = todayISO();
+
+  // Hitung jadwal & status
+  const defM = u?.jadwal?.masuk  || '07:20';
+  const defP = u?.jadwal?.pulang || '12:00';
+  const ov   = u?.jadwal?.override?.[today];
+  const dayIdx = now.getDay();
+  const jh   = u?.jadwal?.hari?.[dayIdx];
+  let jadwalMasuk  = (ov?.masuk  || jh?.masuk  || defM);
+  let jadwalPulang = (ov?.pulang || jh?.pulang || defP);
+
+  const tipe = _scanType;
+  const jadwalWkt = tipe === 'masuk' ? jadwalMasuk : jadwalPulang;
+  const [jW_h, jW_m] = jadwalWkt.split(':').map(Number);
+  const [w_h, w_m]   = waktu.split(':').map(Number);
+  const diff = (w_h * 60 + w_m) - (jW_h * 60 + jW_m);
+
+  let status, ket;
+  if (tipe === 'masuk') {
+    status = diff > 0 ? `Terlambat ${diff} menit` : diff < 0 ? `Tepat Waktu (+${Math.abs(diff)} menit)` : 'Tepat Waktu';
+    ket    = diff > 0 ? `${diff} menit terlambat` : diff < 0 ? `${Math.abs(diff)} menit lebih awal` : 'Tepat waktu';
+  } else {
+    status = diff < 0 ? `Pulang Lebih Awal ${Math.abs(diff)} menit` : diff > 0 ? `Melebihi Jadwal +${diff} menit` : 'Tepat Waktu';
+    ket    = diff < 0 ? `${Math.abs(diff)} menit lebih awal pulang` : diff > 0 ? `${diff} menit melebihi jadwal` : 'Tepat waktu';
+  }
+
+  try {
+    const updates = {};
+    updates[`absensi/${today}/${uid}/${tipe}`] = { waktu, status, keterangan: ket, timestamp: Date.now() };
+    updates[`absensi/${today}/${uid}/nama`]    = nama;
+    await update(ref(db, '/'), updates);
+
+    statusEl.className = 'scanner-status success';
+    statusEl.textContent = `✅ Absen ${tipe} ${nama} berhasil dicatat!`;
+    resultBox.style.display  = 'block';
+    resultBox.style.borderColor = 'var(--ok)';
+    resultNama.textContent = `${tipe === 'masuk' ? '⬆️' : '⬇️'} ${nama}`;
+    resultInfo.textContent = `${jab} · ${waktu} · ${status}`;
+    showToast(`✅ Absen ${tipe} ${nama}: ${waktu}`, 'success');
+  } catch (err) {
+    statusEl.className = 'scanner-status error';
+    statusEl.textContent = '❌ Gagal menyimpan: ' + err.message;
+    resultBox.style.display = 'block';
+    resultBox.style.borderColor = 'var(--err)';
+    resultNama.textContent = nama;
+    resultInfo.textContent = 'Gagal disimpan: ' + err.message;
+  }
+
+  setTimeout(() => {
+    _scanCooldown = false;
+    statusEl.className = 'scanner-status';
+    statusEl.textContent = 'Arahkan kamera ke QR code guru berikutnya…';
+  }, 3500);
+}
 
 // ─────────────────────────────────────────
 // KOREKSI ABSENSI
