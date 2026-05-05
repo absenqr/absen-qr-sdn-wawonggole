@@ -914,6 +914,51 @@ select:focus, input:focus { border-color: var(--prim); }
 .confirm-detail-val { font-size: 13px; font-weight: 800; color: var(--ink); font-family: 'DM Mono', monospace; }
 .confirm-actions { display: grid; gap: 10px; }
 
+/* ─── QR CODE PANEL ─────────────────────── */
+.qr-section-card {
+    background: var(--white);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+.qr-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--ink3);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+}
+.qr-box-wrap {
+    padding: 14px;
+    background: #fff;
+    border-radius: 14px;
+    border: 1.5px solid var(--line);
+    box-shadow: 0 4px 16px rgba(79,70,229,.08);
+    display: inline-block;
+}
+.qr-uid-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--ink3);
+    text-align: center;
+    word-break: break-all;
+    max-width: 240px;
+    padding: 6px 10px;
+    background: var(--bg);
+    border-radius: 6px;
+    border: 1px solid var(--line);
+}
+.qr-note {
+    font-size: 11px;
+    color: var(--ink3);
+    text-align: center;
+    line-height: 1.5;
+}
 /* ─── RESPONSIVE TABLET+ ─────────────────── */
 @media (min-width: 480px) {
     .absen-section { max-width: 480px; margin: 0 auto; }
@@ -1113,6 +1158,16 @@ select:focus, input:focus { border-color: var(--prim); }
                     <div class="spinner-wrap"><div class="spin"></div></div>
                 </div>
 
+                <div class="profil-section-title">QR Presensi Saya</div>
+                <div class="qr-section-card">
+                    <div class="qr-label">Tunjukkan QR ini kepada admin untuk presensi</div>
+                    <div class="qr-box-wrap">
+                        <div id="profil-qr-canvas"></div>
+                    </div>
+                    <div class="qr-uid-text" id="profil-qr-uid">–</div>
+                    <div class="qr-note">📷 Admin akan men-scan kode ini<br>untuk mencatat kehadiran Anda</div>
+                </div>
+
                 <div class="profil-section-title">Akun</div>
                 <div class="profil-card">
                     <div class="profil-row" onclick="doLogout()" style="cursor:pointer;">
@@ -1166,6 +1221,7 @@ select:focus, input:focus { border-color: var(--prim); }
 
 <div id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script type="module">
 import { initializeApp }
     from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -1344,7 +1400,7 @@ window.showPanel = (name) => {
     document.getElementById(`panel-${name}`).classList.add('active');
     document.querySelector(`.nav-item[data-panel="${name}"]`)?.classList.add('active');
     if (name === 'riwayat') fetchRiwayat();
-    if (name === 'profil')  renderProfil();
+    if (name === 'profil')  { renderProfil(); renderQRCode(); }
 };
 
 // ──────────────────────────────────────────
@@ -1910,6 +1966,37 @@ function resetRekap() {
         document.getElementById(id).textContent = '–';
     });
     document.getElementById('riwayat-count').textContent = '';
+}
+
+// ──────────────────────────────────────────
+// QR CODE
+// ──────────────────────────────────────────
+let _qrInstance = null;
+function renderQRCode() {
+    const uid = state.uid;
+    if (!uid) return;
+    const wrap = document.getElementById('profil-qr-canvas');
+    const uidEl = document.getElementById('profil-qr-uid');
+    if (!wrap) return;
+
+    // Tampilkan UID (dipotong untuk privasi tampilan)
+    uidEl.textContent = uid;
+
+    // Hapus QR lama jika sudah ada
+    if (_qrInstance) {
+        try { _qrInstance.clear(); } catch (_) {}
+        wrap.innerHTML = '';
+    }
+
+    // Generate QR baru
+    _qrInstance = new QRCode(wrap, {
+        text: uid,
+        width:  180,
+        height: 180,
+        colorDark:  '#0D1117',
+        colorLight: '#FFFFFF',
+        correctLevel: QRCode.CorrectLevel.H,
+    });
 }
 
 // ──────────────────────────────────────────
