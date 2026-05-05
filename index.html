@@ -459,6 +459,22 @@ body {
 .jadwal-time-lbl { font-size: 9px; font-weight: 700; color: rgba(255,255,255,.35); }
 .jadwal-sep { color: rgba(255,255,255,.2); font-size: 14px; }
 .jadwal-tanpa { font-size: 12px; font-weight: 700; color: rgba(255,255,255,.5); font-style: italic; }
+.jadwal-override-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 7px;
+    border-radius: 5px;
+    font-size: 8px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    background: rgba(245,158,11,.25);
+    border: 1px solid rgba(245,158,11,.4);
+    color: #FCD34D;
+    margin-left: 6px;
+    vertical-align: middle;
+}
 
 /* ─── ABSEN BUTTONS ──────────────────────── */
 .absen-section {
@@ -1200,14 +1216,15 @@ const LIBUR_NASIONAL = {
 // STATE
 // ──────────────────────────────────────────
 const state = {
-    uid:        null,
-    user:       null,   // data dari Firebase users/{uid}
-    email:      null,
-    todayStr:   null,
-    todayData:  null,   // absensi hari ini
-    liburKhusus:{},
-    pendingAbsen: null, // 'masuk' | 'pulang'
+    uid:          null,
+    user:         null,   // data dari Firebase users/{uid}
+    email:        null,
+    todayStr:     null,
+    todayData:    null,   // absensi hari ini
+    liburKhusus:  {},
+    pendingAbsen: null,   // 'masuk' | 'pulang'
     realtimeUnsub: null,
+    userUnsub:    null,   // listener perubahan data user (termasuk override)
 };
 
 // ──────────────────────────────────────────
@@ -1259,8 +1276,9 @@ onAuthStateChanged(auth, async (user) => {
 function showLoginPage() {
     document.getElementById('login-page').style.display = 'flex';
     document.getElementById('app').style.display = 'none';
-    if (clockInterval) { clearInterval(clockInterval); clockInterval = null; }
-    if (state.realtimeUnsub) { state.realtimeUnsub(); state.realtimeUnsub = null; }
+    if (clockInterval)         { clearInterval(clockInterval); clockInterval = null; }
+    if (state.realtimeUnsub)   { state.realtimeUnsub(); state.realtimeUnsub = null; }
+    if (state.userUnsub)       { state.userUnsub(); state.userUnsub = null; }
 }
 
 function showAppPage() {
@@ -1271,6 +1289,7 @@ function showAppPage() {
     initHeroDatetime();
     startClock();
     initFilters();
+    initRealtimeUser();   // listener data user + override jadwal
     initRealtimeToday();
 }
 
@@ -1347,6 +1366,19 @@ function initHeroDatetime() {
 }
 
 // ──────────────────────────────────────────
+// REALTIME USER LISTENER (termasuk override jadwal)
+// ──────────────────────────────────────────
+function initRealtimeUser() {
+    const userRef = ref(db, `users/${state.uid}`);
+    state.userUnsub = onValue(userRef, (snap) => {
+        if (!snap.exists()) return;
+        state.user = snap.val();
+        // Re-render tampilan yang bergantung pada data user/override
+        renderHomeState();
+    }, (err) => console.warn('User listener error:', err.message));
+}
+
+// ──────────────────────────────────────────
 // REALTIME TODAY LISTENER
 // ──────────────────────────────────────────
 async function initRealtimeToday() {
@@ -1402,8 +1434,8 @@ function renderHomeState() {
         return;
     }
 
-    // Dapatkan jadwal
-    const jadwal = getJadwalHari(u, dayIdx);
+    // Dapatkan jadwal efektif (override → per hari → default)
+    const jadwal = getJadwalEfektif(todayStr, u);
     showJadwal(jadwal);
 
     const masukW  = d?.masuk?.waktu   || null;
@@ -1447,6 +1479,15 @@ function setHeroStatus(cls, text) {
 function showJadwal(jadwal) {
     const wrap = document.getElementById('hero-jadwal');
     wrap.style.display = 'flex';
+
+    // Tampilkan badge override jika jadwal hari ini di-override
+    const labelEl = wrap.querySelector('.jadwal-label');
+    if (labelEl) {
+        labelEl.innerHTML = jadwal.isOverride
+            ? `Jadwal Hari Ini <span class="jadwal-override-badge">🔄 Override</span>`
+            : 'Jadwal Hari Ini';
+    }
+
     document.getElementById('hero-jadwal-times').innerHTML = `
         <div class="jadwal-time-item">
             <span class="jadwal-time-lbl">Masuk</span>
@@ -1569,13 +1610,21 @@ window.konfirmAbsen = (tipe) => {
     const mm     = String(now.getMinutes()).padStart(2,'0');
     const waktu  = `${hh}:${mm}`;
     const u      = state.user;
-    const dayIdx = now.getDay();
-    const jadwal = getJadwalHari(u, dayIdx);
+
+    // Gunakan jadwal efektif untuk tanggal hari ini (override → per hari → default)
+    const jadwal = getJadwalEfektif(state.todayStr, u);
 
     const { status, selisihMenit } = hitungStatus(tipe, waktu, jadwal);
     const selisihStr = selisihMenit === 0 ? 'Tepat waktu'
         : selisihMenit > 0 ? `+${selisihMenit} menit (lebih ${tipe === 'masuk' ? 'awal' : 'dari jadwal'})`
         : `${selisihMenit} menit (${tipe === 'masuk' ? 'terlambat' : 'lebih awal pulang'})`;
+
+    const overrideNote = jadwal.isOverride
+        ? `<div class="confirm-detail-row">
+               <span class="confirm-detail-key">Tipe Jadwal</span>
+               <span class="confirm-detail-val" style="font-size:10px;color:var(--warn)">🔄 Override Tanggal Ini</span>
+           </div>`
+        : '';
 
     document.getElementById('confirm-icon').textContent  = tipe === 'masuk' ? '⬆️' : '⬇️';
     document.getElementById('confirm-title').textContent = tipe === 'masuk' ? 'Konfirmasi Absen Masuk' : 'Konfirmasi Absen Pulang';
@@ -1600,7 +1649,8 @@ window.konfirmAbsen = (tipe) => {
         <div class="confirm-detail-row">
             <span class="confirm-detail-key">Status</span>
             <span class="confirm-detail-val" style="font-size:11px">${status}</span>
-        </div>`;
+        </div>
+        ${overrideNote}`;
     document.getElementById('confirm-overlay').classList.add('open');
 };
 
@@ -1619,8 +1669,9 @@ window.doAbsen = async () => {
     const mm     = String(now.getMinutes()).padStart(2,'0');
     const waktu  = `${hh}:${mm}`;
     const u      = state.user;
-    const dayIdx = now.getDay();
-    const jadwal = getJadwalHari(u, dayIdx);
+
+    // Gunakan jadwal efektif untuk tanggal hari ini (override → per hari → default)
+    const jadwal = getJadwalEfektif(state.todayStr, u);
     const { status, selisihMenit } = hitungStatus(tipe, waktu, jadwal);
     const ket    = selisihMenit === 0 ? 'Tepat waktu'
         : selisihMenit > 0 ? `${selisihMenit} menit lebih ${tipe === 'masuk' ? 'awal' : 'dari jadwal'}`
@@ -1698,11 +1749,15 @@ window.fetchRiwayat = async () => {
             startAt(`${tahun}-${bulan}-01`),
             endAt(`${tahun}-${bulan}-31`)
         );
-        const [abSnap, lbSnap] = await Promise.all([
+        const [abSnap, lbSnap, userSnap] = await Promise.all([
             get(abQuery),
             get(ref(db, 'libur_khusus')).catch(() => null),
+            get(ref(db, `users/${state.uid}`)).catch(() => null),
         ]);
         const liburKhusus = lbSnap?.exists() ? lbSnap.val() : {};
+
+        // Gunakan data user terbaru (termasuk override jadwal) jika tersedia
+        const u = userSnap?.exists() ? userSnap.val() : state.user;
 
         if (!abSnap.exists()) {
             el.innerHTML = emptyHTML('📅', 'Tidak ada data', `Belum ada absensi di ${NAMA_BULAN[parseInt(bulan)]} ${tahun}`);
@@ -1712,7 +1767,6 @@ window.fetchRiwayat = async () => {
 
         const allData  = abSnap.val();
         const daysInM  = new Date(parseInt(tahun), parseInt(bulan), 0).getDate();
-        const u        = state.user;
 
         // Build rows
         const items = [];
@@ -1793,7 +1847,8 @@ function renderRiwayatRow(item, u) {
     }
 
     const { d: ab } = item;
-    const jadwal   = getJadwalHari(u, dayIdx);
+    // Gunakan jadwal efektif per tanggal (override → per hari → default)
+    const jadwal  = getJadwalEfektif(tgl, u);
     const masukW   = ab?.masuk?.waktu  || null;
     const pulangW  = ab?.pulang?.waktu || null;
     const masukS   = ab?.masuk?.status || null;
@@ -1811,6 +1866,10 @@ function renderRiwayatRow(item, u) {
     }
     if (pulangW && pl !== 0) {
         diffBadges.push(`<span class="diff-badge ${pl < 0 ? 'psw' : 'lbh'}">${fmtMenit(pl)}' pulang</span>`);
+    }
+    // Tambahkan badge jika jadwal hari ini di-override
+    if (jadwal.isOverride) {
+        diffBadges.push(`<span class="diff-badge" style="background:rgba(245,158,11,.15);color:#92400E;">🔄 Override</span>`);
     }
 
     return `<div class="riwayat-row">
@@ -1852,8 +1911,23 @@ function renderProfil() {
     const el = document.getElementById('profil-jadwal-card');
     const jadwalDefault = { masuk: u?.jadwal?.masuk || '07:20', pulang: u?.jadwal?.pulang || '12:00' };
     const htj = u?.jadwal?.hari_tanpa_jadwal || {};
+    const todayOverride = u?.jadwal?.override?.[state.todayStr];
 
     let rows = '';
+
+    // Override hari ini — tampilkan paling atas jika ada
+    if (todayOverride && (todayOverride.masuk || todayOverride.pulang)) {
+        const ovMasuk  = todayOverride.masuk  || jadwalDefault.masuk;
+        const ovPulang = todayOverride.pulang || jadwalDefault.pulang;
+        rows += `<div class="profil-row" style="background:var(--warn-l);">
+            <div class="profil-row-icon" style="background:rgba(245,158,11,.2);font-size:15px;">🔄</div>
+            <div style="flex:1;">
+                <div class="profil-row-key" style="color:var(--warn-d);">Override Hari Ini (${formatTgl(state.todayStr)})</div>
+                <div class="profil-row-val" style="color:var(--warn-d);font-weight:800;">${ovMasuk} – ${ovPulang}</div>
+            </div>
+        </div>`;
+    }
+
     // Default jadwal
     rows += `<div class="profil-row">
         <div class="profil-row-icon" style="background:var(--ok-l)">🕐</div>
@@ -1904,6 +1978,45 @@ function getJadwalHari(u, dayIdx) {
     const defP = u?.jadwal?.pulang || '12:00';
     const jh   = u?.jadwal?.hari?.[dayIdx];
     return { masuk: jh?.masuk || defM, pulang: jh?.pulang || defP };
+}
+
+/**
+ * getJadwalEfektif — ambil jadwal dengan prioritas:
+ *   1. Override per tanggal (jadwal/override/YYYY-MM-DD)
+ *   2. Jadwal per hari (jadwal/hari/[dayIdx])
+ *   3. Jadwal default
+ *
+ * @param {string} tgl    - tanggal format 'YYYY-MM-DD'
+ * @param {object} u      - data user dari Firebase
+ * @returns {{ masuk: string, pulang: string, isOverride: boolean }}
+ */
+function getJadwalEfektif(tgl, u) {
+    const defM = u?.jadwal?.masuk  || '07:20';
+    const defP = u?.jadwal?.pulang || '12:00';
+
+    // 1. Cek override per tanggal spesifik
+    const ov = u?.jadwal?.override?.[tgl];
+    if (ov && (ov.masuk || ov.pulang)) {
+        return {
+            masuk:      ov.masuk  || defM,
+            pulang:     ov.pulang || defP,
+            isOverride: true,
+        };
+    }
+
+    // 2. Cek jadwal per hari dalam seminggu
+    const dayIdx = new Date(tgl + 'T00:00:00').getDay();
+    const jh     = u?.jadwal?.hari?.[dayIdx];
+    if (jh && (jh.masuk || jh.pulang)) {
+        return {
+            masuk:      jh.masuk  || defM,
+            pulang:     jh.pulang || defP,
+            isOverride: false,
+        };
+    }
+
+    // 3. Jadwal default
+    return { masuk: defM, pulang: defP, isOverride: false };
 }
 
 function calcTelatCepat(d) {
