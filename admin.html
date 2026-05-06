@@ -6,8 +6,7 @@
 <title>Admin Panel · E-Presensi SDN Wawonggole</title>
 <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jsQR/1.4.0/jsQR.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 <style>
 /* ════════════════════════════════════════
    DESIGN TOKENS — diselaraskan dengan index.html
@@ -261,8 +260,7 @@ body {
 .btn-orange { background: var(--orange); color: #fff; }
 .btn-orange:hover { background: #EA580C; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
-.btn-qr { background: var(--purple-l); color: var(--purple); border: 1px solid rgba(139,92,246,.3); }
-.btn-qr:hover { background: #DDD6FE; }
+
 
 /* ════════════════════════════════════════
    FORM CONTROLS
@@ -398,13 +396,7 @@ tr:hover td    { background: #F9FAFB; }
 .modal-row     { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
 
-/* QR modal body */
-.modal-qr-body { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 8px 0; }
-.modal-qr-box  { padding: 14px; background: #fff; border-radius: 14px; border: 1.5px solid var(--line); box-shadow: 0 4px 20px rgba(79,70,229,.1); display: inline-block; }
-.modal-qr-name { font-size: 16px; font-weight: 800; color: var(--ink); text-align: center; }
-.modal-qr-meta { font-size: 11px; color: var(--ink3); text-align: center; }
-.modal-qr-uid  { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--ink3); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; word-break: break-all; text-align: center; max-width: 220px; }
-.modal-qr-note { font-size: 11px; color: var(--ink3); text-align: center; line-height: 1.5; }
+
 
 /* ════════════════════════════════════════
    DASHBOARD
@@ -456,31 +448,7 @@ tr:hover td    { background: #F9FAFB; }
 .kal-day.libur-baru:hover   .kal-hapus { display: block; }
 .kal-hapus:hover { background: rgba(239,68,68,.3); }
 
-/* ════════════════════════════════════════
-   QR SCANNER & QR DISPLAY
-════════════════════════════════════════ */
-.scanner-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; }
-.scanner-video-box { position: relative; width: 100%; max-width: 360px; border-radius: 14px; overflow: hidden; background: #000; aspect-ratio: 1; border: 2px solid var(--prim); }
-.scanner-video-box video  { width: 100%; height: 100%; object-fit: cover; display: block; }
-.scanner-video-box canvas { display: none; }
-.scanner-crosshair { position: absolute; inset: 0; pointer-events: none; }
-.scanner-crosshair::before,
-.scanner-crosshair::after {
-  content: ''; position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%,-50%);
-  border: 3px solid rgba(108,99,255,.8); border-radius: 8px;
-}
-.scanner-crosshair::before { width: 55%; height: 55%; }
-.scanner-crosshair::after  { width: 30%; height: 30%; background: rgba(108,99,255,.05); }
-.scanner-anim-line {
-  position: absolute; left: 22.5%; right: 22.5%; height: 2px;
-  background: linear-gradient(90deg, transparent, var(--prim2), transparent);
-  animation: scan-line 2s ease-in-out infinite; top: 50%;
-}
-@keyframes scan-line { 0% { top: 22.5%; opacity: 1; } 50% { opacity: 1; } 100% { top: 77.5%; opacity: .3; } }
-.scanner-status { font-size: 12px; font-weight: 700; color: var(--ink2); text-align: center; min-height: 20px; }
-.scanner-status.success { color: var(--ok); }
-.scanner-status.error   { color: var(--err); }
+
 
 /* ════════════════════════════════════════
    MISC
@@ -709,16 +677,7 @@ tr:hover td    { background: #F9FAFB; }
         </svg>
         Libur Khusus
       </div>
-      <div class="sb-section" style="margin-top:8px;">Presensi QR</div>
-      <div class="sb-item" onclick="openQRScanner()">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/>
-          <path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
-          <rect x="7" y="7" width="3" height="3"/><rect x="14" y="7" width="3" height="3"/>
-          <rect x="7" y="14" width="3" height="3"/><rect x="14" y="14" width="3" height="3"/>
-        </svg>
-        Scan QR Absen
-      </div>
+
       <div class="sb-section" style="margin-top:8px;">Export</div>
       <div class="sb-item" onclick="showPanel('laporan'); setTimeout(doExport, 300)">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -843,15 +802,6 @@ tr:hover td    { background: #F9FAFB; }
               <div class="card-sub">Kelola nama, jabatan, dan tampilkan QR code guru</div>
             </div>
             <div class="card-actions">
-              <button class="btn btn-prim" onclick="openQRScanner()">
-                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-                  <path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/>
-                  <path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
-                  <rect x="7" y="7" width="3" height="3"/><rect x="14" y="7" width="3" height="3"/>
-                  <rect x="7" y="14" width="3" height="3"/><rect x="14" y="14" width="3" height="3"/>
-                </svg>
-                Scan QR Absen
-              </button>
               <button class="btn btn-ghost" onclick="fetchGuruList()">
                 <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                   <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.08-5.96"/>
@@ -1082,71 +1032,9 @@ tr:hover td    { background: #F9FAFB; }
   </div>
 </div>
 
-<!-- ════════════════════════════════════════
-     MODAL — QR VIEWER (tampilkan QR guru)
-════════════════════════════════════════ -->
-<div class="modal-overlay" id="modal-qr-viewer" onclick="if(event.target===this) closeQRViewer()">
-  <div class="modal-box" style="max-width:340px;">
-    <div class="modal-title">🔲 QR Code Guru</div>
-    <div class="modal-sub">QR Code untuk presensi — scan menggunakan fitur Scan QR Absen</div>
-    <div class="modal-qr-body">
-      <div class="modal-qr-name" id="modal-qr-guru-name">–</div>
-      <div class="modal-qr-meta" id="modal-qr-guru-meta">–</div>
-      <div class="modal-qr-box">
-        <div id="modal-qr-canvas"></div>
-      </div>
-      <div class="modal-qr-uid" id="modal-qr-uid-text">–</div>
-      <div class="modal-qr-note">Guru dapat menunjukkan QR ini kepada admin<br>atau scan mandiri via aplikasi E-Presensi</div>
-    </div>
-    <div class="modal-actions" style="justify-content:center;">
-      <button class="btn btn-ghost" onclick="closeQRViewer()">Tutup</button>
-    </div>
-  </div>
-</div>
 
-<!-- ════════════════════════════════════════
-     MODAL — QR SCANNER
-════════════════════════════════════════ -->
-<div class="modal-overlay" id="modal-qr-scanner" onclick="if(event.target===this) closeQRScanner()">
-  <div class="modal-box" style="max-width:420px;">
-    <div class="modal-title">📷 Scan QR Absen</div>
-    <div class="modal-sub">Arahkan kamera ke QR code guru untuk mencatat kehadiran</div>
 
-    <!-- Pilih tipe absen -->
-    <div style="display:flex;gap:8px;margin-bottom:14px;justify-content:center;">
-      <button class="btn" id="scan-type-masuk" onclick="setScanType('masuk')"
-        style="background:var(--ok-l);color:var(--ok);border:2px solid var(--ok);font-weight:800;">
-        ⬆️ Masuk
-      </button>
-      <button class="btn" id="scan-type-pulang" onclick="setScanType('pulang')"
-        style="background:var(--bg);color:var(--ink3);border:2px solid var(--line);font-weight:800;">
-        ⬇️ Pulang
-      </button>
-    </div>
 
-    <div class="scanner-wrap">
-      <div class="scanner-video-box">
-        <video id="qr-video" autoplay playsinline muted></video>
-        <canvas id="qr-canvas"></canvas>
-        <div class="scanner-crosshair">
-          <div class="scanner-anim-line"></div>
-        </div>
-      </div>
-      <div class="scanner-status" id="scanner-status">Menginisialisasi kamera…</div>
-    </div>
-
-    <!-- Hasil scan terakhir -->
-    <div id="scan-result-box" style="display:none;margin-top:10px;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);">
-      <div style="font-size:10px;font-weight:800;color:var(--ink3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.1em;">Hasil Scan Terakhir</div>
-      <div id="scan-result-nama" style="font-size:14px;font-weight:800;color:var(--ink);">–</div>
-      <div id="scan-result-info" style="font-size:11px;color:var(--ink3);margin-top:3px;">–</div>
-    </div>
-
-    <div class="modal-actions" style="justify-content:center;margin-top:14px;">
-      <button class="btn btn-ghost" onclick="closeQRScanner()">Tutup Scanner</button>
-    </div>
-  </div>
-</div>
 
 <!-- ════════════════════════════════════════
      PRINT AREA
@@ -1374,26 +1262,61 @@ window.showPanel = (name) => {
   if (name === 'jadwal') fetchJadwal();
 };
 
+// Bug 10 Fix: updateTopbarDate dijadwalkan ulang setiap menit sehingga tanggal selalu akurat.
+// Menggunakan menit (bukan hanya sekali saat login) agar pergantian hari terdeteksi otomatis.
 function updateTopbarDate() {
   const now = new Date();
   document.getElementById('topbar-date').textContent =
     `${NAMA_HARI[now.getDay()]}, ${String(now.getDate()).padStart(2,'0')} ${NAMA_BULAN[now.getMonth()+1]} ${now.getFullYear()}`;
 }
+// Perbarui topbar setiap menit
+setInterval(updateTopbarDate, 60_000);
 
 // ─────────────────────────────────────────
 // DASHBOARD — REAL-TIME
 // ─────────────────────────────────────────
 function initDashboardRealtime() {
-  const todayStr = todayISO();
-  const today    = new Date();
-  document.getElementById('dash-tgl-sub').textContent =
-    `${NAMA_HARI[today.getDay()]}, ${String(today.getDate()).padStart(2,'0')} ${NAMA_BULAN[today.getMonth()+1]} ${today.getFullYear()}`;
-  listen('dashboard-users', ref(db, 'users'), (usersSnap) => {
-    state.users = usersSnap.exists() ? usersSnap.val() : {};
-    listen('dashboard-today', ref(db, `absensi/${todayStr}`), (todaySnap) => {
-      renderDashboard(state.users, todaySnap.exists() ? todaySnap.val() : {});
+  // Bug 03 Fix: todayStr dibaca ulang di dalam setiap render, bukan disimpan sekali saat init.
+  // Bug 14 Fix: Kedua listener didaftarkan secara independen, bukan bersarang.
+
+  function startListeners() {
+    const todayStr = todayISO();
+    const today    = new Date();
+    document.getElementById('dash-tgl-sub').textContent =
+      `${NAMA_HARI[today.getDay()]}, ${String(today.getDate()).padStart(2,'0')} ${NAMA_BULAN[today.getMonth()+1]} ${today.getFullYear()}`;
+
+    // Listener independen untuk data users
+    listen('dashboard-users', ref(db, 'users'), (usersSnap) => {
+      state.users = usersSnap.exists() ? usersSnap.val() : {};
+      // Render ulang jika data today sudah tersedia
+      if (state._dashTodayData !== undefined) {
+        renderDashboard(state.users, state._dashTodayData);
+      }
     });
-  });
+
+    // Listener independen untuk data absensi hari ini
+    listen('dashboard-today', ref(db, `absensi/${todayStr}`), (todaySnap) => {
+      state._dashTodayData = todaySnap.exists() ? todaySnap.val() : {};
+      renderDashboard(state.users || {}, state._dashTodayData);
+    });
+  }
+
+  startListeners();
+
+  // Bug 03 Fix: Hitung waktu tepat hingga pergantian hari, lalu restart semua listener.
+  function scheduleMidnightRefresh() {
+    const now = new Date();
+    const msUntilMidnight =
+      new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).getTime() - now.getTime();
+    setTimeout(() => {
+      // Hentikan listener lama sebelum mendaftarkan yang baru dengan tanggal baru
+      stopListener('dashboard-today');
+      state._dashTodayData = undefined;
+      startListeners();
+      scheduleMidnightRefresh();
+    }, msUntilMidnight + 500); // +500ms buffer agar tanggal sudah benar-benar berganti
+  }
+  scheduleMidnightRefresh();
 }
 
 function renderDashboard(users, todayData) {
@@ -1418,7 +1341,7 @@ function renderDashboard(users, todayData) {
     else                                   { hadir++;       chipClass='chip-ok';     chipText='Hadir'; }
 
     const editBtn = !tanpaJ
-      ? `<button class="btn btn-ghost" style="padding:4px 8px;font-size:9px;" onclick="openKoreksi('${uid}','${u.nama||uid}')">✏️</button>`
+      ? `<button class="btn btn-ghost" style="padding:4px 8px;font-size:9px;" onclick="openKoreksi('${esc(uid)}','${esc(u.nama||uid)}')">✏️</button>`
       : '';
     const ovBadge = isOv
       ? `<span class="chip chip-orange" title="Override aktif hari ini">🔀 Override</span>`
@@ -1427,8 +1350,8 @@ function renderDashboard(users, todayData) {
     return `<div class="today-row">
       <div class="today-avatar">👤</div>
       <div>
-        <div class="today-name">${u.nama || uid}</div>
-        <div class="today-jabatan">${jab} · ${jadwal.masuk}–${jadwal.pulang} ${ovBadge}</div>
+        <div class="today-name">${esc(u.nama || uid)}</div>
+        <div class="today-jabatan">${esc(jab)} · ${esc(jadwal.masuk)}–${esc(jadwal.pulang)} ${ovBadge}</div>
       </div>
       <div class="today-times">
         <div class="time-badge">
@@ -1478,9 +1401,13 @@ function drawPie(hadir, belum) {
     ctx.closePath(); ctx.fillStyle = d.color; ctx.fill();
     start += slice;
   });
+  // Bug 12 Fix: Baca warna dari CSS variables agar tetap kompatibel dengan dark mode di masa mendatang.
+  const style     = getComputedStyle(document.documentElement);
+  const holeColor = style.getPropertyValue('--white').trim() || '#ffffff';
+  const textColor = style.getPropertyValue('--ink').trim()   || '#0D1117';
   ctx.beginPath(); ctx.arc(cx, cy, 44, 0, Math.PI * 2);
-  ctx.fillStyle = '#fff'; ctx.fill();
-  ctx.fillStyle = '#0D1117';
+  ctx.fillStyle = holeColor; ctx.fill();
+  ctx.fillStyle = textColor;
   ctx.font = 'bold 22px DM Mono,monospace';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillText(total === 0 ? '–' : `${Math.round((hadir / (total || 1)) * 100)}%`, cx, cy);
@@ -1518,20 +1445,11 @@ window.fetchGuruList = async () => {
       return `<div class="guru-card">
         <div class="guru-avatar">👤</div>
         <div style="flex:1;">
-          <div class="guru-name">${u.nama || uid}</div>
-          <div class="guru-meta">${jab} · ${jm}–${jp} · ${htjStr}${ovStr}</div>
+          <div class="guru-name">${esc(u.nama || uid)}</div>
+          <div class="guru-meta">${esc(jab)} · ${esc(jm)}–${esc(jp)} · ${esc(htjStr)}${esc(ovStr)}</div>
         </div>
         <div class="guru-actions">
-          <button class="btn btn-qr" style="font-size:10px;" onclick="showGuruQR('${uid}')">
-            <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-              <path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/>
-              <path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>
-              <rect x="7" y="7" width="3" height="3"/><rect x="14" y="7" width="3" height="3"/>
-              <rect x="7" y="14" width="3" height="3"/><rect x="14" y="14" width="3" height="3"/>
-            </svg>
-            QR
-          </button>
-          <button class="btn btn-ghost" onclick="openEditGuru('${uid}')">✏️ Edit</button>
+          <button class="btn btn-ghost" onclick="openEditGuru('${esc(uid)}')">✏️ Edit</button>
           <button class="btn btn-cyan" style="font-size:10px;" onclick="showPanel('jadwal')">🗓 Jadwal</button>
         </div>
       </div>`;
@@ -1566,228 +1484,9 @@ window.submitEditGuru = async () => {
   }
 };
 
-// ─────────────────────────────────────────
-// QR CODE VIEWER (generate QR per guru)
-// ─────────────────────────────────────────
-let _adminQRInstance = null;
 
-window.showGuruQR = (uid) => {
-  const u = state.users?.[uid];
-  if (!u) return;
-  const jab = JABATAN_LABEL[u.jabatan] || 'Guru';
-  document.getElementById('modal-qr-guru-name').textContent = u.nama || uid;
-  document.getElementById('modal-qr-guru-meta').textContent = jab;
-  document.getElementById('modal-qr-uid-text').textContent  = uid;
-  const wrap = document.getElementById('modal-qr-canvas');
-  if (_adminQRInstance) {
-    try { _adminQRInstance.clear(); } catch (_) {}
-    wrap.innerHTML = '';
-  }
-  // QR code berisi UID Firebase — selaras dengan apa yang di-scan oleh index.html
-  _adminQRInstance = new QRCode(wrap, {
-    text: uid,
-    width:  180,
-    height: 180,
-    colorDark:  '#0D1117',
-    colorLight: '#FFFFFF',
-    correctLevel: QRCode.CorrectLevel.H,
-  });
-  document.getElementById('modal-qr-viewer').classList.add('open');
-};
-window.closeQRViewer = () => document.getElementById('modal-qr-viewer').classList.remove('open');
 
-// ─────────────────────────────────────────
-// QR SCANNER (scan QR guru → rekam absensi)
-// Format absensi diselaraskan penuh dengan index.html
-// ─────────────────────────────────────────
-let _scanStream    = null;
-let _scanAnimFrame = null;
-let _scanCooldown  = false;
-let _scanType      = 'masuk'; // 'masuk' | 'pulang'
 
-window.setScanType = (type) => {
-  _scanType = type;
-  const btnM = document.getElementById('scan-type-masuk');
-  const btnP = document.getElementById('scan-type-pulang');
-  if (type === 'masuk') {
-    btnM.style.cssText = 'background:var(--ok-l);color:var(--ok);border:2px solid var(--ok);font-weight:800;';
-    btnP.style.cssText = 'background:var(--bg);color:var(--ink3);border:2px solid var(--line);font-weight:800;';
-  } else {
-    btnM.style.cssText = 'background:var(--bg);color:var(--ink3);border:2px solid var(--line);font-weight:800;';
-    btnP.style.cssText = 'background:var(--prim-l);color:var(--prim);border:2px solid var(--prim);font-weight:800;';
-  }
-};
-
-window.openQRScanner = () => {
-  _scanCooldown = false;
-  setScanType('masuk');
-  document.getElementById('scan-result-box').style.display = 'none';
-  document.getElementById('modal-qr-scanner').classList.add('open');
-  startScanner();
-};
-
-window.closeQRScanner = () => {
-  stopScanner();
-  document.getElementById('modal-qr-scanner').classList.remove('open');
-};
-
-async function startScanner() {
-  const statusEl = document.getElementById('scanner-status');
-  const video    = document.getElementById('qr-video');
-  statusEl.className   = 'scanner-status';
-  statusEl.textContent = 'Meminta akses kamera…';
-  try {
-    _scanStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 640 } }
-    });
-    video.srcObject = _scanStream;
-    await video.play();
-    statusEl.textContent = 'Arahkan kamera ke QR code guru…';
-    scanLoop();
-  } catch (err) {
-    statusEl.className = 'scanner-status error';
-    if      (err.name === 'NotAllowedError') statusEl.textContent = '❌ Akses kamera ditolak. Izinkan kamera di browser.';
-    else if (err.name === 'NotFoundError')   statusEl.textContent = '❌ Tidak ada kamera yang ditemukan.';
-    else                                     statusEl.textContent = '❌ Gagal akses kamera: ' + err.message;
-  }
-}
-
-function stopScanner() {
-  if (_scanAnimFrame) { cancelAnimationFrame(_scanAnimFrame); _scanAnimFrame = null; }
-  if (_scanStream)    { _scanStream.getTracks().forEach(t => t.stop()); _scanStream = null; }
-  const video = document.getElementById('qr-video');
-  if (video) video.srcObject = null;
-}
-
-function scanLoop() {
-  const video  = document.getElementById('qr-video');
-  const canvas = document.getElementById('qr-canvas');
-  if (!video || !canvas || !_scanStream) return;
-  const ctx = canvas.getContext('2d');
-  function tick() {
-    if (!_scanStream) return;
-    if (video.readyState === video.HAVE_ENOUGH_DATA) {
-      canvas.width  = video.videoWidth;
-      canvas.height = video.videoHeight;
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const code = jsQR(imageData.data, imageData.width, imageData.height, {
-        inversionAttempts: 'dontInvert',
-      });
-      if (code && !_scanCooldown) handleQRScan(code.data);
-    }
-    _scanAnimFrame = requestAnimationFrame(tick);
-  }
-  tick();
-}
-
-async function handleQRScan(uid) {
-  if (_scanCooldown) return;
-  _scanCooldown = true;
-
-  const statusEl   = document.getElementById('scanner-status');
-  const resultBox  = document.getElementById('scan-result-box');
-  const resultNama = document.getElementById('scan-result-nama');
-  const resultInfo = document.getElementById('scan-result-info');
-
-  if (!state.users) {
-    try {
-      const snap = await get(ref(db, 'users'));
-      state.users = snap.exists() ? snap.val() : {};
-    } catch (_) { state.users = {}; }
-  }
-
-  const u = state.users?.[uid];
-  if (!u || (u.role !== 'guru' && u.role !== 'kepala_sekolah')) {
-    statusEl.className   = 'scanner-status error';
-    statusEl.textContent = '❌ QR tidak dikenali atau bukan akun guru';
-    resultNama.textContent = 'Tidak dikenali';
-    resultInfo.textContent = uid.substring(0, 20) + '…';
-    resultBox.style.display     = 'block';
-    resultBox.style.borderColor = 'var(--err)';
-    setTimeout(() => {
-      _scanCooldown = false;
-      statusEl.className   = 'scanner-status';
-      statusEl.textContent = 'Arahkan kamera ke QR code guru…';
-    }, 3000);
-    return;
-  }
-
-  const nama = u.nama || uid;
-  const jab  = JABATAN_LABEL[u.jabatan] || 'Guru';
-  const now  = new Date();
-  const hh   = String(now.getHours()).padStart(2,'0');
-  const mm   = String(now.getMinutes()).padStart(2,'0');
-  const waktu = `${hh}:${mm}`;
-  const today = todayISO();
-
-  // Hitung jadwal efektif — identik dengan index.html (override → hari → default)
-  const jadwal      = getJadwalEfektif(state.users, uid, today);
-  const jadwalWkt   = _scanType === 'masuk' ? jadwal.masuk : jadwal.pulang;
-  const [jW_h, jW_m] = jadwalWkt.split(':').map(Number);
-  const [w_h,  w_m]  = waktu.split(':').map(Number);
-  const diff = (w_h * 60 + w_m) - (jW_h * 60 + jW_m);
-
-  // Format status & keterangan — diselaraskan dengan index.html
-  let status, ket;
-  if (_scanType === 'masuk') {
-    if (diff > 0) {
-      status = `Terlambat ${diff} menit`;
-      ket    = `${diff} menit terlambat dari jadwal`;
-    } else if (diff < 0) {
-      status = `Tepat Waktu (+${Math.abs(diff)} menit)`;
-      ket    = `${Math.abs(diff)} menit lebih awal dari jadwal`;
-    } else {
-      status = 'Tepat Waktu';
-      ket    = 'Tepat waktu';
-    }
-  } else {
-    if (diff < 0) {
-      status = `Pulang Lebih Awal ${Math.abs(diff)} menit`;
-      ket    = `${Math.abs(diff)} menit lebih awal dari jadwal pulang`;
-    } else if (diff > 0) {
-      status = `Melebihi Jadwal +${diff} menit`;
-      ket    = `${diff} menit melebihi jadwal pulang`;
-    } else {
-      status = 'Tepat Waktu';
-      ket    = 'Tepat waktu';
-    }
-  }
-
-  try {
-    // Path absensi — identik dengan index.html: absensi/{tgl}/{uid}/{tipe}
-    const updates = {};
-    updates[`absensi/${today}/${uid}/${_scanType}`] = {
-      waktu,
-      status,
-      keterangan: ket,
-      timestamp:  Date.now(), // tambahan untuk audit trail
-    };
-    updates[`absensi/${today}/${uid}/nama`] = nama;
-    await update(ref(db, '/'), updates);
-
-    statusEl.className   = 'scanner-status success';
-    statusEl.textContent = `✅ Absen ${_scanType} ${nama} berhasil dicatat!`;
-    resultBox.style.display     = 'block';
-    resultBox.style.borderColor = 'var(--ok)';
-    resultNama.textContent = `${_scanType === 'masuk' ? '⬆️' : '⬇️'} ${nama}`;
-    resultInfo.textContent = `${jab} · ${waktu} · ${status}`;
-    showToast(`✅ Absen ${_scanType} ${nama}: ${waktu}`, 'success');
-  } catch (err) {
-    statusEl.className   = 'scanner-status error';
-    statusEl.textContent = '❌ Gagal menyimpan: ' + err.message;
-    resultBox.style.display     = 'block';
-    resultBox.style.borderColor = 'var(--err)';
-    resultNama.textContent = nama;
-    resultInfo.textContent = 'Gagal disimpan: ' + err.message;
-  }
-
-  setTimeout(() => {
-    _scanCooldown = false;
-    statusEl.className   = 'scanner-status';
-    statusEl.textContent = 'Arahkan kamera ke QR code guru berikutnya…';
-  }, 3500);
-}
 
 // ─────────────────────────────────────────
 // KOREKSI ABSENSI (admin)
@@ -1795,21 +1494,39 @@ async function handleQRScan(uid) {
 window.openKoreksi = async (uid, nama) => {
   state.koreksiUID = uid;
   const today = todayISO();
-  document.getElementById('koreksi-sub').textContent    = `Guru: ${nama}`;
+  document.getElementById('koreksi-sub').textContent    = `Guru: ${esc(nama)}`;
   document.getElementById('koreksi-tgl').value          = today;
   document.getElementById('koreksi-masuk').value        = '';
   document.getElementById('koreksi-pulang').value       = '';
   document.getElementById('koreksi-ket').value          = '';
   document.getElementById('btn-hapus-ab').style.display = 'none';
-  try {
-    const snap = await get(ref(db, `absensi/${today}/${uid}`));
-    if (snap.exists()) {
-      const d = snap.val();
-      document.getElementById('koreksi-masuk').value  = d.masuk?.waktu  || '';
-      document.getElementById('koreksi-pulang').value = d.pulang?.waktu || '';
-      document.getElementById('btn-hapus-ab').style.display = 'inline-flex';
-    }
-  } catch (_) {}
+
+  // Bug 07 Fix: Fungsi untuk memuat ulang data ketika tanggal berubah
+  async function loadAbsensiForDate(tgl) {
+    document.getElementById('koreksi-masuk').value  = '';
+    document.getElementById('koreksi-pulang').value = '';
+    document.getElementById('btn-hapus-ab').style.display = 'none';
+    try {
+      const snap = await get(ref(db, `absensi/${tgl}/${uid}`));
+      if (snap.exists()) {
+        const d = snap.val();
+        document.getElementById('koreksi-masuk').value  = d.masuk?.waktu  || '';
+        document.getElementById('koreksi-pulang').value = d.pulang?.waktu || '';
+        document.getElementById('btn-hapus-ab').style.display = 'inline-flex';
+      }
+    } catch (_) {}
+  }
+
+  await loadAbsensiForDate(today);
+
+  // Bug 07 Fix: Ganti handler onchange agar memuat ulang data dari tanggal yang dipilih
+  const tglEl = document.getElementById('koreksi-tgl');
+  // Hapus handler lama sebelum menambahkan yang baru
+  tglEl.replaceWith(tglEl.cloneNode(true));
+  document.getElementById('koreksi-tgl').addEventListener('change', (e) => {
+    loadAbsensiForDate(e.target.value);
+  });
+
   document.getElementById('modal-koreksi').classList.add('open');
 };
 window.closeKoreksi = () => document.getElementById('modal-koreksi').classList.remove('open');
@@ -1822,11 +1539,67 @@ window.submitKoreksi = async () => {
   const ketIn  = document.getElementById('koreksi-ket').value.trim() || 'Dikoreksi admin';
   if (!tgl) { showToast('Pilih tanggal', 'warning'); return; }
   if (!masuk && !pulang) { showToast('Isi minimal satu waktu (masuk atau pulang)', 'warning'); return; }
+
+  // Bug 08 Fix: Hitung selisih waktu dan buat status + keterangan dengan format yang
+  // sama seperti absen normal, agar calcTelatCepat() / calcPswLewat() bekerja pada laporan.
+  const jadwal = getJadwalEfektif(state.users || {}, state.koreksiUID, tgl);
+
+  function toMinutes(hhmm) {
+    if (!hhmm) return null;
+    const [h, m] = hhmm.split(':').map(Number);
+    return h * 60 + m;
+  }
+
+  function buildMasukRecord(waktu) {
+    const jadwalM   = toMinutes(jadwal.masuk);
+    const aktualM   = toMinutes(waktu);
+    const selisih   = jadwalM !== null && aktualM !== null ? jadwalM - aktualM : null;
+    // selisih > 0 → lebih awal dari jadwal (tepat waktu), selisih < 0 → terlambat
+    let status, keterangan;
+    if (selisih === null) {
+      status      = 'Koreksi Admin';
+      keterangan  = ketIn;
+    } else if (selisih < 0) {
+      const mnt   = Math.abs(selisih);
+      status      = `Terlambat ${mnt} menit`;
+      keterangan  = `${mnt} menit terlambat dari jadwal (Koreksi Admin: ${ketIn})`;
+    } else if (selisih > 0) {
+      status      = `Tepat Waktu (+${selisih} menit)`;
+      keterangan  = `${selisih} menit lebih awal dari jadwal (Koreksi Admin: ${ketIn})`;
+    } else {
+      status      = 'Tepat Waktu';
+      keterangan  = `Tepat sesuai jadwal (Koreksi Admin: ${ketIn})`;
+    }
+    return { waktu, status, keterangan, timestamp: Date.now() };
+  }
+
+  function buildPulangRecord(waktu) {
+    const jadwalP   = toMinutes(jadwal.pulang);
+    const aktualP   = toMinutes(waktu);
+    const selisih   = jadwalP !== null && aktualP !== null ? aktualP - jadwalP : null;
+    // selisih > 0 → melebihi jadwal, selisih < 0 → pulang lebih awal
+    let status, keterangan;
+    if (selisih === null) {
+      status      = 'Koreksi Admin';
+      keterangan  = ketIn;
+    } else if (selisih < 0) {
+      const mnt   = Math.abs(selisih);
+      status      = `Pulang Lebih Awal ${mnt} menit`;
+      keterangan  = `${mnt} menit lebih awal dari jadwal (Koreksi Admin: ${ketIn})`;
+    } else if (selisih > 0) {
+      status      = `Melebihi Jadwal +${selisih} menit`;
+      keterangan  = `${selisih} menit melebihi jadwal pulang (Koreksi Admin: ${ketIn})`;
+    } else {
+      status      = 'Tepat Waktu';
+      keterangan  = `Tepat sesuai jadwal pulang (Koreksi Admin: ${ketIn})`;
+    }
+    return { waktu, status, keterangan, timestamp: Date.now() };
+  }
+
   try {
     const updates = {};
-    const ts = Date.now();
-    if (masuk)  updates[`absensi/${tgl}/${state.koreksiUID}/masuk`]  = { waktu: masuk,  status: 'Koreksi Admin', keterangan: ketIn, timestamp: ts };
-    if (pulang) updates[`absensi/${tgl}/${state.koreksiUID}/pulang`] = { waktu: pulang, status: 'Koreksi Admin', keterangan: ketIn, timestamp: ts };
+    if (masuk)  updates[`absensi/${tgl}/${state.koreksiUID}/masuk`]  = buildMasukRecord(masuk);
+    if (pulang) updates[`absensi/${tgl}/${state.koreksiUID}/pulang`] = buildPulangRecord(pulang);
     const nama = state.users?.[state.koreksiUID]?.nama;
     if (nama) updates[`absensi/${tgl}/${state.koreksiUID}/nama`] = nama;
     await update(ref(db, '/'), updates);
@@ -1867,7 +1640,8 @@ function initFilters() {
   fetchLaporan();
 }
 
-async function populateGuruFilter(users) {
+// Bug 13 Fix: Removed unnecessary 'async' — no await exists inside this function
+function populateGuruFilter(users) {
   const sel    = document.getElementById('f-guru');
   const curVal = sel.value;
   const list   = Object.entries(users).filter(([, u]) => u.role === 'guru' || u.role === 'kepala_sekolah');
@@ -2290,8 +2064,8 @@ function renderJadwalCard(uid, u) {
     <div class="jadwal-card-head">
       <div class="today-avatar">👤</div>
       <div>
-        <div class="jadwal-name">${u.nama || uid}</div>
-        <div class="jadwal-meta">${JABATAN_LABEL[jab]||'Guru Kelas'} · Default: ${jm} – ${jp}</div>
+        <div class="jadwal-name">${esc(u.nama || uid)}</div>
+        <div class="jadwal-meta">${esc(JABATAN_LABEL[jab]||'Guru Kelas')} · Default: ${esc(jm)} – ${esc(jp)}</div>
       </div>
     </div>
     <div class="jadwal-body">
@@ -2625,20 +2399,35 @@ async function renderDaftarLibur() {
       return;
     }
     const sorted = Object.entries(snap.val()).sort(([a], [b]) => a.localeCompare(b));
+    // Bug 02 Fix: Gunakan data-tgl dan data-ket pada tombol; hindari onclick inline
+    // dengan interpolasi string yang bisa putus jika keterangan mengandung tanda kutip.
     el.innerHTML = sorted.map(([tgl, ket]) => {
       const [y, m, d] = tgl.split('-');
       const namaH     = NAMA_HARI[new Date(parseInt(y), parseInt(m)-1, parseInt(d)).getDay()];
       return `<div class="libur-item">
         <div class="libur-info">
-          <div class="libur-tgl">${d}-${m}-${y} · ${namaH}</div>
-          <div class="libur-ket">${ket}</div>
+          <div class="libur-tgl">${esc(d)}-${esc(m)}-${esc(y)} · ${esc(namaH)}</div>
+          <div class="libur-ket">${esc(ket)}</div>
         </div>
-        <button class="btn-hapus-libur" onclick="hapusLiburItem('${tgl}','${ket}')">🗑 Hapus</button>
+        <button class="btn-hapus-libur" data-tgl="${esc(tgl)}" data-ket="${esc(ket)}">🗑 Hapus</button>
       </div>`;
     }).join('');
+
+    // Bug 02 Fix: Event delegation — satu listener pada container menangani semua tombol hapus
+    el.removeEventListener('click', _liburListClickHandler);
+    el.addEventListener('click', _liburListClickHandler);
   } catch (err) {
     el.innerHTML = `<div class="empty" style="color:var(--err);">⚠️ Akses ditolak. Periksa Firebase Rules untuk <code>libur_khusus</code>.</div>`;
   }
+}
+
+// Handler terpisah agar bisa di-remove sebelum re-attach (hindari duplikasi listener)
+function _liburListClickHandler(e) {
+  const btn = e.target.closest('.btn-hapus-libur');
+  if (!btn) return;
+  const tgl = btn.dataset.tgl;
+  const ket = btn.dataset.ket;
+  window.hapusLiburItem(tgl, ket);
 }
 
 window.hapusLiburItem = async (tgl, ket) => {
@@ -2682,7 +2471,7 @@ function getJadwalEfektif(users, uid, tgl) {
 
 // ─────────────────────────────────────────
 // HELPER — KALKULASI SELISIH
-// Diselaraskan dengan format data yang ditulis index.html dan admin (handleQRScan)
+// Diselaraskan dengan format data yang ditulis index.html
 // Format keterangan: "N menit terlambat dari jadwal" / "N menit lebih awal dari jadwal"
 // Format status: "Terlambat N menit" / "Tepat Waktu (+N menit)" / "Tepat Waktu"
 //                "Pulang Lebih Awal N menit" / "Melebihi Jadwal +N menit"
@@ -2730,6 +2519,21 @@ function calcPswLewat(d) {
 /** Tanggal hari ini format YYYY-MM-DD — identik dengan index.html */
 function todayISO() {
   return new Date().toLocaleDateString('sv-SE');
+}
+
+/**
+ * Bug 01 Fix — XSS sanitization
+ * Encode karakter HTML khusus sebelum dimasukkan ke innerHTML.
+ * Gunakan fungsi ini pada SEMUA data dari Firebase sebelum dirender ke template string.
+ */
+function esc(str) {
+  if (str == null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
 /** Format selisih menit: +5 / -3 / 0 */
