@@ -11,7 +11,6 @@
     <title>E-Presensi · SDN WAWONGGOLE</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700;1,800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/html5-qrcode"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
             --p1: #6C63FF; --p2: #4F46E5; --p3: #3730A3;
@@ -399,137 +398,6 @@
         .report-list{padding:0 24px}
 
         /* ═══════════════════════════════════════
-           ADMIN SCREEN
-        ═══════════════════════════════════════ */
-        #screen-admin{padding-bottom:100px;overflow-y:auto}
-        .admin-header{
-            padding:52px 24px 24px;
-            background:linear-gradient(135deg,#1E1B4B 0%,#312E81 50%,#1E3A5F 100%);
-            position:relative;overflow:hidden;margin-bottom:20px;
-        }
-        .admin-header-grid{
-            position:absolute;inset:0;
-            background-image:radial-gradient(rgba(255,255,255,.08) 1px,transparent 1px);
-            background-size:24px 24px;pointer-events:none;
-        }
-        .admin-header-inner{position:relative;z-index:1}
-        .admin-title{font-size:24px;font-weight:900;color:#fff;letter-spacing:-.5px}
-        .admin-sub{font-size:9px;font-weight:700;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.2em;margin-top:4px}
-        .admin-badge{display:inline-block;background:linear-gradient(135deg,#6C63FF,#06B6D4);color:white;font-size:7px;font-weight:800;text-transform:uppercase;letter-spacing:.15em;padding:3px 10px;border-radius:var(--r-full);vertical-align:middle;margin-left:8px}
-
-        /* Stats grid */
-        .admin-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 24px;margin-bottom:20px}
-        .stat-card{border-radius:var(--r-lg);padding:20px 18px;position:relative;overflow:hidden}
-        .stat-card.s-purple{background:linear-gradient(135deg,#6C63FF,#4F46E5);box-shadow:0 12px 32px rgba(108,99,255,.35)}
-        .stat-card.s-teal{background:linear-gradient(135deg,#0891B2,#06B6D4);box-shadow:0 12px 32px rgba(6,182,212,.3)}
-        /* legacy aliases */
-        .stat-card.primary{background:linear-gradient(135deg,#6C63FF,#4F46E5);box-shadow:0 12px 32px rgba(108,99,255,.35)}
-        .stat-card.white{background:linear-gradient(135deg,#0891B2,#06B6D4);box-shadow:0 12px 32px rgba(6,182,212,.3)}
-        .stat-card::after{content:'';position:absolute;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.06);bottom:-30px;right:-20px}
-        .stat-label{font-size:8px;font-weight:800;text-transform:uppercase;letter-spacing:.2em;color:rgba(255,255,255,.6);margin-bottom:8px}
-        .stat-card.primary .stat-label{color:rgba(255,255,255,.6)}
-        .stat-card.white .stat-label{color:rgba(255,255,255,.6)}
-        .stat-value{font-size:40px;font-weight:900;color:white;line-height:1}
-        .stat-card.primary .stat-value{color:white}
-        .stat-card.white .stat-value{color:white}
-        .stat-icon{font-size:22px;margin-bottom:6px;display:block}
-
-        /* Pie chart */
-        .chart-card{margin:0 24px 20px;background:var(--surface);border-radius:var(--r-lg);padding:20px;border:1.5px solid var(--border);box-shadow:var(--sh-sm)}
-        .chart-title{font-size:9px;font-weight:900;color:var(--t3);text-transform:uppercase;letter-spacing:.2em;margin-bottom:16px}
-        .chart-wrap{display:flex;align-items:center;gap:20px}
-        .chart-canvas-wrap{position:relative;flex-shrink:0}
-        #admin-pie-chart{display:block}
-        .chart-center-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
-        .chart-center-pct{font-size:20px;font-weight:900;color:var(--t1)}
-        .chart-center-sub{font-size:8px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.1em}
-        .chart-legend{flex:1}
-        .legend-item{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-        .legend-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
-        .legend-label{font-size:10px;font-weight:700;color:var(--t2)}
-        .legend-val{font-size:10px;font-weight:900;color:var(--t1);margin-left:auto}
-
-        /* Admin tabs */
-        .admin-tabs{display:flex;gap:8px;padding:0 24px;margin-bottom:20px}
-        .admin-tab{flex:1;padding:10px;background:var(--surface);border:1.5px solid var(--border);border-radius:12px;font-family:inherit;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--t3);cursor:pointer;transition:all .2s}
-        .admin-tab.active{background:linear-gradient(135deg,#6C63FF,#4F46E5);color:white;border-color:transparent;box-shadow:0 6px 16px rgba(108,99,255,.3)}
-
-        /* Filter card */
-        .filter-card{margin:0 24px 20px;background:var(--surface);border-radius:var(--r-lg);padding:18px 20px;border:1.5px solid var(--border);box-shadow:var(--sh-sm)}
-        .filter-label{font-size:9px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.2em;margin-bottom:12px}
-        .filter-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-        .filter-select{
-            flex:1;
-            background:var(--bg);
-            border:1.5px solid var(--border);
-            border-radius:12px;padding:11px 12px;
-            font-family:inherit;font-size:11px;font-weight:700;color:var(--t1);
-            outline:none;cursor:pointer;min-width:80px;
-            transition:border-color .2s;
-        }
-        .filter-select:focus{border-color:var(--p2)}
-        .btn-print{
-            background:linear-gradient(135deg,#6C63FF,#4F46E5);color:white;
-            border:none;border-radius:12px;padding:11px 14px;
-            font-family:inherit;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;
-            cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;
-            box-shadow:0 6px 16px rgba(108,99,255,.3);transition:transform .15s;
-        }
-        .btn-print:active{transform:scale(.96)}
-        .btn-export{
-            background:linear-gradient(135deg,#10B981,#059669);color:white;
-            border:none;border-radius:12px;padding:11px 14px;
-            font-family:inherit;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;
-            cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;
-            box-shadow:0 6px 16px rgba(16,185,129,.3);transition:transform .15s;
-        }
-        .btn-export:active{transform:scale(.96)}
-
-        /* Admin report list */
-        .admin-report-list{padding:0 24px}
-        .report-day-label{font-size:8px;font-weight:900;color:var(--p2);text-transform:uppercase;letter-spacing:.3em;margin:16px 0 8px;padding:0 2px}
-        .admin-card{background:var(--surface);border-radius:var(--r-md);padding:14px 16px;border:1.5px solid var(--border);margin-bottom:8px;box-shadow:var(--sh-sm);transition:transform .15s}
-        .admin-card:active{transform:scale(.99)}
-        .admin-card-top{display:flex;justify-content:space-between;align-items:flex-start}
-        .admin-card-name{font-size:13px;font-weight:800;color:var(--t1)}
-        .admin-card-meta{font-size:9px;font-weight:600;color:var(--t3);margin-top:2px}
-        .admin-card-times{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-        .time-chip{display:flex;gap:5px;align-items:center;font-size:9px;font-weight:700;padding:5px 12px;border-radius:8px}
-        .time-chip-label{opacity:.6}
-        .time-chip.masuk-chip{background:rgba(108,99,255,.1);color:var(--p2)}
-        .time-chip.pulang-chip{background:rgba(16,185,129,.1);color:#059669}
-        .status-chip{font-size:8px;font-weight:800;padding:4px 10px;border-radius:6px}
-        .sc-hadir{background:#D1FAE5;color:#065F46}
-        .sc-awal{background:#DBEAFE;color:#1E40AF}
-        .sc-late{background:#FEE2E2;color:#991B1B}
-
-        /* Jadwal admin */
-        #panel-jadwal{padding:0 24px}
-        .jadwal-user-card{background:var(--surface);border-radius:var(--r-md);padding:14px 16px;border:1.5px solid var(--border);margin-bottom:10px;box-shadow:var(--sh-sm)}
-        .jadwal-user-name{font-size:13px;font-weight:800;color:var(--t1)}
-        .jadwal-current{font-size:9px;color:var(--t3);font-weight:600;margin-top:4px}
-        .jadwal-fields{display:flex;gap:10px;margin-top:12px;align-items:flex-end}
-        .jadwal-field{flex:1}
-        .jadwal-field label{font-size:8px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.2em;display:block;margin-bottom:6px}
-        .jadwal-field input{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:10px;font-family:inherit;font-size:13px;font-weight:700;color:var(--t1);outline:none;transition:border-color .2s}
-        .jadwal-field input:focus{border-color:var(--p2)}
-        .btn-save-jadwal{background:linear-gradient(135deg,#6C63FF,#4F46E5);color:white;border:none;border-radius:10px;padding:10px 14px;font-family:inherit;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;cursor:pointer;transition:transform .15s;white-space:nowrap;box-shadow:0 6px 16px rgba(108,99,255,.3)}
-        .btn-save-jadwal:active{transform:scale(.95)}
-        /* Jadwal per hari */
-        .btn-toggle-hari{width:100%;margin-top:12px;padding:9px 14px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:9px;font-weight:800;color:var(--p2);text-transform:uppercase;letter-spacing:.12em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:background .15s}
-        .btn-toggle-hari:active{background:var(--border)}
-        .panel-hari{display:none;margin-top:10px;border-top:1.5px dashed var(--border);padding-top:12px}
-        .panel-hari.open{display:block}
-        .hari-row{display:grid;grid-template-columns:52px 1fr 1fr;gap:8px;align-items:center;margin-bottom:8px}
-        .hari-row:last-child{margin-bottom:0}
-        .hari-label{font-size:9px;font-weight:800;color:var(--t2);text-align:center;padding:6px 4px;border-radius:8px;background:var(--bg);line-height:1.3}
-        .hari-label.today-label{background:var(--p2);color:white}
-        .hari-row input[type=time]{width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:8px;padding:8px 6px;font-family:inherit;font-size:11px;font-weight:700;color:var(--t1);outline:none;text-align:center;transition:border-color .2s}
-        .hari-row input[type=time]:focus{border-color:var(--p2)}
-        .hari-row input.today-input{border-color:var(--p2);background:#EEF2FF}
-        .jadwal-today-badge{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;background:#EEF2FF;color:var(--p2);border-radius:6px;font-size:8px;font-weight:800;letter-spacing:.08em;margin-top:6px}
-
-        /* ═══════════════════════════════════════
            PROFILE
         ═══════════════════════════════════════ */
         #screen-profile{align-items:center;padding:0 32px 100px;overflow-y:auto}
@@ -581,12 +449,6 @@
         #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
         ::-webkit-scrollbar{width:0}
-
-        @media print{
-            body{background:white;display:block}
-            .phone,#bottom-nav,#scanner-modal,#toast{display:none!important}
-            #print-area{display:block!important}
-        }
     </style>
 </head>
 <body>
@@ -737,95 +599,7 @@
         <div class="report-list" id="report-container"></div>
     </section>
 
-    <!-- ══ ADMIN ══ -->
-    <section id="screen-admin" class="screen">
-        <div class="admin-header">
-            <div class="admin-header-grid"></div>
-            <div class="admin-header-inner">
-                <h2 class="admin-title">Dashboard <span class="admin-badge">Admin</span></h2>
-                <p class="admin-sub">SDN WAWONGGOLE — Overview</p>
-            </div>
-        </div>
 
-        <!-- Stat cards -->
-        <div class="admin-stats-grid">
-            <div class="stat-card s-purple">
-                <span class="stat-icon">👨‍🏫</span>
-                <p class="stat-label">Total Guru</p>
-                <p class="stat-value" id="admin-total-guru">–</p>
-            </div>
-            <div class="stat-card s-teal">
-                <span class="stat-icon">✅</span>
-                <p class="stat-label">Hadir Hari Ini</p>
-                <p class="stat-value" id="admin-hadir-today">–</p>
-            </div>
-        </div>
-
-        <!-- Pie chart -->
-        <div class="chart-card">
-            <p class="chart-title">Visualisasi Kehadiran Hari Ini</p>
-            <div class="chart-wrap">
-                <div class="chart-canvas-wrap">
-                    <canvas id="admin-pie-chart" width="110" height="110"></canvas>
-                    <div class="chart-center-text">
-                        <span class="chart-center-pct" id="chart-pct">–</span>
-                        <span class="chart-center-sub">Hadir</span>
-                    </div>
-                </div>
-                <div class="chart-legend">
-                    <div class="legend-item">
-                        <div class="legend-dot" style="background:#6C63FF"></div>
-                        <span class="legend-label">Hadir</span>
-                        <span class="legend-val" id="legend-hadir">0</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-dot" style="background:#E2E8F0"></div>
-                        <span class="legend-label">Belum Absen</span>
-                        <span class="legend-val" id="legend-absen">0</span>
-                    </div>
-                    <div class="legend-item">
-                        <div class="legend-dot" style="background:#FCA5A5"></div>
-                        <span class="legend-label">Terlambat</span>
-                        <span class="legend-val" id="legend-late">0</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Admin tabs -->
-        <div class="admin-tabs">
-            <button class="admin-tab active" id="tab-laporan" onclick="switchAdminTab('laporan')">📋 Laporan</button>
-            <button class="admin-tab" id="tab-jadwal" onclick="switchAdminTab('jadwal')">⏰ Atur Jadwal</button>
-        </div>
-
-        <!-- Panel laporan -->
-        <div id="panel-laporan">
-            <div class="filter-card">
-                <p class="filter-label">Filter Laporan Bulanan</p>
-                <div class="filter-row">
-                    <select id="admin-filter-bulan" class="filter-select" onchange="fetchAdminReport()"></select>
-                    <select id="admin-filter-tahun" class="filter-select" style="width:90px;flex:none;" onchange="fetchAdminReport()"></select>
-                    <button class="btn-print" onclick="printReport()">
-                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                        Cetak
-                    </button>
-                    <button class="btn-export" onclick="exportXLSX()">
-                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        Excel
-                    </button>
-                </div>
-            </div>
-            <div class="admin-report-list" id="admin-report-container"></div>
-        </div>
-
-        <!-- Panel jadwal -->
-        <div id="panel-jadwal" style="display:none;">
-            <div style="padding:0 24px 12px;">
-                <p style="font-size:9px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.2em;">Default: Masuk 07:20 · Pulang 12:00</p>
-            </div>
-            <div id="jadwal-list"></div>
-        </div>
-    </section>
 
     <!-- ══ PROFILE ══ -->
     <section id="screen-profile" class="screen">
@@ -877,11 +651,6 @@
             <span class="nav-label">Laporan</span>
             <div class="nav-dot"></div>
         </button>
-        <button class="nav-btn" id="btn-admin" onclick="switchTab('admin')" style="display:none;">
-            <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
-            <span class="nav-label">Admin</span>
-            <div class="nav-dot"></div>
-        </button>
         <button class="nav-btn" id="btn-profile" onclick="switchTab('profile')">
             <svg fill="currentColor" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
             <span class="nav-label">Profil</span>
@@ -910,23 +679,7 @@
 
 </div>
 
-<!-- ══ PRINT TEMPLATE ══ -->
-<div id="print-area" style="display:none;">
-    <div style="font-family:'Plus Jakarta Sans',sans-serif;padding:30px;max-width:1050px;margin:auto;">
-        <div style="text-align:center;margin-bottom:24px;border-bottom:3px solid #4F46E5;padding-bottom:16px;">
-            <h1 style="font-size:20px;font-weight:900;color:#0F172A;margin:0;">LAPORAN ABSENSI BULANAN</h1>
-            <h2 style="font-size:16px;font-weight:700;color:#4F46E5;margin:4px 0;">SDN WAWONGGOLE</h2>
-            <p id="print-periode" style="font-size:12px;color:#64748B;margin:4px 0;font-weight:600;"></p>
-            <p id="print-tanggal-cetak" style="font-size:10px;color:#94A3B8;margin:0;"></p>
-        </div>
-        <div id="print-content"></div>
-        <div style="margin-top:40px;text-align:right;">
-            <p style="font-size:11px;color:#64748B;">Kepala Sekolah SDN WAWONGGOLE</p>
-            <div style="height:60px;"></div>
-            <p style="font-size:12px;font-weight:700;border-top:1px solid #000;padding-top:4px;display:inline-block;min-width:200px;">(_______________________)</p>
-        </div>
-    </div>
-</div>
+
 
 <script type="module">
     import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
@@ -951,24 +704,9 @@
     let currentUser = null;
     let currentUserNama = '';
     let currentScanMode = 'masuk'; // 'masuk' | 'pulang'
-    let adminReportCache = null;
     let userJadwal = { masuk: '07:20', pulang: '12:00' }; // default
 
-    // ── Pemetaan jabatan berdasarkan UID ──
-    const JABATAN_MAP = {
-        'uT0CndrXuYT9cK6NTRd9gWXpIoV2': 'pjok',        // RIKI ANDRIAWAN
-        'y9aWRn6ColTQ85w4F7jVGF12vLH2': 'pjok',        // MASNA
-        'ylB9m8YEfiRRPDtr2Tv1HA6skhk1': 'pai',         // MUNIA
-        'gvicMIoJnuewHf5mKfxdz7Qc7702': 'pai',         // YAMIN
-        'ABOp8YIRO8bAGzVxfkepXCbrbAE3': 'bahasa_inggris', // DEWI
-        'abkDijN3hRV68uggBgitFeCK7Av1': 'bahasa_inggris', // MARLIANING
-    };
-    const JABATAN_LABEL = {
-        'kelas':         'Guru Kelas',
-        'pjok':          'Guru PJOK',
-        'pai':           'Guru PAI',
-        'bahasa_inggris':'Guru Bhs. Inggris',
-    };
+    // ── Konstanta jabatan ──
     const JABATAN_BADGE = {
         'kelas':         'Guru Kelas Terverifikasi',
         'pjok':          'Guru PJOK Terverifikasi',
@@ -1008,15 +746,16 @@
         const selisih       = menitSekarang - menitJadwal;
 
         if (selisih < 0) {
+            const mnt = Math.abs(selisih);
             return {
-                status:     'Hadir Lebih Awal',
-                keterangan: `${Math.abs(selisih)} menit lebih awal`,
+                status:     `Tepat Waktu (+${mnt} menit)`,
+                keterangan: `${mnt} menit lebih awal`,
                 chipClass:  'chip-awal',
                 valClass:   'early'
             };
         } else if (selisih === 0) {
             return {
-                status:     'Hadir',
+                status:     'Tepat Waktu',
                 keterangan: 'Tepat waktu',
                 chipClass:  'chip-hadir',
                 valClass:   ''
@@ -1032,6 +771,7 @@
     }
 
     /**
+     * Hitung status absen pulang    /**
      * Hitung status absen pulang
      * @param {string} jamSekarang - format "HH.MM"
      * @param {string} jadwalPulang - format "HH:MM"
@@ -1043,9 +783,10 @@
         const selisih       = menitSekarang - menitJadwal;
 
         if (selisih < 0) {
+            const mnt = Math.abs(selisih);
             return {
-                status:     `Pulang Lebih Awal ${Math.abs(selisih)} menit`,
-                keterangan: `${Math.abs(selisih)} menit lebih awal`,
+                status:     `Pulang Lebih Awal ${mnt} menit`,
+                keterangan: `${mnt} menit lebih awal`,
                 chipClass:  'chip-pulang-awal',
                 valClass:   'early'
             };
@@ -1058,15 +799,16 @@
             };
         } else {
             return {
-                status:     'Pulang',
+                status:     `Melebihi Jadwal +${selisih} menit`,
                 keterangan: `${selisih} menit setelah jadwal`,
-                chipClass:  'chip-hadir',
-                valClass:   ''
+                chipClass:  'chip-late',
+                valClass:   'late'
             };
         }
     }
 
     // ══════════════════════════════════════════════════════════
+    // GPS    // ══════════════════════════════════════════════════════════
     // GPS
     // ══════════════════════════════════════════════════════════
     function haversine(lat1, lon1, lat2, lon2) {
@@ -1186,6 +928,20 @@
         t._tid = setTimeout(() => t.classList.remove('show'), duration);
     };
 
+    /**
+     * Fix XSS: Encode karakter HTML khusus sebelum dimasukkan ke innerHTML.
+     * Gunakan pada SEMUA data dari Firebase sebelum dirender ke template string.
+     */
+    function esc(str) {
+        if (str == null) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     // ══════════════════════════════════════════════════════════
     // INGAT EMAIL & LIHAT PIN
     // ══════════════════════════════════════════════════════════
@@ -1260,14 +1016,8 @@
 
                 // ── Tentukan jabatan ──
                 if (currentUserRole === 'guru') {
-                    // Baca dari Firebase, fallback ke UID map, fallback ke 'kelas'
-                    if (data.jabatan) {
-                        currentJabatan = data.jabatan;
-                    } else {
-                        currentJabatan = JABATAN_MAP[user.uid] || 'kelas';
-                        // Simpan ke Firebase agar konsisten
-                        update(ref(db, `users/${user.uid}`), { jabatan: currentJabatan });
-                    }
+                    // Baca dari Firebase, fallback ke 'kelas' jika belum diset oleh admin
+                    currentJabatan = data.jabatan || 'kelas';
                 } else if (currentUserRole === 'kepala_sekolah') {
                     currentJabatan = 'kepala_sekolah';
                 } else {
@@ -1327,13 +1077,9 @@
                 if (jabEl) jabEl.innerText = (jabatanStatusMap[currentJabatan] || 'Guru Kelas').toUpperCase();
 
                 if (currentUserRole === 'admin') {
-                    // Admin: hanya admin & profil, tampilkan btn-admin
-                    document.getElementById('btn-admin').style.display = 'flex';
-                    if (document.getElementById('btn-home')) document.getElementById('btn-home').remove();
-                    if (document.getElementById('btn-report')) document.getElementById('btn-report').remove();
-                    populateFilter();
-                    switchTab('admin');
-                    fetchAdminStats();
+                    // Admin: langsung redirect ke halaman admin terpisah
+                    window.location.href = 'admin.html';
+                    return;
                 } else if (currentUserRole === 'kepala_sekolah') {
                     // Kepala sekolah: TIDAK dapat akses admin dashboard
                     document.getElementById('header-greet').innerText = 'Kepala Sekolah';
@@ -1357,7 +1103,7 @@
 
     window.switchTab = (tab) => {
         const tabs = currentUserRole === 'admin'
-            ? ['admin','profile']
+            ? ['profile']
             : ['home','report','profile'];
         tabs.forEach(t => {
             const btn = document.getElementById(`btn-${t}`);
@@ -1366,18 +1112,8 @@
         showScreen(tab);
         if (tab === 'report') fetchReport();
         if (tab === 'home')   fetchHistory();
-        if (tab === 'admin')  { fetchAdminReport(); fetchAdminStats(); }
     };
 
-    window.switchAdminTab = (tab) => {
-        // Kepala sekolah tidak bisa akses tab Atur Jadwal
-        if (tab === 'jadwal' && currentUserRole === 'kepala_sekolah') return;
-        document.getElementById('tab-laporan').classList.toggle('active', tab === 'laporan');
-        document.getElementById('tab-jadwal').classList.toggle('active', tab === 'jadwal');
-        document.getElementById('panel-laporan').style.display = tab === 'laporan' ? 'block' : 'none';
-        document.getElementById('panel-jadwal').style.display  = tab === 'jadwal'  ? 'block' : 'none';
-        if (tab === 'jadwal') fetchJadwalList();
-    };
 
     // ══════════════════════════════════════════════════════════
     // SCANNER — dual mode masuk / pulang
@@ -1454,8 +1190,9 @@
         const user = auth.currentUser;
         const now  = new Date();
         const tgl  = now.toISOString().split('T')[0];
-        // Format jam pakai titik sesuai konvensi sistem: "07.15"
-        const jam  = now.getHours().toString().padStart(2,'0') + '.' + now.getMinutes().toString().padStart(2,'0');
+        // Format jam pakai titik dua — konsisten dengan format jadwal dan admin.html
+        // (waktuKeMenit() sudah mendukung kedua format sehingga data lama tetap terbaca)
+        const jam  = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
         const nama = document.getElementById('user-display').innerText;
 
         // Cek apakah sudah absen mode ini hari ini
@@ -1604,18 +1341,18 @@
                 <div class="activity-row">
                     <div class="activity-row-wrap">
                         <span class="activity-type">Masuk</span>
-                        <span class="activity-status-chip ${chipMasukClass(data.masuk.status)}">${data.masuk.status}</span>
+                        <span class="activity-status-chip ${chipMasukClass(data.masuk.status, data.masuk.keterangan)}">${esc(data.masuk.status)}</span>
                     </div>
-                    <span class="activity-time">${data.masuk.waktu}</span>
+                    <span class="activity-time">${esc(data.masuk.waktu)}</span>
                 </div>` : `<div class="activity-row"><span class="activity-type" style="color:var(--text-3)">Masuk — Tidak Hadir</span></div>`;
 
             const pulangHTML = data.pulang ? `
                 <div class="activity-row" style="margin-top:6px;">
                     <div class="activity-row-wrap">
                         <span class="activity-type">Pulang</span>
-                        <span class="activity-status-chip ${chipPulangClass(data.pulang.status)}">${data.pulang.status.length > 20 ? data.pulang.status.substring(0,18)+'…' : data.pulang.status}</span>
+                        <span class="activity-status-chip ${chipPulangClass(data.pulang.status, data.pulang.keterangan)}">${esc(data.pulang.status.length > 20 ? data.pulang.status.substring(0,18)+'…' : data.pulang.status)}</span>
                     </div>
-                    <span class="activity-time pulang">${data.pulang.waktu}</span>
+                    <span class="activity-time pulang">${esc(data.pulang.waktu)}</span>
                 </div>` : `<div class="activity-row" style="margin-top:6px;"><span class="activity-type" style="color:var(--text-3)">Pulang — Belum Absen</span></div>`;
 
             container.innerHTML += `
@@ -1641,15 +1378,16 @@
         if (!container.innerHTML) container.innerHTML = `<p class="empty-state">Belum ada riwayat</p>`;
     }
 
-    function chipMasukClass(status) {
-        if (!status) return 'chip-hadir';
-        if (status.includes('Terlambat')) return 'chip-late';
-        if (status.includes('Lebih Awal')) return 'chip-awal';
+    function chipMasukClass(status, keterangan = '') {
+        const blob = `${status || ''} ${keterangan || ''}`;
+        if (blob.includes('Terlambat')) return 'chip-late';
+        if (blob.includes('Lebih Awal') || blob.includes('lebih awal') || blob.includes('(+')) return 'chip-awal';
         return 'chip-hadir';
     }
-    function chipPulangClass(status) {
-        if (!status) return 'chip-hadir';
-        if (status.includes('Lebih Awal')) return 'chip-pulang-awal';
+    function chipPulangClass(status, keterangan = '') {
+        const blob = `${status || ''} ${keterangan || ''}`;
+        if (blob.includes('Melebihi Jadwal') || blob.includes('setelah jadwal') || blob.includes('Terlambat')) return 'chip-late';
+        if (blob.includes('Lebih Awal') || blob.includes('lebih awal')) return 'chip-pulang-awal';
         return 'chip-hadir';
     }
 
@@ -1684,309 +1422,30 @@
                 <div class="activity-row">
                     <div class="activity-row-wrap">
                         <span class="activity-type">Masuk</span>
-                        <span class="activity-status-chip ${chipMasukClass(data.masuk.status)}">${data.masuk.status}</span>
+                        <span class="activity-status-chip ${chipMasukClass(data.masuk.status, data.masuk.keterangan)}">${esc(data.masuk.status)}</span>
                     </div>
-                    <span class="activity-time">${data.masuk.waktu}</span>
+                    <span class="activity-time">${esc(data.masuk.waktu)}</span>
                 </div>` : '';
 
             const pulangHTML = data.pulang ? `
                 <div class="activity-row" style="margin-top:6px;">
                     <div class="activity-row-wrap">
                         <span class="activity-type">Pulang</span>
-                        <span class="activity-status-chip ${chipPulangClass(data.pulang.status)}">${data.pulang.status}</span>
+                        <span class="activity-status-chip ${chipPulangClass(data.pulang.status, data.pulang.keterangan)}">${esc(data.pulang.status)}</span>
                     </div>
-                    <span class="activity-time pulang">${data.pulang.waktu}</span>
+                    <span class="activity-time pulang">${esc(data.pulang.waktu)}</span>
                 </div>` : '';
 
             container.innerHTML += `
                 <div class="activity-card">
-                    <p class="activity-date">${tgl}</p>
+                    <p class="activity-date">${esc(tgl)}</p>
                     ${masukHTML}${pulangHTML}
                 </div>`;
         }
         if (!container.innerHTML) container.innerHTML = `<p class="empty-state">Belum ada data 30 hari terakhir</p>`;
     }
 
-    // ══════════════════════════════════════════════════════════
-    // ADMIN STATS
-    // ══════════════════════════════════════════════════════════
-    function fetchAdminStats() {
-        let totalGuru = 0;
-        get(ref(db, 'users')).then(snap => {
-            if (snap.exists()) {
-                totalGuru = Object.values(snap.val()).filter(u => u.role === 'guru').length;
-                document.getElementById('admin-total-guru').innerText = totalGuru;
-            }
-        });
-        const today = new Date().toISOString().split('T')[0];
-        get(ref(db, `absensi/${today}`)).then(snap => {
-            let hadir = 0, terlambat = 0;
-            if (snap.exists()) {
-                const vals = Object.values(snap.val());
-                hadir     = vals.filter(v => v.masuk).length;
-                terlambat = vals.filter(v => v.masuk && v.masuk.status && v.masuk.status.includes('Terlambat')).length;
-            }
-            document.getElementById('admin-hadir-today').innerText = hadir;
-            // Render pie chart
-            setTimeout(() => renderPieChart(hadir, terlambat, totalGuru || hadir), 100);
-        });
-    }
 
-    function renderPieChart(hadir, terlambat, total) {
-        const canvas = document.getElementById('admin-pie-chart');
-        if (!canvas) return;
-        const ctx    = canvas.getContext('2d');
-        const W = canvas.width, H = canvas.height;
-        const cx = W / 2, cy = H / 2, r = Math.min(W, H) / 2 - 6;
-
-        const belum    = Math.max(0, total - hadir);
-        const hadirOk  = Math.max(0, hadir - terlambat);
-        const segments = [
-            { val: hadirOk,   color: '#6C63FF' },
-            { val: belum,     color: '#E2E8F0' },
-            { val: terlambat, color: '#FCA5A5' },
-        ];
-        const sum = segments.reduce((a, s) => a + s.val, 0) || 1;
-
-        ctx.clearRect(0, 0, W, H);
-        let startAngle = -Math.PI / 2;
-        segments.forEach(seg => {
-            const sweep = (seg.val / sum) * 2 * Math.PI;
-            ctx.beginPath();
-            ctx.moveTo(cx, cy);
-            ctx.arc(cx, cy, r, startAngle, startAngle + sweep);
-            ctx.closePath();
-            ctx.fillStyle = seg.color;
-            ctx.fill();
-            startAngle += sweep;
-        });
-        // Inner circle (donut)
-        ctx.beginPath();
-        ctx.arc(cx, cy, r * 0.55, 0, 2 * Math.PI);
-        ctx.fillStyle = '#fff';
-        ctx.fill();
-
-        // Update legend & center pct
-        const pct = total > 0 ? Math.round((hadir / total) * 100) : 0;
-        const pctEl = document.getElementById('chart-pct');
-        if (pctEl) pctEl.innerText = `${pct}%`;
-        const lH = document.getElementById('legend-hadir');
-        const lA = document.getElementById('legend-absen');
-        const lL = document.getElementById('legend-late');
-        if (lH) lH.innerText = hadirOk;
-        if (lA) lA.innerText = belum;
-        if (lL) lL.innerText = terlambat;
-    }
-
-    function populateFilter() {
-        const now     = new Date();
-        const bulanEl = document.getElementById('admin-filter-bulan');
-        const tahunEl = document.getElementById('admin-filter-tahun');
-        const namaBulan = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-        namaBulan.forEach((b, i) => {
-            const opt = document.createElement('option');
-            opt.value = String(i+1).padStart(2,'0');
-            opt.text  = b;
-            if (i === now.getMonth()) opt.selected = true;
-            bulanEl.appendChild(opt);
-        });
-        for (let y = now.getFullYear(); y >= 2024; y--) {
-            const opt = document.createElement('option');
-            opt.value = y; opt.text = y;
-            tahunEl.appendChild(opt);
-        }
-    }
-
-    // ══════════════════════════════════════════════════════════
-    // ADMIN REPORT — tampilkan masuk & pulang
-    // ══════════════════════════════════════════════════════════
-    window.fetchAdminReport = () => {
-        const bulan  = document.getElementById('admin-filter-bulan').value;
-        const tahun  = document.getElementById('admin-filter-tahun').value;
-        const prefix = `${tahun}-${bulan}`;
-
-        get(ref(db, 'absensi')).then(snap => {
-            const container = document.getElementById('admin-report-container');
-            container.innerHTML = '';
-
-            if (!snap.exists()) {
-                container.innerHTML = `<p class="empty-state">Tidak ada data</p>`;
-                return;
-            }
-
-            const allData  = snap.val();
-            const allDates = Object.keys(allData).filter(d => d.startsWith(prefix)).sort().reverse();
-
-            if (allDates.length === 0) {
-                container.innerHTML = `<p class="empty-state">Tidak ada data bulan ini</p>`;
-                return;
-            }
-
-            allDates.forEach(tgl => {
-                container.innerHTML += `<p class="report-day-label">${tgl}</p>`;
-                Object.keys(allData[tgl]).forEach(uid => {
-                    const d = allData[tgl][uid];
-                    const nama = d.nama || uid;
-
-                    const masukInfo  = d.masuk  ? `${d.masuk.waktu} <small>(${d.masuk.status})</small>`  : '–';
-                    const pulangInfo = d.pulang ? `${d.pulang.waktu} <small>(${d.pulang.status})</small>` : '–';
-
-                    const masukChip = d.masuk
-                        ? `<span class="status-chip ${scChipClass(d.masuk.status)}">${d.masuk.status.substring(0, 18)}</span>`
-                        : `<span style="font-size:10px;color:var(--text-3)">–</span>`;
-
-                    container.innerHTML += `
-                        <div class="admin-card">
-                            <div class="admin-card-top">
-                                <div>
-                                    <p class="admin-card-name">${nama}</p>
-                                </div>
-                                ${masukChip}
-                            </div>
-                            <div class="admin-card-times">
-                                <div class="time-chip masuk-chip">
-                                    <span class="time-chip-label">Masuk</span>
-                                    <span>${d.masuk ? d.masuk.waktu : '–'}</span>
-                                </div>
-                                <div class="time-chip pulang-chip">
-                                    <span class="time-chip-label">Pulang</span>
-                                    <span>${d.pulang ? d.pulang.waktu : '–'}</span>
-                                </div>
-                            </div>
-                        </div>`;
-                });
-            });
-
-            // Load jadwal guru untuk dipakai saat cetak
-            get(ref(db, 'users')).then(usersSnap => {
-                const usersData = usersSnap.exists() ? usersSnap.val() : {};
-                adminReportCache = { allDates, snap: allData, bulan, tahun, usersData };
-            }).catch(() => {
-                adminReportCache = { allDates, snap: allData, bulan, tahun, usersData: {} };
-            });
-        });
-    };
-
-    function scChipClass(status) {
-        if (!status) return 'sc-hadir';
-        if (status.includes('Terlambat')) return 'sc-late';
-        if (status.includes('Lebih Awal')) return 'sc-awal';
-        return 'sc-hadir';
-    }
-
-    // ══════════════════════════════════════════════════════════
-    // ADMIN JADWAL — Atur jadwal per guru
-    // ══════════════════════════════════════════════════════════
-    async function fetchJadwalList() {
-        const container = document.getElementById('jadwal-list');
-        container.innerHTML = `<p class="empty-state">Memuat daftar guru…</p>`;
-
-        const snap = await get(ref(db, 'users'));
-        if (!snap.exists()) { container.innerHTML = `<p class="empty-state">Tidak ada data</p>`; return; }
-
-        container.innerHTML = '';
-        const users = snap.val();
-        const NAMA_HARI_PENDEK = ['Sen','Sel','Rab','Kam','Jum','Sab'];
-        const HARI_KERJA = [1,2,3,4,5,6]; // Senin–Sabtu
-        const hariIniNum = new Date().getDay();
-
-        Object.keys(users).forEach(uid => {
-            const u = users[uid];
-            if (u.role !== 'guru' && u.role !== 'kepala_sekolah') return;
-
-            const jMasuk  = (u.jadwal && u.jadwal.masuk)  ? u.jadwal.masuk  : '07:20';
-            const jPulang = (u.jadwal && u.jadwal.pulang) ? u.jadwal.pulang : '12:00';
-            const jJabatan = u.jabatan || JABATAN_MAP[uid] || 'kelas';
-            const jabatanOptions = ['kelas','pjok','pai','bahasa_inggris','kepala_sekolah']
-                .map(j => `<option value="${j}" ${jJabatan===j?'selected':''}>${JABATAN_LABEL[j]||j}</option>`)
-                .join('');
-
-            // Baris grid per hari
-            let hariRows = '';
-            HARI_KERJA.forEach(h => {
-                const hData   = (u.jadwal && u.jadwal.hari && u.jadwal.hari[h]) || {};
-                const hMasuk  = hData.masuk  || jMasuk;
-                const hPulang = hData.pulang || jPulang;
-                const isToday = h === hariIniNum;
-                hariRows += `
-                <div class="hari-row">
-                    <div class="hari-label${isToday ? ' today-label' : ''}">
-                        ${NAMA_HARI_PENDEK[h-1]}${isToday ? '<br><span style="font-size:7px">Hari ini</span>' : ''}
-                    </div>
-                    <input type="time" id="jhm-${uid}-${h}" value="${hMasuk}" class="${isToday ? 'today-input' : ''}">
-                    <input type="time" id="jhp-${uid}-${h}" value="${hPulang}" class="${isToday ? 'today-input' : ''}">
-                </div>`;
-            });
-
-            container.innerHTML += `
-                <div class="jadwal-user-card">
-                    <p class="jadwal-user-name">${u.nama}</p>
-                    <p class="jadwal-current">Default: Masuk ${jMasuk} · Pulang ${jPulang} · ${JABATAN_LABEL[jJabatan]||'Guru Kelas'}</p>
-                    <div class="jadwal-fields">
-                        <div class="jadwal-field">
-                            <label>Jam Masuk Default</label>
-                            <input type="time" id="jm-${uid}" value="${jMasuk}">
-                        </div>
-                        <div class="jadwal-field">
-                            <label>Jam Pulang Default</label>
-                            <input type="time" id="jp-${uid}" value="${jPulang}">
-                        </div>
-                    </div>
-                    <div class="jadwal-fields" style="margin-top:8px;">
-                        <div class="jadwal-field" style="flex:2;">
-                            <label>Jabatan</label>
-                            <select id="jjab-${uid}" style="width:100%;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:10px;font-family:inherit;font-size:12px;font-weight:700;color:var(--t1);outline:none;">${jabatanOptions}</select>
-                        </div>
-                        <button class="btn-save-jadwal" onclick="saveJadwal('${uid}', '${u.nama}')">Simpan</button>
-                    </div>
-                    <button class="btn-toggle-hari" onclick="togglePanelHari('${uid}')">
-                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                        Atur Jadwal Per Hari (Sen–Sab)
-                    </button>
-                    <div class="panel-hari" id="panel-hari-${uid}">
-                        <div style="display:grid;grid-template-columns:52px 1fr 1fr;gap:8px;margin-bottom:6px;">
-                            <div></div>
-                            <p style="font-size:8px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;text-align:center;">Masuk</p>
-                            <p style="font-size:8px;font-weight:800;color:var(--t3);text-transform:uppercase;letter-spacing:.12em;text-align:center;">Pulang</p>
-                        </div>
-                        ${hariRows}
-                        <button class="btn-save-jadwal" style="width:100%;margin-top:14px;" onclick="saveJadwalHari('${uid}', '${u.nama}')">
-                            💾 Simpan Jadwal Per Hari
-                        </button>
-                    </div>
-                </div>`;
-        });
-    }
-
-    window.togglePanelHari = (uid) => {
-        document.getElementById(`panel-hari-${uid}`).classList.toggle('open');
-    };
-
-    window.saveJadwal = async (uid, nama) => {
-        const masuk   = document.getElementById(`jm-${uid}`).value;
-        const pulang  = document.getElementById(`jp-${uid}`).value;
-        const jabatan = document.getElementById(`jjab-${uid}`) ? document.getElementById(`jjab-${uid}`).value : 'kelas';
-        if (!masuk || !pulang) { showToast('Isi jam masuk dan pulang terlebih dahulu', 'warning'); return; }
-
-        await update(ref(db, `users/${uid}/jadwal`), { masuk, pulang });
-        await update(ref(db, `users/${uid}`), { jabatan });
-        showToast(`✅ Jadwal default ${nama} disimpan`, 'success');
-        fetchJadwalList();
-    };
-
-    window.saveJadwalHari = async (uid, nama) => {
-        // Kumpulkan jadwal per hari (Senin=1 … Sabtu=6)
-        const hariData = {};
-        [1,2,3,4,5,6].forEach(h => {
-            const m = document.getElementById(`jhm-${uid}-${h}`);
-            const p = document.getElementById(`jhp-${uid}-${h}`);
-            if (m && p && m.value && p.value) {
-                hariData[h] = { masuk: m.value, pulang: p.value };
-            }
-        });
-        await update(ref(db, `users/${uid}/jadwal/hari`), hariData);
-        showToast(`✅ Jadwal per hari ${nama} disimpan`, 'success');
-    };
 
     // ══════════════════════════════════════════════════════════
     // LIBUR NASIONAL — data lokal 2024–2026 sebagai fallback offline
@@ -2105,64 +1564,6 @@
     }
 
     // ══════════════════════════════════════════════════════════
-    // SHARED HELPERS — dipakai oleh exportXLSX & printReport
-    // ══════════════════════════════════════════════════════════
-    function sharedParseMenit(keterangan) {
-        if (!keterangan || keterangan === 'Tepat waktu') return 0;
-        const match = keterangan.match(/(\d+)/);
-        return match ? parseInt(match[1]) : 0;
-    }
-    // Nilai TELAT/CEPAT: negatif = telat, positif = cepat, 0 = tepat
-    function sharedTelatCepat(d) {
-        if (!d.masuk) return 0;
-        const menit = sharedParseMenit(d.masuk.keterangan);
-        if (d.masuk.status && d.masuk.status.includes('Terlambat')) return menit > 0 ? -menit : 0;
-        return menit > 0 ? menit : 0;
-    }
-    // Nilai PSW/LEWAT WAKTU: negatif = PSW, positif = lewat waktu, 0 = tepat
-    function sharedPswLewat(d) {
-        if (!d.pulang) return 0;
-        const menit = sharedParseMenit(d.pulang.keterangan);
-        if (d.pulang.status && d.pulang.status.includes('Lebih Awal')) return menit > 0 ? -menit : 0;
-        return menit > 0 ? menit : 0;
-    }
-    // Format menit dengan tanda + / - / 0
-    function sharedFormatMenit(val) {
-        if (val > 0) return `+${val}`;
-        if (val < 0) return `${val}`;
-        return '0';
-    }
-    // Format waktu: kembalikan '0' jika null
-    function sharedFormatWaktu(w) {
-        if (!w) return '0';
-        return w.replace('.', ':');
-    }
-    // Format tanggal YYYY-MM-DD → DD-MM-YYYY
-    function sharedFormatTanggal(dateStr) {
-        const [y, m, d] = dateStr.split('-');
-        return `${d}-${m}-${y}`;
-    }
-    // Nama hari
-    const _HARI_NAMA = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-    function sharedNamaHari(dateStr) {
-        const [y, m, d] = dateStr.split('-').map(Number);
-        return _HARI_NAMA[new Date(y, m - 1, d).getDay()];
-    }
-    // Jadwal guru berdasarkan uid & tanggal
-    function sharedJadwal(usersData, uid, dateStr) {
-        const ud = usersData && usersData[uid];
-        const defMasuk  = (ud && ud.jadwal && ud.jadwal.masuk)  ? ud.jadwal.masuk  : '07:00';
-        const defPulang = (ud && ud.jadwal && ud.jadwal.pulang) ? ud.jadwal.pulang : '14:00';
-        const [y, mo, da] = dateStr.split('-').map(Number);
-        const dayNum = new Date(y, mo - 1, da).getDay();
-        const jh = ud && ud.jadwal && ud.jadwal.hari && ud.jadwal.hari[dayNum];
-        return {
-            masuk:  (jh && jh.masuk)  ? jh.masuk  : defMasuk,
-            pulang: (jh && jh.pulang) ? jh.pulang : defPulang,
-        };
-    }
-
-    // ══════════════════════════════════════════════════════════
     // ALASAN TIDAK HADIR — guru melaporkan ketidakhadiran sendiri
     // Firebase path: absensi/{tgl}/{uid}/alasanTidakHadir
     // ══════════════════════════════════════════════════════════
@@ -2260,198 +1661,7 @@
         } catch(e) {}
     }
 
-    // ══════════════════════════════════════════════════════════
-    // EXPORT XLSX — 1 sheet, struktur sama dengan PDF per guru
-    // ══════════════════════════════════════════════════════════
-    window.exportXLSX = async () => {
-        if (!adminReportCache) { showToast('Data belum tersedia, pilih filter dahulu', 'warning'); return; }
-        const { allDates, snap, bulan, tahun, usersData } = adminReportCache;
-        const namaBulan = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-        const periodeLabel = `${namaBulan[parseInt(bulan)]} ${tahun}`;
-        const sortedDates = [...allDates].sort();
 
-        // Fetch hari libur nasional secara otomatis untuk tahun ini
-        await fetchLiburNasional(tahun);
-        await fetchLiburKhususDB();
-
-        // Kelompokkan per guru
-        const teacherMap = {};
-        sortedDates.forEach(tgl => {
-            Object.keys(snap[tgl]).forEach(uid => {
-                const d = snap[tgl][uid];
-                if (!d.nama) return;
-                if (!teacherMap[uid]) teacherMap[uid] = { nama: d.nama, rows: [] };
-                teacherMap[uid].rows.push({ tgl, d });
-            });
-        });
-
-        const COL_HEADERS = [
-            'TANGGAL','HARI','JAM MASUK','ABSEN MASUK',
-            'TELAT/CEPAT (Menit)','JAM PULANG','ABSEN PULANG',
-            'PSW/LEWAT WAKTU (Menit)','KETERANGAN'
-        ];
-
-        const allRows  = [];
-        const merges   = [];
-        let   rowIdx   = 0;
-
-        Object.entries(teacherMap).forEach(([uid, { nama, rows }], gi) => {
-            // Baris kosong antar guru
-            if (gi > 0) { allRows.push(Array(9).fill('')); rowIdx++; }
-
-            // Baris nama guru (di-merge sepanjang 9 kolom)
-            const jumlahHadir = rows.filter(r => r.d.masuk).length;
-            allRows.push([`${nama}     |  Hadir: ${jumlahHadir} dari ${rows.length} hari`, ...Array(8).fill('')]);
-            merges.push({ s: { r: rowIdx, c: 0 }, e: { r: rowIdx, c: 8 } });
-            rowIdx++;
-
-            // Baris header kolom
-            allRows.push([...COL_HEADERS]);
-            rowIdx++;
-
-            // Baris data per tanggal
-            rows.forEach(({ tgl, d }) => {
-                const jadwal     = sharedJadwal(usersData, uid, tgl);
-                const telatCepat = sharedTelatCepat(d);
-                const pswLewat   = sharedPswLewat(d);
-                allRows.push([
-                    sharedFormatTanggal(tgl),
-                    sharedNamaHari(tgl),
-                    jadwal.masuk,
-                    sharedFormatWaktu(d.masuk  ? d.masuk.waktu  : null),
-                    sharedFormatMenit(telatCepat),
-                    jadwal.pulang,
-                    sharedFormatWaktu(d.pulang ? d.pulang.waktu : null),
-                    sharedFormatMenit(pswLewat),
-                    (LIBUR_KHUSUS[tgl] || LIBUR_NASIONAL[tgl] || (d.alasanTidakHadir ? (d.alasanTidakHadir.tipe + (d.alasanTidakHadir.detail ? ': ' + d.alasanTidakHadir.detail : '')) : '-')),
-                ]);
-                rowIdx++;
-            });
-        });
-
-        const wb = XLSX.utils.book_new();
-        const ws = XLSX.utils.aoa_to_sheet(allRows);
-        ws['!cols']   = [{wch:13},{wch:9},{wch:11},{wch:12},{wch:20},{wch:11},{wch:13},{wch:24},{wch:28}];
-        ws['!merges'] = merges;
-
-        XLSX.utils.book_append_sheet(wb, ws, 'Absensi');
-        const fileName = `Absensi_SDN_Wawonggole_${periodeLabel.replaceAll(' ', '_')}.xlsx`;
-        XLSX.writeFile(wb, fileName);
-        showToast(`✅ ${fileName} berhasil diunduh`, 'success');
-    };
-
-    // ══════════════════════════════════════════════════════════
-    // PRINT — kolom masuk & pulang (PDF)
-    // ══════════════════════════════════════════════════════════
-    window.printReport = async () => {
-        if (!adminReportCache) { showToast('Data belum tersedia, pilih filter dahulu', 'warning'); return; }
-        const { allDates, snap, bulan, tahun, usersData } = adminReportCache;
-        const namaBulan = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-        document.getElementById('print-periode').innerText = `Periode: ${namaBulan[parseInt(bulan)]} ${tahun}`;
-        document.getElementById('print-tanggal-cetak').innerText = `Dicetak: ${new Date().toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})}`;
-
-        const sortedDates = [...allDates].sort();
-        // Fetch hari libur nasional secara otomatis untuk tahun ini
-        await fetchLiburNasional(tahun);
-        await fetchLiburKhususDB();
-
-
-        // Kelompokkan per guru
-        const teacherMap = {};
-        sortedDates.forEach(tgl => {
-            Object.keys(snap[tgl]).forEach(uid => {
-                const d = snap[tgl][uid];
-                if (!d.nama) return;
-                if (!teacherMap[uid]) teacherMap[uid] = { nama: d.nama, rows: [] };
-                teacherMap[uid].rows.push({ tgl, d });
-            });
-        });
-
-        // Style helpers
-        const thBase = `padding:7px 5px;border:1px solid #94A3B8;background:#4F46E5;color:white;font-size:8.5px;font-weight:800;text-align:center;letter-spacing:.04em;line-height:1.4;`;
-        function td(val, align, extra) {
-            return `<td style="padding:6px 5px;border:1px solid #E2E8F0;font-size:9.5px;text-align:${align||'center'};${extra||''}">${val}</td>`;
-        }
-
-        // Build HTML per guru
-        let html = '';
-        Object.entries(teacherMap).forEach(([uid, { nama, rows }], gi) => {
-            const jumlahHadir = rows.filter(r => r.d.masuk).length;
-
-            let tbodyRows = '';
-            rows.forEach(({ tgl, d }, i) => {
-                const jadwal     = sharedJadwal(usersData, uid, tgl);
-                const absenMasuk = sharedFormatWaktu(d.masuk  ? d.masuk.waktu  : null);
-                const absenPulang= sharedFormatWaktu(d.pulang ? d.pulang.waktu : null);
-                const telatCepat = sharedTelatCepat(d);
-                const pswLewat   = sharedPswLewat(d);
-                const keterangan = LIBUR_KHUSUS[tgl] || LIBUR_NASIONAL[tgl] || (d.alasanTidakHadir ? (d.alasanTidakHadir.tipe + (d.alasanTidakHadir.detail ? ': ' + d.alasanTidakHadir.detail : '')) : '–');
-
-                // Warna baris selang-seling
-                const rowBg = i % 2 === 0 ? 'white' : '#F8FAFC';
-
-                // Warna TELAT/CEPAT: merah = telat (-), hijau = cepat (+), abu = tepat
-                let colorMasuk = '#475569';
-                if (telatCepat < 0) colorMasuk = '#DC2626';
-                else if (telatCepat > 0) colorMasuk = '#059669';
-
-                // Warna PSW/LEWAT WAKTU: oranye = PSW (-), biru = lewat waktu (+), abu = tepat
-                let colorPulang = '#475569';
-                if (pswLewat < 0) colorPulang = '#D97706';
-                else if (pswLewat > 0) colorPulang = '#2563EB';
-
-                tbodyRows += `<tr style="background:${rowBg}">
-                    ${td(sharedFormatTanggal(tgl), 'center')}
-                    ${td(sharedNamaHari(tgl), 'center')}
-                    ${td(jadwal.masuk, 'center', 'font-weight:700;')}
-                    ${td(absenMasuk, 'center', `font-weight:700;color:${absenMasuk==='0'?'#94A3B8':'#4F46E5'};`)}
-                    ${td(sharedFormatMenit(telatCepat), 'center', `font-weight:700;color:${colorMasuk};`)}
-                    ${td(jadwal.pulang, 'center', 'font-weight:700;')}
-                    ${td(absenPulang, 'center', `font-weight:700;color:${absenPulang==='0'?'#94A3B8':'#059669'};`)}
-                    ${td(sharedFormatMenit(pswLewat), 'center', `font-weight:700;color:${colorPulang};`)}
-                    ${td(keterangan, 'left', 'font-size:8.5px;color:#475569;')}
-                </tr>`;
-            });
-
-            html += `
-            <div style="margin-bottom:36px;${gi > 0 ? 'page-break-before:auto;' : ''}">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-                    <p style="font-size:12px;font-weight:800;color:#0F172A;border-left:4px solid #4F46E5;padding-left:8px;">
-                        ${nama}
-                    </p>
-                    <p style="font-size:9px;color:#64748B;font-weight:600;">Hadir: ${jumlahHadir} hari dari ${rows.length} hari data</p>
-                </div>
-                <table style="width:100%;border-collapse:collapse;">
-                    <thead>
-                        <tr>
-                            <th style="${thBase}">TANGGAL</th>
-                            <th style="${thBase}">HARI</th>
-                            <th style="${thBase}">JAM MASUK</th>
-                            <th style="${thBase}">ABSEN MASUK</th>
-                            <th style="${thBase}">TELAT/CEPAT<br>(Menit)</th>
-                            <th style="${thBase}">JAM PULANG</th>
-                            <th style="${thBase}">ABSEN PULANG</th>
-                            <th style="${thBase}">PSW/LEWAT WAKTU<br>(Menit)</th>
-                            <th style="${thBase}">KETERANGAN</th>
-                        </tr>
-                    </thead>
-                    <tbody>${tbodyRows}</tbody>
-                </table>
-            </div>`;
-        });
-
-        document.getElementById('print-content').innerHTML = html;
-        document.getElementById('print-area').style.display = 'block';
-
-        const hideAfterPrint = () => {
-            document.getElementById('print-area').style.display = 'none';
-            window.removeEventListener('afterprint', hideAfterPrint);
-        };
-        window.addEventListener('afterprint', hideAfterPrint);
-
-        window.print();
-    };
-</script>
 
 <!-- ══ MODAL ALASAN TIDAK HADIR ══ -->
 <div class="modal-overlay" id="modal-alasan" onclick="closeAlasanModal(event)">
