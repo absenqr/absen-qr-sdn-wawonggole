@@ -1445,8 +1445,6 @@
         if (!container.innerHTML) container.innerHTML = `<p class="empty-state">Belum ada data 30 hari terakhir</p>`;
     }
 
-
-
     // ══════════════════════════════════════════════════════════
     // LIBUR NASIONAL — data lokal 2024–2026 sebagai fallback offline
     // Jika ada internet → data diambil otomatis dari API (berlaku untuk
@@ -1660,8 +1658,6 @@
             if (snap.exists()) updateTombolAlasan(true, snap.val().tipe);
         } catch(e) {}
     }
-
-
 
 <!-- ══ MODAL ALASAN TIDAK HADIR ══ -->
 <div class="modal-overlay" id="modal-alasan" onclick="closeAlasanModal(event)">
