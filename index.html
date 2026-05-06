@@ -679,6 +679,8 @@
 
 </div>
 
+
+
 <script type="module">
     import { initializeApp }                          from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword,
@@ -744,16 +746,15 @@
         const selisih       = menitSekarang - menitJadwal;
 
         if (selisih < 0) {
-            const mnt = Math.abs(selisih);
             return {
-                status:     `Tepat Waktu (+${mnt} menit)`,
-                keterangan: `${mnt} menit lebih awal`,
+                status:     'Hadir Lebih Awal',
+                keterangan: `${Math.abs(selisih)} menit lebih awal`,
                 chipClass:  'chip-awal',
                 valClass:   'early'
             };
         } else if (selisih === 0) {
             return {
-                status:     'Tepat Waktu',
+                status:     'Hadir',
                 keterangan: 'Tepat waktu',
                 chipClass:  'chip-hadir',
                 valClass:   ''
@@ -780,10 +781,9 @@
         const selisih       = menitSekarang - menitJadwal;
 
         if (selisih < 0) {
-            const mnt = Math.abs(selisih);
             return {
-                status:     `Pulang Lebih Awal ${mnt} menit`,
-                keterangan: `${mnt} menit lebih awal`,
+                status:     `Pulang Lebih Awal ${Math.abs(selisih)} menit`,
+                keterangan: `${Math.abs(selisih)} menit lebih awal`,
                 chipClass:  'chip-pulang-awal',
                 valClass:   'early'
             };
@@ -796,10 +796,10 @@
             };
         } else {
             return {
-                status:     `Melebihi Jadwal +${selisih} menit`,
+                status:     'Pulang',
                 keterangan: `${selisih} menit setelah jadwal`,
-                chipClass:  'chip-late',
-                valClass:   'late'
+                chipClass:  'chip-hadir',
+                valClass:   ''
             };
         }
     }
@@ -843,7 +843,7 @@
             _gpsWatchId = null;
         }
 
-        // Timeout global 20 detik agar gpsChecked tidak stuck false selamanya
+        // Fix #4: Timeout global 20 detik agar gpsChecked tidak stuck false selamanya
         const gpsTimeout = setTimeout(() => {
             if (!gpsChecked) {
                 if (_gpsWatchId !== null) {
@@ -875,7 +875,7 @@
                 _gpsWatchId = null;
 
                 gpsChecked = true;
-                // Simpan timestamp untuk deteksi data GPS kadaluarsa
+                // Fix #5: simpan timestamp untuk deteksi data GPS kadaluarsa
                 lastCoords = { lat, lng, acc: Math.round(acc), ts: Date.now() };
 
                 if (jarak <= RADIUS_METER) {
@@ -925,7 +925,8 @@
     };
 
     /**
-     * Encode karakter HTML khusus sebelum dimasukkan ke innerHTML.
+     * Fix XSS: Encode karakter HTML khusus sebelum dimasukkan ke innerHTML.
+     * Gunakan pada SEMUA data dari Firebase sebelum dirender ke template string.
      */
     function esc(str) {
         if (str == null) return '';
@@ -1089,26 +1090,6 @@
                     checkGPS();
                     loadAlasanHariIni();
                 }
-            } else {
-                // Auto create user if not found in Database
-                const newData = {
-                    nama: user.displayName || (user.email ? user.email.split('@')[0] : 'Guru'),
-                    email: user.email || '',
-                    role: 'guru',
-                    jabatan: 'kelas'
-                };
-                await set(ref(db, `users/${user.uid}`), newData);
-
-                currentUserRole = 'guru';
-                currentJabatan = 'kelas';
-                currentUserNama = newData.nama;
-                
-                document.getElementById('user-display').innerText = newData.nama;
-                document.getElementById('header-greet').innerText = 'Guru Kelas Terverifikasi';
-                
-                switchTab('home');
-                checkGPS();
-                loadAlasanHariIni();
             }
         } else {
             showScreen('auth');
@@ -1149,7 +1130,7 @@
         if (!gpsChecked)  { showToast('Harap tunggu, GPS sedang diperiksa…', 'warning'); return; }
         if (!gpsValid)    { showToast('❌ Anda berada di luar area sekolah.', 'error');   return; }
 
-        // Cegah double instance jika startScanner dipanggil ganda
+        // Fix #3: Cegah double instance jika startScanner dipanggil ganda
         if (html5QrCode) return;
 
         currentScanMode = mode;
@@ -1162,7 +1143,7 @@
         document.getElementById('scanner-modal').classList.add('open');
         html5QrCode = new Html5Qrcode("qr-reader");
 
-        // Flag untuk mencegah race condition double submit
+        // Fix #1: Flag untuk mencegah race condition double submit
         let scanHandled = false;
 
         html5QrCode.start(
@@ -1179,6 +1160,7 @@
                 }
             }
         ).catch((err) => {
+            // Fix #2: Tampilkan error kamera ke pengguna (bukan hanya console)
             console.error(err);
             stopScanner();
             showToast('❌ Kamera tidak dapat diakses. Periksa izin kamera.', 'error');
@@ -1239,7 +1221,7 @@
             keterangan: statusResult.keterangan,
         };
 
-        // Tolak GPS yang sudah kadaluarsa (> 5 menit sejak terakhir valid)
+        // Fix #5: Tolak GPS yang sudah kadaluarsa (> 5 menit sejak terakhir valid)
         const GPS_STALE_MS = 5 * 60 * 1000;
         if (lastCoords) {
             if ((Date.now() - lastCoords.ts) > GPS_STALE_MS) {
@@ -1355,7 +1337,7 @@
                 <div class="activity-row">
                     <div class="activity-row-wrap">
                         <span class="activity-type">Masuk</span>
-                        <span class="activity-status-chip ${chipMasukClass(data.masuk.status, data.masuk.keterangan)}">${esc(data.masuk.status)}</span>
+                        <span class="activity-status-chip ${chipMasukClass(data.masuk.status)}">${esc(data.masuk.status)}</span>
                     </div>
                     <span class="activity-time">${esc(data.masuk.waktu)}</span>
                 </div>` : `<div class="activity-row"><span class="activity-type" style="color:var(--text-3)">Masuk — Tidak Hadir</span></div>`;
@@ -1364,7 +1346,7 @@
                 <div class="activity-row" style="margin-top:6px;">
                     <div class="activity-row-wrap">
                         <span class="activity-type">Pulang</span>
-                        <span class="activity-status-chip ${chipPulangClass(data.pulang.status, data.pulang.keterangan)}">${esc(data.pulang.status.length > 20 ? data.pulang.status.substring(0,18)+'…' : data.pulang.status)}</span>
+                        <span class="activity-status-chip ${chipPulangClass(data.pulang.status)}">${esc(data.pulang.status.length > 20 ? data.pulang.status.substring(0,18)+'…' : data.pulang.status)}</span>
                     </div>
                     <span class="activity-time pulang">${esc(data.pulang.waktu)}</span>
                 </div>` : `<div class="activity-row" style="margin-top:6px;"><span class="activity-type" style="color:var(--text-3)">Pulang — Belum Absen</span></div>`;
@@ -1392,16 +1374,15 @@
         if (!container.innerHTML) container.innerHTML = `<p class="empty-state">Belum ada riwayat</p>`;
     }
 
-    function chipMasukClass(status, keterangan = '') {
-        const blob = `${status || ''} ${keterangan || ''}`;
-        if (blob.includes('Terlambat')) return 'chip-late';
-        if (blob.includes('Lebih Awal') || blob.includes('lebih awal') || blob.includes('(+')) return 'chip-awal';
+    function chipMasukClass(status) {
+        if (!status) return 'chip-hadir';
+        if (status.includes('Terlambat')) return 'chip-late';
+        if (status.includes('Lebih Awal')) return 'chip-awal';
         return 'chip-hadir';
     }
-    function chipPulangClass(status, keterangan = '') {
-        const blob = `${status || ''} ${keterangan || ''}`;
-        if (blob.includes('Melebihi Jadwal') || blob.includes('setelah jadwal') || blob.includes('Terlambat')) return 'chip-late';
-        if (blob.includes('Lebih Awal') || blob.includes('lebih awal')) return 'chip-pulang-awal';
+    function chipPulangClass(status) {
+        if (!status) return 'chip-hadir';
+        if (status.includes('Lebih Awal')) return 'chip-pulang-awal';
         return 'chip-hadir';
     }
 
@@ -1436,7 +1417,7 @@
                 <div class="activity-row">
                     <div class="activity-row-wrap">
                         <span class="activity-type">Masuk</span>
-                        <span class="activity-status-chip ${chipMasukClass(data.masuk.status, data.masuk.keterangan)}">${esc(data.masuk.status)}</span>
+                        <span class="activity-status-chip ${chipMasukClass(data.masuk.status)}">${esc(data.masuk.status)}</span>
                     </div>
                     <span class="activity-time">${esc(data.masuk.waktu)}</span>
                 </div>` : '';
@@ -1445,7 +1426,7 @@
                 <div class="activity-row" style="margin-top:6px;">
                     <div class="activity-row-wrap">
                         <span class="activity-type">Pulang</span>
-                        <span class="activity-status-chip ${chipPulangClass(data.pulang.status, data.pulang.keterangan)}">${esc(data.pulang.status)}</span>
+                        <span class="activity-status-chip ${chipPulangClass(data.pulang.status)}">${esc(data.pulang.status)}</span>
                     </div>
                     <span class="activity-time pulang">${esc(data.pulang.waktu)}</span>
                 </div>` : '';
@@ -1458,6 +1439,8 @@
         }
         if (!container.innerHTML) container.innerHTML = `<p class="empty-state">Belum ada data 30 hari terakhir</p>`;
     }
+
+
 
     // ══════════════════════════════════════════════════════════
     // LIBUR NASIONAL — data lokal 2024–2026 sebagai fallback offline
@@ -1672,7 +1655,8 @@
             if (snap.exists()) updateTombolAlasan(true, snap.val().tipe);
         } catch(e) {}
     }
-</script>
+
+
 
 <!-- ══ MODAL ALASAN TIDAK HADIR ══ -->
 <div class="modal-overlay" id="modal-alasan" onclick="closeAlasanModal(event)">
@@ -1693,4 +1677,3 @@
     </div>
 </div>
 </body>
-</html>
