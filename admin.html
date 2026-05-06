@@ -10,7 +10,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
 /* ════════════════════════════════════════
-   DESIGN TOKENS
+   DESIGN TOKENS — diselaraskan dengan index.html
 ════════════════════════════════════════ */
 :root {
   --ink:       #0D1117;
@@ -65,13 +65,10 @@ body {
   z-index: 100;
   transition: transform .3s;
 }
-
 .sb-logo {
   padding: 20px 20px 16px;
   border-bottom: 1px solid rgba(255,255,255,.08);
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display: flex; align-items: center; gap: 10px;
 }
 .sb-logo-icon {
   width: 36px; height: 36px;
@@ -83,7 +80,7 @@ body {
 .sb-logo-icon img { mix-blend-mode: screen; }
 .sb-logo-text { line-height: 1.2; }
 .sb-logo-text strong { font-size: 12px; font-weight: 700; color: #fff; display: block; }
-.sb-logo-text span { font-size: 9px; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .1em; }
+.sb-logo-text span   { font-size: 9px; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .1em; }
 
 .sb-nav { flex: 1; padding: 12px 0; overflow-y: auto; }
 .sb-section {
@@ -102,9 +99,9 @@ body {
   border-left: 3px solid transparent;
   margin: 1px 0;
 }
-.sb-item:hover { color: #fff; background: rgba(255,255,255,.05); }
+.sb-item:hover  { color: #fff; background: rgba(255,255,255,.05); }
 .sb-item.active { color: #fff; background: rgba(79,70,229,.25); border-left-color: var(--prim2); }
-.sb-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+.sb-item svg    { width: 16px; height: 16px; flex-shrink: 0; }
 
 .sb-bottom { padding: 12px; border-top: 1px solid rgba(255,255,255,.08); }
 .sb-user {
@@ -120,7 +117,7 @@ body {
   font-size: 14px; flex-shrink: 0;
 }
 .sb-user-info strong { font-size: 11px; font-weight: 700; color: #fff; display: block; }
-.sb-user-info span { font-size: 9px; color: rgba(255,255,255,.4); }
+.sb-user-info span   { font-size: 9px; color: rgba(255,255,255,.4); }
 .btn-logout-sb {
   margin-left: auto;
   background: none; border: none;
@@ -154,7 +151,6 @@ body {
   flex-direction: column;
   min-height: 100vh;
 }
-
 #topbar {
   height: var(--head);
   background: var(--white);
@@ -164,21 +160,20 @@ body {
   position: sticky; top: 0; z-index: 50;
 }
 .topbar-title { font-size: 15px; font-weight: 700; color: var(--ink); }
-.topbar-sub { font-size: 11px; color: var(--ink3); margin-top: 1px; }
+.topbar-sub   { font-size: 11px; color: var(--ink3); margin-top: 1px; }
 .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
-.topbar-date {
+.topbar-date  {
   font-size: 11px; font-weight: 600; color: var(--ink3);
   background: var(--bg); padding: 6px 12px;
   border-radius: 8px; border: 1px solid var(--line);
   font-family: 'DM Mono', monospace;
 }
-
 #content { padding: 28px; flex: 1; }
 
 /* ════════════════════════════════════════
    PANELS
 ════════════════════════════════════════ */
-.panel { display: none; }
+.panel        { display: none; }
 .panel.active { display: block; }
 
 /* ════════════════════════════════════════
@@ -187,29 +182,24 @@ body {
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 16px; margin-bottom: 24px;
 }
 .stat-box {
   background: var(--white);
   border: 1px solid var(--line);
-  border-radius: 14px;
-  padding: 20px;
+  border-radius: 14px; padding: 20px;
   position: relative; overflow: hidden;
 }
 .stat-box::after {
   content: '';
   position: absolute;
-  width: 80px; height: 80px;
-  border-radius: 50%;
-  right: -20px; bottom: -20px;
-  opacity: .06;
+  width: 80px; height: 80px; border-radius: 50%;
+  right: -20px; bottom: -20px; opacity: .06;
 }
 .stat-box.blue::after   { background: var(--prim); }
 .stat-box.green::after  { background: var(--ok); }
 .stat-box.amber::after  { background: var(--warn); }
 .stat-box.purple::after { background: var(--purple); }
-
 .stat-icon {
   width: 36px; height: 36px; border-radius: 9px;
   display: flex; align-items: center; justify-content: center;
@@ -219,12 +209,9 @@ body {
 .stat-box.green  .stat-icon { background: var(--ok-l); }
 .stat-box.amber  .stat-icon { background: var(--warn-l); }
 .stat-box.purple .stat-icon { background: var(--purple-l); }
-
 .stat-label {
-  font-size: 11px; font-weight: 600;
-  color: var(--ink3);
-  text-transform: uppercase; letter-spacing: .08em;
-  margin-bottom: 4px;
+  font-size: 11px; font-weight: 600; color: var(--ink3);
+  text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px;
 }
 .stat-value { font-size: 28px; font-weight: 700; color: var(--ink); font-family: 'DM Mono', monospace; }
 .stat-note  { font-size: 10px; color: var(--ink3); margin-top: 4px; }
@@ -235,32 +222,27 @@ body {
 .card {
   background: var(--white);
   border: 1px solid var(--line);
-  border-radius: 14px;
-  overflow: hidden;
-  margin-bottom: 16px;
+  border-radius: 14px; overflow: hidden; margin-bottom: 16px;
 }
 .card:last-child { margin-bottom: 0; }
 .card-head {
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--line);
+  padding: 16px 20px; border-bottom: 1px solid var(--line);
   display: flex; align-items: center; gap: 10px;
 }
-.card-title { font-size: 13px; font-weight: 700; color: var(--ink); }
-.card-sub   { font-size: 11px; color: var(--ink3); margin-top: 1px; }
+.card-title   { font-size: 13px; font-weight: 700; color: var(--ink); }
+.card-sub     { font-size: 11px; color: var(--ink3); margin-top: 1px; }
 .card-actions { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
-.card-body { padding: 20px; }
+.card-body    { padding: 20px; }
 
 /* ════════════════════════════════════════
    BUTTONS
 ════════════════════════════════════════ */
 .btn {
   display: inline-flex; align-items: center; gap: 6px;
-  padding: 8px 14px;
-  border: none; border-radius: 8px;
+  padding: 8px 14px; border: none; border-radius: 8px;
   font-family: inherit; font-size: 11px; font-weight: 700;
   cursor: pointer; transition: all .15s;
-  text-transform: uppercase; letter-spacing: .06em;
-  white-space: nowrap;
+  text-transform: uppercase; letter-spacing: .06em; white-space: nowrap;
 }
 .btn-prim   { background: var(--prim);   color: #fff; }
 .btn-prim:hover   { background: #4338CA; }
@@ -279,6 +261,8 @@ body {
 .btn-orange { background: var(--orange); color: #fff; }
 .btn-orange:hover { background: #EA580C; }
 .btn:disabled { opacity: .5; cursor: not-allowed; }
+.btn-qr { background: var(--purple-l); color: var(--purple); border: 1px solid rgba(139,92,246,.3); }
+.btn-qr:hover { background: #DDD6FE; }
 
 /* ════════════════════════════════════════
    FORM CONTROLS
@@ -288,17 +272,11 @@ body {
   margin-bottom: 16px; flex-wrap: wrap;
 }
 .filter-row label {
-  font-size: 11px; font-weight: 700;
-  color: var(--ink3);
+  font-size: 11px; font-weight: 700; color: var(--ink3);
   text-transform: uppercase; letter-spacing: .08em;
 }
-select,
-input[type=text],
-input[type=time],
-input[type=date],
-input[type=email] {
-  border: 1.5px solid var(--line);
-  border-radius: 8px;
+select, input[type=text], input[type=time], input[type=date], input[type=email] {
+  border: 1.5px solid var(--line); border-radius: 8px;
   padding: 8px 12px;
   font-family: inherit; font-size: 12px; font-weight: 600;
   color: var(--ink); background: var(--white);
@@ -313,21 +291,16 @@ select:focus, input:focus { border-color: var(--prim); }
 table { width: 100%; border-collapse: collapse; font-size: 12px; }
 thead tr { background: var(--bg); }
 th {
-  padding: 10px 14px;
-  text-align: left;
+  padding: 10px 14px; text-align: left;
   font-size: 10px; font-weight: 800;
-  text-transform: uppercase; letter-spacing: .08em;
-  color: var(--ink3);
-  border-bottom: 2px solid var(--line);
-  white-space: nowrap;
+  text-transform: uppercase; letter-spacing: .08em; color: var(--ink3);
+  border-bottom: 2px solid var(--line); white-space: nowrap;
 }
 td {
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--line);
-  color: var(--ink2);
-  vertical-align: middle;
+  padding: 10px 14px; border-bottom: 1px solid var(--line);
+  color: var(--ink2); vertical-align: middle;
 }
-tr:hover td { background: #F9FAFB; }
+tr:hover td    { background: #F9FAFB; }
 .td-name { font-weight: 700; color: var(--ink); }
 .td-mono { font-family: 'DM Mono', monospace; font-size: 11px; }
 
@@ -338,8 +311,7 @@ tr:hover td { background: #F9FAFB; }
   display: inline-flex; align-items: center;
   padding: 3px 9px; border-radius: 6px;
   font-size: 9px; font-weight: 800;
-  text-transform: uppercase; letter-spacing: .06em;
-  white-space: nowrap;
+  text-transform: uppercase; letter-spacing: .06em; white-space: nowrap;
 }
 .chip-ok     { background: var(--ok-l);     color: #065F46; }
 .chip-warn   { background: var(--warn-l);   color: #92400E; }
@@ -355,8 +327,7 @@ tr:hover td { background: #F9FAFB; }
 .jadwal-grid { display: grid; gap: 12px; }
 .jadwal-card { border: 1.5px solid var(--line); border-radius: 12px; overflow: hidden; }
 .jadwal-card-head {
-  padding: 12px 16px;
-  background: var(--bg);
+  padding: 12px 16px; background: var(--bg);
   display: flex; align-items: center; gap: 10px;
   border-bottom: 1px solid var(--line);
 }
@@ -366,117 +337,45 @@ tr:hover td { background: #F9FAFB; }
 .jadwal-fields {
   display: grid;
   grid-template-columns: 1fr 1fr auto auto;
-  gap: 10px; align-items: end;
-  margin-bottom: 10px;
+  gap: 10px; align-items: end; margin-bottom: 10px;
 }
-.field-group { display: flex; flex-direction: column; gap: 5px; }
-.field-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--ink3); }
+.field-group  { display: flex; flex-direction: column; gap: 5px; }
+.field-label  { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--ink3); }
 
-/* Collapsible sections */
-.hari-section { display: none; }
-.hari-section.open {
-  display: block;
-  margin-top: 12px; padding-top: 12px;
-  border-top: 1px solid var(--line);
-}
-.hari-toggle {
-  font-size: 10px; font-weight: 600; color: var(--prim);
-  cursor: pointer; background: none; border: none;
-  font-family: inherit; padding: 4px 0;
-}
+/* Collapsible */
+.hari-section      { display: none; }
+.hari-section.open { display: block; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+.hari-toggle { font-size: 10px; font-weight: 600; color: var(--prim); cursor: pointer; background: none; border: none; font-family: inherit; padding: 4px 0; }
 
-/* Hari tanpa jadwal grid */
-.htj-grid {
-  display: grid;
-  grid-template-columns: 80px repeat(6, 1fr);
-  gap: 6px;
-  margin-top: 12px; padding-top: 12px;
-  border-top: 1px solid var(--line);
-}
-.htj-head {
-  font-size: 9px; font-weight: 800;
-  text-transform: uppercase; letter-spacing: .06em;
-  color: var(--ink3);
-  text-align: center; padding: 4px 0;
-}
+/* Hari tanpa jadwal */
+.htj-grid { display: grid; grid-template-columns: 80px repeat(6, 1fr); gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
+.htj-head { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--ink3); text-align: center; padding: 4px 0; }
 .htj-label { display: flex; align-items: center; font-size: 10px; font-weight: 700; color: var(--ink3); }
-.htj-toggle {
-  display: flex; align-items: center; justify-content: center;
-  height: 32px; border-radius: 8px;
-  border: 1.5px solid var(--line);
-  cursor: pointer; background: var(--white);
-  transition: all .15s;
-  font-size: 10px; font-weight: 700; color: var(--ink3);
-}
-.htj-toggle.aktif   { background: var(--ok-l);  border-color: var(--ok);  color: #065F46; }
-.htj-toggle.nonaktif{ background: var(--err-l); border-color: var(--err); color: #991B1B; }
+.htj-toggle { display: flex; align-items: center; justify-content: center; height: 32px; border-radius: 8px; border: 1.5px solid var(--line); cursor: pointer; background: var(--white); transition: all .15s; font-size: 10px; font-weight: 700; color: var(--ink3); }
+.htj-toggle.aktif    { background: var(--ok-l);  border-color: var(--ok);  color: #065F46; }
+.htj-toggle.nonaktif { background: var(--err-l); border-color: var(--err); color: #991B1B; }
 
-/* ════════════════════════════════════════
-   OVERRIDE JADWAL (NEW)
-════════════════════════════════════════ */
-.override-section {
-  margin-top: 14px; padding-top: 14px;
-  border-top: 1px solid var(--line);
-}
-.override-form {
-  display: grid;
-  grid-template-columns: 1fr auto auto auto;
-  gap: 8px; align-items: end;
-  margin-bottom: 12px;
-}
+/* Override jadwal */
+.override-section { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
+.override-form { display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; align-items: end; margin-bottom: 12px; }
 .override-list { display: grid; gap: 6px; }
-.override-item {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 12px;
-  background: var(--orange-l);
-  border: 1.5px solid var(--orange);
-  border-radius: 8px;
-}
-.override-item-date {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px; font-weight: 700;
-  color: #9A3412;
-  min-width: 90px;
-}
-.override-item-time {
-  font-size: 11px; color: var(--ink2); flex: 1;
-}
-.override-item-del {
-  background: none; border: none;
-  color: var(--err); cursor: pointer;
-  font-size: 13px; padding: 2px 4px;
-  border-radius: 4px; transition: background .15s;
-  display: flex; align-items: center;
-}
+.override-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--orange-l); border: 1.5px solid var(--orange); border-radius: 8px; }
+.override-item-date { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700; color: #9A3412; min-width: 90px; }
+.override-item-time { font-size: 11px; color: var(--ink2); flex: 1; }
+.override-item-del  { background: none; border: none; color: var(--err); cursor: pointer; font-size: 13px; padding: 2px 4px; border-radius: 4px; transition: background .15s; display: flex; align-items: center; }
 .override-item-del:hover { background: var(--err-l); }
-.override-empty {
-  font-size: 11px; color: var(--ink3);
-  text-align: center; padding: 10px;
-  border: 1.5px dashed var(--line);
-  border-radius: 8px;
-}
+.override-empty { font-size: 11px; color: var(--ink3); text-align: center; padding: 10px; border: 1.5px dashed var(--line); border-radius: 8px; }
 
 /* ════════════════════════════════════════
    GURU PANEL
 ════════════════════════════════════════ */
-.guru-card {
-  border: 1.5px solid var(--line);
-  border-radius: 12px; padding: 16px;
-  display: flex; align-items: center; gap: 14px;
-  transition: border-color .15s;
-}
+.guru-card { border: 1.5px solid var(--line); border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px; transition: border-color .15s; }
 .guru-card:hover { border-color: var(--prim); }
-.guru-avatar {
-  width: 40px; height: 40px;
-  background: linear-gradient(135deg, var(--prim-l), var(--cyan-l));
-  border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 18px; flex-shrink: 0;
-}
-.guru-name { font-size: 13px; font-weight: 700; color: var(--ink); }
-.guru-meta { font-size: 10px; color: var(--ink3); margin-top: 2px; }
+.guru-avatar { width: 40px; height: 40px; background: linear-gradient(135deg, var(--prim-l), var(--cyan-l)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.guru-name    { font-size: 13px; font-weight: 700; color: var(--ink); }
+.guru-meta    { font-size: 10px; color: var(--ink3); margin-top: 2px; }
 .guru-actions { margin-left: auto; display: flex; gap: 8px; }
-.guru-grid { display: grid; gap: 10px; }
+.guru-grid    { display: grid; gap: 10px; }
 
 /* ════════════════════════════════════════
    MODAL
@@ -485,157 +384,120 @@ tr:hover td { background: #F9FAFB; }
   position: fixed; inset: 0;
   background: rgba(0,0,0,.5);
   z-index: 200;
-  display: none; align-items: center; justify-content: center;
-  padding: 20px;
+  display: none; align-items: center; justify-content: center; padding: 20px;
 }
 .modal-overlay.open { display: flex; }
 .modal-box {
-  background: var(--white);
-  border-radius: 16px; padding: 28px;
+  background: var(--white); border-radius: 16px; padding: 28px;
   width: 100%; max-width: 480px;
   box-shadow: 0 20px 60px rgba(0,0,0,.2);
 }
-.modal-title { font-size: 16px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
-.modal-sub   { font-size: 12px; color: var(--ink3); margin-bottom: 20px; }
-.modal-fields { display: grid; gap: 14px; }
-.modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal-title   { font-size: 16px; font-weight: 800; color: var(--ink); margin-bottom: 4px; }
+.modal-sub     { font-size: 12px; color: var(--ink3); margin-bottom: 20px; }
+.modal-fields  { display: grid; gap: 14px; }
+.modal-row     { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
 
+/* QR modal body */
+.modal-qr-body { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 8px 0; }
+.modal-qr-box  { padding: 14px; background: #fff; border-radius: 14px; border: 1.5px solid var(--line); box-shadow: 0 4px 20px rgba(79,70,229,.1); display: inline-block; }
+.modal-qr-name { font-size: 16px; font-weight: 800; color: var(--ink); text-align: center; }
+.modal-qr-meta { font-size: 11px; color: var(--ink3); text-align: center; }
+.modal-qr-uid  { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--ink3); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; word-break: break-all; text-align: center; max-width: 220px; }
+.modal-qr-note { font-size: 11px; color: var(--ink3); text-align: center; line-height: 1.5; }
+
 /* ════════════════════════════════════════
-   DASHBOARD TODAY LIST
+   DASHBOARD
 ════════════════════════════════════════ */
-.today-grid  { display: grid; gap: 8px; }
+.today-grid { display: grid; gap: 8px; }
 .today-row {
   display: flex; align-items: center; gap: 12px;
-  padding: 10px 14px;
-  border: 1px solid var(--line); border-radius: 10px;
-  transition: border-color .15s;
+  padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; transition: border-color .15s;
 }
 .today-row:hover { border-color: var(--prim); }
-.today-avatar {
-  width: 32px; height: 32px;
-  background: var(--prim-l); border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 14px; flex-shrink: 0;
-}
+.today-avatar  { width: 32px; height: 32px; background: var(--prim-l); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
 .today-name    { font-size: 12px; font-weight: 700; color: var(--ink); }
 .today-jabatan { font-size: 10px; color: var(--ink3); }
 .today-times   { margin-left: auto; display: flex; gap: 8px; align-items: center; }
-.time-badge {
-  display: flex; align-items: center; gap: 5px;
-  background: var(--bg); border-radius: 6px;
-  padding: 4px 8px;
-  font-size: 10px; font-weight: 700;
-  font-family: 'DM Mono', monospace;
-  color: var(--ink2);
-}
+.time-badge    { display: flex; align-items: center; gap: 5px; background: var(--bg); border-radius: 6px; padding: 4px 8px; font-size: 10px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--ink2); }
 
-/* ════════════════════════════════════════
-   DASHBOARD CHART
-════════════════════════════════════════ */
-.dash-grid {
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 16px; margin-bottom: 24px;
-}
-.chart-wrap {
-  padding: 20px;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-}
+/* Chart */
+.dash-grid  { display: grid; grid-template-columns: 1fr 320px; gap: 16px; margin-bottom: 24px; }
+.chart-wrap { padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 #pie-canvas { max-width: 180px; }
 .pie-legend { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; width: 100%; }
-.pie-legend-item {
-  display: flex; align-items: center; gap: 8px;
-  font-size: 11px; font-weight: 600; color: var(--ink2);
-}
+.pie-legend-item { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; color: var(--ink2); }
 .pie-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
 
 /* ════════════════════════════════════════
    KALENDER LIBUR
 ════════════════════════════════════════ */
 .kal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-.kal-head {
-  text-align: center;
-  font-size: 9px; font-weight: 800;
-  text-transform: uppercase; letter-spacing: .08em;
-  color: var(--ink3);
-  padding: 8px 4px;
-  background: var(--bg); border-radius: 6px;
-}
-.kal-day {
-  min-height: 68px; border-radius: 10px;
-  border: 1.5px solid var(--line);
-  padding: 6px; cursor: pointer;
-  transition: all .15s;
-  position: relative; background: var(--white);
-}
-.kal-day:hover                  { border-color: var(--prim); transform: scale(1.02); }
-.kal-day.minggu                 { background: #F8FAFC; cursor: default; }
-.kal-day.today                  { background: var(--prim-l); border-color: #6366F1; }
-.kal-day.libur-nasional         { background: var(--err-l); border-color: var(--err); cursor: default; }
-.kal-day.libur-khusus           { background: #FDF4FF; border-color: #A855F7; }
-.kal-day.libur-baru             { background: #F0FDF4; border-color: #22C55E; }
-.kal-day.empty                  { background: transparent; border-color: transparent; cursor: default; pointer-events: none; }
+.kal-head { text-align: center; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--ink3); padding: 8px 4px; background: var(--bg); border-radius: 6px; }
+.kal-day { min-height: 68px; border-radius: 10px; border: 1.5px solid var(--line); padding: 6px; cursor: pointer; transition: all .15s; position: relative; background: var(--white); }
+.kal-day:hover { border-color: var(--prim); transform: scale(1.02); }
+.kal-day.minggu         { background: #F8FAFC; cursor: default; }
+.kal-day.today          { background: var(--prim-l); border-color: #6366F1; }
+.kal-day.libur-nasional { background: var(--err-l); border-color: var(--err); cursor: default; }
+.kal-day.libur-khusus   { background: #FDF4FF; border-color: #A855F7; }
+.kal-day.libur-baru     { background: #F0FDF4; border-color: #22C55E; }
+.kal-day.empty          { background: transparent; border-color: transparent; cursor: default; pointer-events: none; }
 .kal-tgl { font-size: 13px; font-weight: 800; color: var(--ink); display: block; margin-bottom: 3px; }
-.kal-day.minggu        .kal-tgl { color: #CBD5E1; }
-.kal-day.libur-nasional .kal-tgl{ color: #DC2626; }
-.kal-day.libur-khusus  .kal-tgl { color: #9333EA; }
-.kal-day.libur-baru    .kal-tgl { color: #16A34A; }
+.kal-day.minggu         .kal-tgl { color: #CBD5E1; }
+.kal-day.libur-nasional .kal-tgl { color: #DC2626; }
+.kal-day.libur-khusus   .kal-tgl { color: #9333EA; }
+.kal-day.libur-baru     .kal-tgl { color: #16A34A; }
 .kal-ket { font-size: 8px; font-weight: 700; line-height: 1.3; color: var(--ink3); word-break: break-word; }
 .kal-day.libur-nasional .kal-ket { color: var(--err); }
-.kal-day.libur-khusus  .kal-ket  { color: #A855F7; }
-.kal-day.libur-baru    .kal-ket  { color: #22C55E; }
-.kal-hapus {
-  position: absolute; top: 4px; right: 4px;
-  background: rgba(239,68,68,.15); border: none;
-  border-radius: 4px; color: var(--err);
-  font-size: 9px; font-weight: 800;
-  padding: 2px 5px; cursor: pointer;
-  display: none; transition: background .15s;
-}
+.kal-day.libur-khusus   .kal-ket { color: #A855F7; }
+.kal-day.libur-baru     .kal-ket { color: #22C55E; }
+.kal-hapus { position: absolute; top: 4px; right: 4px; background: rgba(239,68,68,.15); border: none; border-radius: 4px; color: var(--err); font-size: 9px; font-weight: 800; padding: 2px 5px; cursor: pointer; display: none; transition: background .15s; }
 .kal-day.libur-khusus:hover .kal-hapus,
 .kal-day.libur-baru:hover   .kal-hapus { display: block; }
 .kal-hapus:hover { background: rgba(239,68,68,.3); }
 
 /* ════════════════════════════════════════
-   MISC COMPONENTS
+   QR SCANNER & QR DISPLAY
+════════════════════════════════════════ */
+.scanner-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+.scanner-video-box { position: relative; width: 100%; max-width: 360px; border-radius: 14px; overflow: hidden; background: #000; aspect-ratio: 1; border: 2px solid var(--prim); }
+.scanner-video-box video  { width: 100%; height: 100%; object-fit: cover; display: block; }
+.scanner-video-box canvas { display: none; }
+.scanner-crosshair { position: absolute; inset: 0; pointer-events: none; }
+.scanner-crosshair::before,
+.scanner-crosshair::after {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  border: 3px solid rgba(108,99,255,.8); border-radius: 8px;
+}
+.scanner-crosshair::before { width: 55%; height: 55%; }
+.scanner-crosshair::after  { width: 30%; height: 30%; background: rgba(108,99,255,.05); }
+.scanner-anim-line {
+  position: absolute; left: 22.5%; right: 22.5%; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--prim2), transparent);
+  animation: scan-line 2s ease-in-out infinite; top: 50%;
+}
+@keyframes scan-line { 0% { top: 22.5%; opacity: 1; } 50% { opacity: 1; } 100% { top: 77.5%; opacity: .3; } }
+.scanner-status { font-size: 12px; font-weight: 700; color: var(--ink2); text-align: center; min-height: 20px; }
+.scanner-status.success { color: var(--ok); }
+.scanner-status.error   { color: var(--err); }
+
+/* ════════════════════════════════════════
+   MISC
 ════════════════════════════════════════ */
 .empty { text-align: center; padding: 40px 20px; color: var(--ink3); font-size: 13px; }
 .spinner-wrap { text-align: center; padding: 32px; }
-.spin {
-  width: 28px; height: 28px;
-  border: 3px solid var(--line);
-  border-top-color: var(--prim);
-  border-radius: 50%;
-  animation: rotate .6s linear infinite;
-  display: inline-block;
-}
+.spin { width: 28px; height: 28px; border: 3px solid var(--line); border-top-color: var(--prim); border-radius: 50%; animation: rotate .6s linear infinite; display: inline-block; }
 @keyframes rotate { to { transform: rotate(360deg); } }
 
-.libur-item {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 12px 16px; border-radius: 10px;
-  background: var(--bg); border: 1px solid var(--line);
-  margin-bottom: 8px;
-}
+.libur-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-radius: 10px; background: var(--bg); border: 1px solid var(--line); margin-bottom: 8px; }
 .libur-tgl  { font-size: 12px; font-weight: 700; color: var(--prim); font-family: 'DM Mono', monospace; }
 .libur-ket  { font-size: 13px; font-weight: 600; color: var(--ink); margin-top: 2px; }
 .libur-info { flex: 1; }
-.btn-hapus-libur {
-  background: var(--err-l); border: none; border-radius: 8px;
-  padding: 6px 12px; cursor: pointer;
-  font-size: 11px; font-weight: 700; color: var(--err);
-  transition: background .15s; white-space: nowrap; margin-left: 12px;
-}
+.btn-hapus-libur { background: var(--err-l); border: none; border-radius: 8px; padding: 6px 12px; cursor: pointer; font-size: 11px; font-weight: 700; color: var(--err); transition: background .15s; white-space: nowrap; margin-left: 12px; }
 .btn-hapus-libur:hover { background: var(--err); color: white; }
 
-.alert {
-  border-radius: 10px; padding: 12px 16px;
-  font-size: 12px; font-weight: 600;
-  margin-bottom: 16px;
-  display: flex; align-items: center; gap: 10px;
-}
+.alert { border-radius: 10px; padding: 12px 16px; font-size: 12px; font-weight: 600; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; }
 .alert-info   { background: var(--prim-l);   color: #3730A3; border: 1px solid #C7D2FE; }
 .alert-purple { background: var(--purple-l); color: #5B21B6; border: 1px solid #DDD6FE; }
 .alert-orange { background: var(--orange-l); color: #9A3412; border: 1px solid #FED7AA; }
@@ -659,141 +521,52 @@ tr:hover td { background: #F9FAFB; }
 }
 .login-bg-grid {
   position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
+  background-image: linear-gradient(rgba(255,255,255,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.03) 1px, transparent 1px);
+  background-size: 40px 40px; pointer-events: none;
 }
 .login-orb { position: absolute; border-radius: 50%; filter: blur(120px); pointer-events: none; }
 .orb1 { width: 600px; height: 600px; background: rgba(108,99,255,.25); top: -200px; left: -100px; }
 .orb2 { width: 500px; height: 500px; background: rgba(6,182,212,.15); bottom: -150px; right: -100px; }
-
-.login-left {
-  width: 380px; flex-shrink: 0;
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 52px 40px;
-  position: relative; z-index: 1;
-  background: rgba(255,255,255,.03);
-}
-.login-divider {
-  width: 1px; align-self: stretch;
-  background: linear-gradient(to bottom,
-    transparent 0%,
-    rgba(255,255,255,.25) 20%,
-    rgba(255,255,255,.25) 80%,
-    transparent 100%);
-  flex-shrink: 0; position: relative; z-index: 1;
-}
-.login-logo-img-wrap {
-  width: 200px; height: 200px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 32px;
-}
-.login-logo-img {
-  width: 100%; height: 100%; object-fit: contain;
-  mix-blend-mode: screen;
-  filter: drop-shadow(0 0 32px rgba(6,182,212,.4));
-}
-.login-brand-name {
-  font-size: 28px; font-weight: 800; color: #fff;
-  text-align: center; line-height: 1.2; margin-bottom: 8px;
-}
-.login-brand-sub {
-  font-size: 13px; color: rgba(255,255,255,.4);
-  text-align: center;
-  text-transform: uppercase; letter-spacing: .15em;
-}
-.login-brand-divider {
-  width: 48px; height: 3px;
-  background: linear-gradient(90deg, var(--prim2), var(--cyan));
-  border-radius: 99px; margin: 20px auto 0;
-}
-
-.login-right {
-  flex: 1;
-  display: flex; align-items: center; justify-content: center;
-  padding: 52px 44px;
-  position: relative; z-index: 1;
-  background: rgba(255,255,255,.04);
-}
-.login-card { width: 100%; }
+.login-left { width: 380px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 52px 40px; position: relative; z-index: 1; background: rgba(255,255,255,.03); }
+.login-divider { width: 1px; align-self: stretch; background: linear-gradient(to bottom, transparent 0%, rgba(255,255,255,.25) 20%, rgba(255,255,255,.25) 80%, transparent 100%); flex-shrink: 0; position: relative; z-index: 1; }
+.login-logo-img-wrap { width: 200px; height: 200px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 32px; }
+.login-logo-img { width: 100%; height: 100%; object-fit: contain; mix-blend-mode: screen; filter: drop-shadow(0 0 32px rgba(6,182,212,.4)); }
+.login-brand-name { font-size: 28px; font-weight: 800; color: #fff; text-align: center; line-height: 1.2; margin-bottom: 8px; }
+.login-brand-sub  { font-size: 13px; color: rgba(255,255,255,.4); text-align: center; text-transform: uppercase; letter-spacing: .15em; }
+.login-brand-divider { width: 48px; height: 3px; background: linear-gradient(90deg, var(--prim2), var(--cyan)); border-radius: 99px; margin: 20px auto 0; }
+.login-right { flex: 1; display: flex; align-items: center; justify-content: center; padding: 52px 44px; position: relative; z-index: 1; background: rgba(255,255,255,.04); }
+.login-card       { width: 100%; }
 .login-form-title { font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 6px; }
 .login-form-sub   { font-size: 13px; color: rgba(255,255,255,.4); margin-bottom: 32px; }
 .login-field      { margin-bottom: 16px; }
-.login-label {
-  font-size: 10px; font-weight: 800;
-  color: rgba(255,255,255,.4);
-  text-transform: uppercase; letter-spacing: .15em;
-  display: block; margin-bottom: 7px;
-}
-.login-input-wrap {
-  background: rgba(255,255,255,.07);
-  border: 1.5px solid rgba(255,255,255,.1);
-  border-radius: 12px;
-  display: flex; align-items: center; gap: 12px;
-  padding: 0 16px;
-  transition: border-color .2s, background .2s;
-}
-.login-input-wrap:focus-within {
-  border-color: rgba(167,139,250,.6);
-  background: rgba(255,255,255,.1);
-}
-.login-input-wrap input {
-  flex: 1; border: none; outline: none;
-  background: transparent;
-  padding: 15px 0;
-  font-size: 14px; font-weight: 600; color: #fff;
-  font-family: 'DM Sans', sans-serif;
-}
+.login-label      { font-size: 10px; font-weight: 800; color: rgba(255,255,255,.4); text-transform: uppercase; letter-spacing: .15em; display: block; margin-bottom: 7px; }
+.login-input-wrap { background: rgba(255,255,255,.07); border: 1.5px solid rgba(255,255,255,.1); border-radius: 12px; display: flex; align-items: center; gap: 12px; padding: 0 16px; transition: border-color .2s, background .2s; }
+.login-input-wrap:focus-within { border-color: rgba(167,139,250,.6); background: rgba(255,255,255,.1); }
+.login-input-wrap input { flex: 1; border: none; outline: none; background: transparent; padding: 15px 0; font-size: 14px; font-weight: 600; color: #fff; font-family: 'DM Sans', sans-serif; }
 .login-input-wrap input::placeholder { color: rgba(255,255,255,.2); }
 .login-input-wrap svg { color: rgba(255,255,255,.3); flex-shrink: 0; }
-
-.btn-login-main {
-  width: 100%; padding: 16px;
-  background: linear-gradient(135deg, var(--prim2), var(--prim));
-  color: #fff; border: none; border-radius: 12px;
-  font-family: 'DM Sans', sans-serif;
-  font-size: 12px; font-weight: 800;
-  letter-spacing: .12em; text-transform: uppercase;
-  cursor: pointer; margin-top: 8px;
-  box-shadow: 0 12px 28px rgba(108,99,255,.4);
-  transition: opacity .15s, transform .15s;
-  display: flex; align-items: center; justify-content: center; gap: 8px;
-}
+.btn-login-main { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--prim2), var(--prim)); color: #fff; border: none; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; margin-top: 8px; box-shadow: 0 12px 28px rgba(108,99,255,.4); transition: opacity .15s, transform .15s; display: flex; align-items: center; justify-content: center; gap: 8px; }
 .btn-login-main:hover    { opacity: .9; transform: translateY(-1px); }
 .btn-login-main:disabled { opacity: .5; cursor: not-allowed; transform: none; }
-
-.login-err {
-  background: rgba(239,68,68,.15);
-  border: 1px solid rgba(239,68,68,.3);
-  border-radius: 10px; padding: 10px 14px;
-  font-size: 12px; font-weight: 600; color: #FCA5A5;
-  margin-top: 12px; display: none;
-}
+.login-err  { background: rgba(239,68,68,.15); border: 1px solid rgba(239,68,68,.3); border-radius: 10px; padding: 10px 14px; font-size: 12px; font-weight: 600; color: #FCA5A5; margin-top: 12px; display: none; }
 .login-err.show { display: block; }
-.login-note {
-  text-align: center; font-size: 10px;
-  color: rgba(255,255,255,.18); margin-top: 24px;
-}
+.login-note { text-align: center; font-size: 10px; color: rgba(255,255,255,.18); margin-top: 24px; }
 
 /* ════════════════════════════════════════
-   TOAST
+   TOAST — diselaraskan dengan index.html
 ════════════════════════════════════════ */
 #toast {
   position: fixed; bottom: 24px; right: 24px;
-  padding: 12px 20px; border-radius: 10px;
-  font-size: 12px; font-weight: 700;
-  opacity: 0; transition: all .3s;
-  z-index: 9999; pointer-events: none;
-  max-width: 340px;
+  padding: 13px 22px; border-radius: 16px;
+  font-size: 12px; font-weight: 700; letter-spacing: -.1px;
+  opacity: 0; transition: all .3s cubic-bezier(.16,1,.3,1);
+  z-index: 9999; pointer-events: none; max-width: 340px;
 }
 #toast.show    { opacity: 1; }
-#toast.success { background: #065F46; color: #6EE7B7; }
-#toast.error   { background: #991B1B; color: #FCA5A5; }
-#toast.info    { background: #1E40AF; color: #93C5FD; }
-#toast.warning { background: #92400E; color: #FCD34D; }
+#toast.success { background: #0F172A; color: white; box-shadow: 0 16px 40px rgba(0,0,0,.3); }
+#toast.error   { background: #DC2626; color: white; box-shadow: 0 16px 40px rgba(220,38,38,.4); }
+#toast.warning { background: #D97706; color: white; box-shadow: 0 16px 40px rgba(217,119,6,.4); }
+#toast.info    { background: #1E40AF; color: #93C5FD; box-shadow: 0 16px 40px rgba(30,64,175,.3); }
 
 /* ════════════════════════════════════════
    PRINT
@@ -818,125 +591,9 @@ tr:hover td { background: #F9FAFB; }
 @media (max-width: 768px) {
   #sidebar { transform: translateX(-100%); }
   #main    { margin-left: 0; }
-  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .stats-grid   { grid-template-columns: 1fr 1fr; }
   .override-form { grid-template-columns: 1fr; }
 }
-/* ════════════════════════════════════════
-   QR SCANNER & QR DISPLAY
-════════════════════════════════════════ */
-/* Modal QR Viewer (tampilkan QR guru) */
-.modal-qr-body {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  padding: 8px 0;
-}
-.modal-qr-box {
-  padding: 14px;
-  background: #fff;
-  border-radius: 14px;
-  border: 1.5px solid var(--line);
-  box-shadow: 0 4px 20px rgba(79,70,229,.1);
-  display: inline-block;
-}
-.modal-qr-name {
-  font-size: 16px;
-  font-weight: 800;
-  color: var(--ink);
-  text-align: center;
-}
-.modal-qr-meta {
-  font-size: 11px;
-  color: var(--ink3);
-  text-align: center;
-}
-.modal-qr-uid {
-  font-family: 'DM Mono', monospace;
-  font-size: 9px;
-  color: var(--ink3);
-  background: var(--bg);
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  padding: 5px 10px;
-  word-break: break-all;
-  text-align: center;
-  max-width: 220px;
-}
-.modal-qr-note {
-  font-size: 11px;
-  color: var(--ink3);
-  text-align: center;
-  line-height: 1.5;
-}
-
-/* QR Scanner modal */
-.scanner-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-}
-.scanner-video-box {
-  position: relative;
-  width: 100%;
-  max-width: 360px;
-  border-radius: 14px;
-  overflow: hidden;
-  background: #000;
-  aspect-ratio: 1;
-  border: 2px solid var(--prim);
-}
-.scanner-video-box video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.scanner-video-box canvas { display: none; }
-.scanner-crosshair {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-.scanner-crosshair::before,
-.scanner-crosshair::after {
-  content: '';
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  border: 3px solid rgba(108,99,255,.8);
-  border-radius: 8px;
-}
-.scanner-crosshair::before { width: 55%; height: 55%; }
-.scanner-crosshair::after  { width: 30%; height: 30%; background: rgba(108,99,255,.05); }
-.scanner-anim-line {
-  position: absolute;
-  left: 22.5%; right: 22.5%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--prim2), transparent);
-  animation: scan-line 2s ease-in-out infinite;
-  top: 50%;
-}
-@keyframes scan-line {
-  0%   { top: 22.5%; opacity: 1; }
-  50%  { opacity: 1; }
-  100% { top: 77.5%; opacity: .3; }
-}
-.scanner-status {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--ink2);
-  text-align: center;
-  min-height: 20px;
-}
-.scanner-status.success { color: var(--ok); }
-.scanner-status.error   { color: var(--err); }
-
-/* Btn QR in guru card */
-.btn-qr { background: var(--purple-l); color: var(--purple); border: 1px solid rgba(139,92,246,.3); }
-.btn-qr:hover { background: #DDD6FE; }
-
 </style>
 </head>
 <body>
@@ -1183,7 +840,7 @@ tr:hover td { background: #F9FAFB; }
           <div class="card-head">
             <div>
               <div class="card-title">Daftar Guru Terdaftar</div>
-              <div class="card-sub">Kelola nama dan jabatan guru</div>
+              <div class="card-sub">Kelola nama, jabatan, dan tampilkan QR code guru</div>
             </div>
             <div class="card-actions">
               <button class="btn btn-prim" onclick="openQRScanner()">
@@ -1275,6 +932,7 @@ tr:hover td { background: #F9FAFB; }
         <div class="alert alert-orange">
           🔀 <strong>Override Jadwal Per Tanggal</strong> — Atur jadwal khusus untuk tanggal tertentu.
           Override akan menggantikan jadwal default dan jadwal per-hari untuk tanggal yang ditentukan.
+          Prioritas: <strong>Override</strong> → Per Hari → Default.
         </div>
         <div class="card">
           <div class="card-head">
@@ -1320,18 +978,10 @@ tr:hover td { background: #F9FAFB; }
           </div>
           <div class="card-body">
             <div style="display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;font-size:11px;font-weight:700;">
-              <span style="display:flex;align-items:center;gap:6px;">
-                <span style="width:12px;height:12px;border-radius:3px;background:var(--prim-l);border:1.5px solid #6366F1;display:inline-block;"></span>Hari Ini
-              </span>
-              <span style="display:flex;align-items:center;gap:6px;">
-                <span style="width:12px;height:12px;border-radius:3px;background:var(--err-l);border:1.5px solid #EF4444;display:inline-block;"></span>Libur Nasional
-              </span>
-              <span style="display:flex;align-items:center;gap:6px;">
-                <span style="width:12px;height:12px;border-radius:3px;background:#FDF4FF;border:1.5px solid #A855F7;display:inline-block;"></span>Libur Khusus
-              </span>
-              <span style="display:flex;align-items:center;gap:6px;">
-                <span style="width:12px;height:12px;border-radius:3px;background:#F0FDF4;border:1.5px solid #22C55E;display:inline-block;"></span>Baru (Belum Simpan)
-              </span>
+              <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;border-radius:3px;background:var(--prim-l);border:1.5px solid #6366F1;display:inline-block;"></span>Hari Ini</span>
+              <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;border-radius:3px;background:var(--err-l);border:1.5px solid #EF4444;display:inline-block;"></span>Libur Nasional</span>
+              <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;border-radius:3px;background:#FDF4FF;border:1.5px solid #A855F7;display:inline-block;"></span>Libur Khusus</span>
+              <span style="display:flex;align-items:center;gap:6px;"><span style="width:12px;height:12px;border-radius:3px;background:#F0FDF4;border:1.5px solid #22C55E;display:inline-block;"></span>Baru (Belum Simpan)</span>
             </div>
             <div id="kalender-wrap"></div>
             <div id="libur-dialog" style="display:none;margin-top:16px;padding:16px;background:var(--bg);border:1.5px solid var(--prim);border-radius:12px;">
@@ -1433,30 +1083,12 @@ tr:hover td { background: #F9FAFB; }
 </div>
 
 <!-- ════════════════════════════════════════
-     PRINT AREA
-════════════════════════════════════════ -->
-<div id="print-area" style="display:none;padding:24px;font-family:'DM Sans',sans-serif;">
-  <div style="text-align:center;margin-bottom:20px;border-bottom:2px solid #4F46E5;padding-bottom:16px;">
-    <h2 style="font-size:16px;font-weight:800;color:#0D1117;">LAPORAN ABSENSI GURU</h2>
-    <p style="font-size:12px;color:#475569;margin-top:4px;">SDN WAWONGGOLE · E-Presensi</p>
-    <p style="font-size:11px;color:#94A3B8;margin-top:2px;" id="print-periode-label"></p>
-    <p style="font-size:10px;color:#94A3B8;" id="print-cetak-tgl"></p>
-    <p style="font-size:10px;color:#7C3AED;margin-top:4px;font-style:italic;display:none;" id="print-ket-tanpa-jadwal">
-      * Hari "Tdk Ada Jadwal Mengajar" dikecualikan dari perhitungan persentase kehadiran
-    </p>
-  </div>
-  <div id="print-content-area"></div>
-</div>
-
-<div id="toast"></div>
-
-<!-- ════════════════════════════════════════
-     MODAL: QR VIEWER (tampilkan QR guru)
+     MODAL — QR VIEWER (tampilkan QR guru)
 ════════════════════════════════════════ -->
 <div class="modal-overlay" id="modal-qr-viewer" onclick="if(event.target===this) closeQRViewer()">
   <div class="modal-box" style="max-width:340px;">
     <div class="modal-title">🔲 QR Code Guru</div>
-    <div class="modal-sub" id="modal-qr-viewer-sub">QR Code untuk presensi</div>
+    <div class="modal-sub">QR Code untuk presensi — scan menggunakan fitur Scan QR Absen</div>
     <div class="modal-qr-body">
       <div class="modal-qr-name" id="modal-qr-guru-name">–</div>
       <div class="modal-qr-meta" id="modal-qr-guru-meta">–</div>
@@ -1464,7 +1096,7 @@ tr:hover td { background: #F9FAFB; }
         <div id="modal-qr-canvas"></div>
       </div>
       <div class="modal-qr-uid" id="modal-qr-uid-text">–</div>
-      <div class="modal-qr-note">Admin gunakan tombol <strong>Scan QR Absen</strong><br>untuk men-scan QR code ini</div>
+      <div class="modal-qr-note">Guru dapat menunjukkan QR ini kepada admin<br>atau scan mandiri via aplikasi E-Presensi</div>
     </div>
     <div class="modal-actions" style="justify-content:center;">
       <button class="btn btn-ghost" onclick="closeQRViewer()">Tutup</button>
@@ -1473,7 +1105,7 @@ tr:hover td { background: #F9FAFB; }
 </div>
 
 <!-- ════════════════════════════════════════
-     MODAL: QR SCANNER
+     MODAL — QR SCANNER
 ════════════════════════════════════════ -->
 <div class="modal-overlay" id="modal-qr-scanner" onclick="if(event.target===this) closeQRScanner()">
   <div class="modal-box" style="max-width:420px;">
@@ -1493,7 +1125,7 @@ tr:hover td { background: #F9FAFB; }
     </div>
 
     <div class="scanner-wrap">
-      <div class="scanner-video-box" id="scanner-video-box">
+      <div class="scanner-video-box">
         <video id="qr-video" autoplay playsinline muted></video>
         <canvas id="qr-canvas"></canvas>
         <div class="scanner-crosshair">
@@ -1504,8 +1136,8 @@ tr:hover td { background: #F9FAFB; }
     </div>
 
     <!-- Hasil scan terakhir -->
-    <div id="scan-result-box" style="display:none;margin-top:10px;padding:12px 14px;border-radius:10px;border:1px solid var(--line);background:var(--bg);">
-      <div style="font-size:11px;font-weight:700;color:var(--ink3);margin-bottom:6px;">HASIL SCAN TERAKHIR</div>
+    <div id="scan-result-box" style="display:none;margin-top:10px;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);">
+      <div style="font-size:10px;font-weight:800;color:var(--ink3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.1em;">Hasil Scan Terakhir</div>
       <div id="scan-result-nama" style="font-size:14px;font-weight:800;color:var(--ink);">–</div>
       <div id="scan-result-info" style="font-size:11px;color:var(--ink3);margin-top:3px;">–</div>
     </div>
@@ -1515,6 +1147,24 @@ tr:hover td { background: #F9FAFB; }
     </div>
   </div>
 </div>
+
+<!-- ════════════════════════════════════════
+     PRINT AREA
+════════════════════════════════════════ -->
+<div id="print-area" style="display:none;padding:24px;font-family:'DM Sans',sans-serif;">
+  <div style="text-align:center;margin-bottom:20px;border-bottom:2px solid #4F46E5;padding-bottom:16px;">
+    <h2 style="font-size:16px;font-weight:800;color:#0D1117;">LAPORAN ABSENSI GURU</h2>
+    <p style="font-size:12px;color:#475569;margin-top:4px;">SDN WAWONGGOLE · E-Presensi</p>
+    <p style="font-size:11px;color:#94A3B8;margin-top:2px;" id="print-periode-label"></p>
+    <p style="font-size:10px;color:#94A3B8;" id="print-cetak-tgl"></p>
+    <p style="font-size:10px;color:#7C3AED;margin-top:4px;font-style:italic;display:none;" id="print-ket-tanpa-jadwal">
+      * Hari "Tdk Ada Jadwal Mengajar" dikecualikan dari perhitungan persentase kehadiran
+    </p>
+  </div>
+  <div id="print-content-area"></div>
+</div>
+
+<div id="toast"></div>
 
 <!-- ════════════════════════════════════════
      JAVASCRIPT MODULE
@@ -1529,7 +1179,7 @@ import { getDatabase, ref, get, set, update, remove, onValue,
   from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
 // ─────────────────────────────────────────
-// FIREBASE CONFIG
+// FIREBASE CONFIG — identik dengan index.html
 // ─────────────────────────────────────────
 const FIREBASE_CONFIG = {
   apiKey:      "AIzaSyB4KhBeNDfiP-rzI16qdBz8J2InbrWrgOM",
@@ -1543,7 +1193,7 @@ const auth  = getAuth(fbApp);
 const db    = getDatabase(fbApp);
 
 // ─────────────────────────────────────────
-// CONSTANTS
+// CONSTANTS — identik dengan index.html
 // ─────────────────────────────────────────
 const JABATAN_LABEL = {
   kelas:          'Guru Kelas',
@@ -1555,7 +1205,25 @@ const JABATAN_LABEL = {
 const NAMA_BULAN  = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const NAMA_HARI   = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
 const HARI_PENDEK = ['','Sen','Sel','Rab','Kam','Jum','Sab'];
+
+// Libur nasional — diselaraskan penuh dengan index.html
 const LIBUR_NASIONAL = {
+  '2025-01-01':'Tahun Baru 2025',
+  '2025-01-27':'Isra Mikraj',
+  '2025-01-29':'Tahun Baru Imlek',
+  '2025-03-29':'Hari Suci Nyepi',
+  '2025-03-31':'Idul Fitri 1446 H',
+  '2025-04-01':'Idul Fitri 1446 H',
+  '2025-04-18':'Wafat Isa Almasih',
+  '2025-05-01':'Hari Buruh',
+  '2025-05-12':'Hari Raya Waisak',
+  '2025-05-29':'Kenaikan Isa Almasih',
+  '2025-06-01':'Hari Lahir Pancasila',
+  '2025-06-06':'Idul Adha 1446 H',
+  '2025-06-27':'Tahun Baru Hijriah 1447 H',
+  '2025-08-17':'HUT Kemerdekaan RI',
+  '2025-09-05':'Maulid Nabi Muhammad SAW',
+  '2025-12-25':'Hari Raya Natal',
   '2026-01-01':'Tahun Baru 2026',
   '2026-01-27':'Isra Mikraj',
   '2026-01-29':'Tahun Baru Imlek',
@@ -1567,6 +1235,7 @@ const LIBUR_NASIONAL = {
   '2026-05-01':'Hari Buruh',
   '2026-05-14':'Kenaikan Isa Almasih',
   '2026-05-23':'Hari Raya Waisak',
+  '2026-06-01':'Hari Lahir Pancasila',
   '2026-06-27':'Idul Adha',
   '2026-07-17':'Tahun Baru Hijriah',
   '2026-08-17':'HUT Kemerdekaan RI',
@@ -1574,44 +1243,37 @@ const LIBUR_NASIONAL = {
   '2026-12-25':'Hari Raya Natal',
 };
 
+// Jadwal default — identik dengan index.html
+const DEFAULT_MASUK  = '07:20';
+const DEFAULT_PULANG = '12:00';
+
 // ─────────────────────────────────────────
 // GLOBAL STATE
 // ─────────────────────────────────────────
 const state = {
-  users:      null,       // cache data users dari Firebase
-  report:     null,       // cache data laporan untuk export/print
-  koreksiUID: null,       // UID guru yang sedang dikoreksi
+  users:      null,
+  report:     null,
+  koreksiUID: null,
   kalender: {
-    liburKhusus: {},      // libur tersimpan di Firebase
-    liburBaru:   {},      // libur baru (belum disimpan)
-    liburHapus:  [],      // libur yang akan dihapus
-    tglDipilih:  null,    // tanggal yang sedang dipilih di kalender
+    liburKhusus: {},
+    liburBaru:   {},
+    liburHapus:  [],
+    tglDipilih:  null,
   },
-  listeners: {},          // registry unsubscribe onValue listeners
+  listeners: {},
 };
 
 // ─────────────────────────────────────────
 // LISTENER MANAGEMENT
 // ─────────────────────────────────────────
-
-/**
- * Daftarkan onValue listener. Listener lama untuk key yang sama
- * akan di-unsubscribe otomatis sebelum listener baru dibuat.
- */
 function listen(key, dbRef, callback) {
-  if (state.listeners[key]) state.listeners[key](); // unsubscribe lama
-  state.listeners[key] = onValue(
-    dbRef,
-    callback,
+  if (state.listeners[key]) state.listeners[key]();
+  state.listeners[key] = onValue(dbRef, callback,
     (err) => console.warn(`[listener:${key}]`, err.message)
   );
 }
-
 function stopListener(key) {
-  if (state.listeners[key]) {
-    state.listeners[key]();
-    delete state.listeners[key];
-  }
+  if (state.listeners[key]) { state.listeners[key](); delete state.listeners[key]; }
 }
 
 // ─────────────────────────────────────────
@@ -1640,16 +1302,11 @@ onAuthStateChanged(auth, async (user) => {
 function showLoginPage() {
   document.getElementById('login-page').style.display = 'flex';
   document.getElementById('app').style.display        = 'none';
-
-  // Reset tombol login ke kondisi awal.
-  // Pada path login SUKSES, catch tidak terpanggil sehingga tombol tidak pernah di-reset.
-  // Akibatnya saat logout dan kembali ke halaman login, tombol masih disabled + 'Memverifikasi…'.
   const btn = document.getElementById('btn-login');
   const txt = document.getElementById('btn-login-text');
   if (btn) btn.disabled = false;
   if (txt) txt.textContent = 'Masuk ke Panel Admin';
 }
-
 function showAppPage() {
   document.getElementById('login-page').style.display = 'none';
   document.getElementById('app').style.display        = 'flex';
@@ -1673,12 +1330,12 @@ window.doLogin = async () => {
     await signInWithEmailAndPassword(auth, email, pass);
   } catch (e) {
     const msgs = {
-      'auth/invalid-credential':    '❌ Email atau password salah.',
-      'auth/user-not-found':        '❌ Akun tidak ditemukan.',
-      'auth/wrong-password':        '❌ Password salah.',
-      'auth/invalid-email':         '❌ Format email tidak valid.',
-      'auth/too-many-requests':     '⏳ Terlalu banyak percobaan. Coba lagi nanti.',
-      'auth/network-request-failed':'📡 Tidak ada koneksi internet.',
+      'auth/invalid-credential':     '❌ Email atau password salah.',
+      'auth/user-not-found':         '❌ Akun tidak ditemukan.',
+      'auth/wrong-password':         '❌ Password salah.',
+      'auth/invalid-email':          '❌ Format email tidak valid.',
+      'auth/too-many-requests':      '⏳ Terlalu banyak percobaan. Coba lagi nanti.',
+      'auth/network-request-failed': '📡 Tidak ada koneksi internet.',
     };
     errEl.textContent = msgs[e.code] || '❌ Login gagal: ' + e.message;
     errEl.classList.add('show');
@@ -1731,8 +1388,6 @@ function initDashboardRealtime() {
   const today    = new Date();
   document.getElementById('dash-tgl-sub').textContent =
     `${NAMA_HARI[today.getDay()]}, ${String(today.getDate()).padStart(2,'0')} ${NAMA_BULAN[today.getMonth()+1]} ${today.getFullYear()}`;
-
-  // Listener users → di dalamnya buat listener today agar data users selalu segar
   listen('dashboard-users', ref(db, 'users'), (usersSnap) => {
     state.users = usersSnap.exists() ? usersSnap.val() : {};
     listen('dashboard-today', ref(db, `absensi/${todayStr}`), (todaySnap) => {
@@ -1742,50 +1397,38 @@ function initDashboardRealtime() {
 }
 
 function renderDashboard(users, todayData) {
-  const todayStr  = todayISO();
-  const guruList  = Object.entries(users).filter(([, u]) => u.role === 'guru' || u.role === 'kepala_sekolah');
+  const todayStr = todayISO();
+  const guruList = Object.entries(users).filter(([, u]) => u.role === 'guru' || u.role === 'kepala_sekolah');
   let hadir = 0, belum = 0, tanpaJadwal = 0;
 
   const rows = guruList.map(([uid, u]) => {
     const tanpaJ  = isTanpaJadwal(users, uid, todayStr);
     const ab      = todayData[uid];
-    const masukW  = ab?.masuk?.waktu   || null;
-    const pulangW = ab?.pulang?.waktu  || null;
-    const masukS  = ab?.masuk?.status  || null;
+    const masukW  = ab?.masuk?.waktu  || null;
+    const pulangW = ab?.pulang?.waktu || null;
+    const masukS  = ab?.masuk?.status || null;
     const jab     = JABATAN_LABEL[u.jabatan] || 'Guru Kelas';
-
-    // Jadwal efektif hari ini (termasuk override)
-    const jadwal    = getJadwalEfektif(users, uid, todayStr);
-    const isOverride= !!users?.[uid]?.jadwal?.override?.[todayStr];
+    const jadwal  = getJadwalEfektif(users, uid, todayStr);
+    const isOv    = !!users?.[uid]?.jadwal?.override?.[todayStr];
 
     let chipClass, chipText;
-    if (tanpaJ) {
-      tanpaJadwal++;
-      chipClass = 'chip-purple'; chipText = 'Tdk Jadwal';
-    } else if (!masukW) {
-      belum++;
-      chipClass = 'chip-gray'; chipText = 'Belum Absen';
-    } else if (masukS?.includes('Terlambat')) {
-      hadir++;
-      chipClass = 'chip-warn'; chipText = 'Terlambat';
-    } else {
-      hadir++;
-      chipClass = 'chip-ok'; chipText = 'Hadir';
-    }
+    if (tanpaJ)                            { tanpaJadwal++; chipClass='chip-purple'; chipText='Tdk Jadwal'; }
+    else if (!masukW)                      { belum++;       chipClass='chip-gray';   chipText='Belum Absen'; }
+    else if (masukS?.includes('Terlambat')){ hadir++;       chipClass='chip-warn';   chipText='Terlambat'; }
+    else                                   { hadir++;       chipClass='chip-ok';     chipText='Hadir'; }
 
     const editBtn = !tanpaJ
       ? `<button class="btn btn-ghost" style="padding:4px 8px;font-size:9px;" onclick="openKoreksi('${uid}','${u.nama||uid}')">✏️</button>`
       : '';
-
-    const overrideBadge = isOverride
-      ? `<span class="chip chip-orange" title="Jadwal override aktif hari ini">🔀 Override</span>`
+    const ovBadge = isOv
+      ? `<span class="chip chip-orange" title="Override aktif hari ini">🔀 Override</span>`
       : '';
 
     return `<div class="today-row">
       <div class="today-avatar">👤</div>
       <div>
         <div class="today-name">${u.nama || uid}</div>
-        <div class="today-jabatan">${jab} · ${jadwal.masuk}–${jadwal.pulang} ${overrideBadge}</div>
+        <div class="today-jabatan">${jab} · ${jadwal.masuk}–${jadwal.pulang} ${ovBadge}</div>
       </div>
       <div class="today-times">
         <div class="time-badge">
@@ -1796,7 +1439,7 @@ function renderDashboard(users, todayData) {
         </div>
         <div class="time-badge">
           <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 8 14"/>
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
           </svg>
           ${pulangW || '–'}
         </div>
@@ -1821,33 +1464,26 @@ function drawPie(hadir, belum) {
   const cx = canvas.width / 2, cy = canvas.height / 2, r = 70;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   const total = hadir + belum;
-  const data = total === 0
+  const data  = total === 0
     ? [{ v: 1, color: '#E8EBF0', label: 'Tidak ada data', count: 0 }]
     : [
         { v: hadir, color: '#10B981', label: 'Hadir',       count: hadir },
         { v: belum, color: '#F59E0B', label: 'Belum Absen', count: belum },
       ].filter(d => d.v > 0);
-
   let start = -Math.PI / 2;
   data.forEach(d => {
     const slice = (d.v / (total || 1)) * Math.PI * 2;
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
+    ctx.beginPath(); ctx.moveTo(cx, cy);
     ctx.arc(cx, cy, r, start, start + slice);
-    ctx.closePath();
-    ctx.fillStyle = d.color;
-    ctx.fill();
+    ctx.closePath(); ctx.fillStyle = d.color; ctx.fill();
     start += slice;
   });
-
-  // Donut hole
   ctx.beginPath(); ctx.arc(cx, cy, 44, 0, Math.PI * 2);
   ctx.fillStyle = '#fff'; ctx.fill();
   ctx.fillStyle = '#0D1117';
   ctx.font = 'bold 22px DM Mono,monospace';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillText(total === 0 ? '–' : `${Math.round((hadir / (total || 1)) * 100)}%`, cx, cy);
-
   document.getElementById('pie-legend').innerHTML = data.map(d =>
     `<div class="pie-legend-item">
       <div class="pie-dot" style="background:${d.color}"></div>
@@ -1870,14 +1506,12 @@ window.fetchGuruList = async () => {
     const guruList = Object.entries(state.users)
       .filter(([, u]) => u.role === 'guru' || u.role === 'kepala_sekolah');
     if (guruList.length === 0) { el.innerHTML = '<div class="empty">Tidak ada guru</div>'; return; }
-
     el.innerHTML = guruList.map(([uid, u]) => {
-      const jab     = JABATAN_LABEL[u.jabatan] || 'Guru Kelas';
-      const jm      = u.jadwal?.masuk  || '07:20';
-      const jp      = u.jadwal?.pulang || '12:00';
-      const htjArr  = Object.entries(u.jadwal?.hari_tanpa_jadwal || {})
-        .filter(([, v]) => v)
-        .map(([k]) => NAMA_HARI[parseInt(k)]);
+      const jab    = JABATAN_LABEL[u.jabatan] || 'Guru Kelas';
+      const jm     = u.jadwal?.masuk  || DEFAULT_MASUK;
+      const jp     = u.jadwal?.pulang || DEFAULT_PULANG;
+      const htjArr = Object.entries(u.jadwal?.hari_tanpa_jadwal || {})
+        .filter(([, v]) => v).map(([k]) => NAMA_HARI[parseInt(k)]);
       const htjStr  = htjArr.length > 0 ? `Tdk ada jadwal: ${htjArr.join(', ')}` : 'Ada jadwal semua hari kerja';
       const ovCount = Object.keys(u.jadwal?.override || {}).length;
       const ovStr   = ovCount > 0 ? ` · ${ovCount} override aktif` : '';
@@ -1915,7 +1549,6 @@ window.openEditGuru = (uid) => {
   document.getElementById('edit-guru-jabatan').value = u.jabatan || 'kelas';
   document.getElementById('modal-edit-guru').classList.add('open');
 };
-
 window.closeEditGuru = () => document.getElementById('modal-edit-guru').classList.remove('open');
 
 window.submitEditGuru = async () => {
@@ -1934,7 +1567,7 @@ window.submitEditGuru = async () => {
 };
 
 // ─────────────────────────────────────────
-// QR CODE VIEWER (tampilkan QR per guru)
+// QR CODE VIEWER (generate QR per guru)
 // ─────────────────────────────────────────
 let _adminQRInstance = null;
 
@@ -1942,16 +1575,15 @@ window.showGuruQR = (uid) => {
   const u = state.users?.[uid];
   if (!u) return;
   const jab = JABATAN_LABEL[u.jabatan] || 'Guru';
-
   document.getElementById('modal-qr-guru-name').textContent = u.nama || uid;
   document.getElementById('modal-qr-guru-meta').textContent = jab;
   document.getElementById('modal-qr-uid-text').textContent  = uid;
-
   const wrap = document.getElementById('modal-qr-canvas');
   if (_adminQRInstance) {
     try { _adminQRInstance.clear(); } catch (_) {}
     wrap.innerHTML = '';
   }
+  // QR code berisi UID Firebase — selaras dengan apa yang di-scan oleh index.html
   _adminQRInstance = new QRCode(wrap, {
     text: uid,
     width:  180,
@@ -1960,21 +1592,18 @@ window.showGuruQR = (uid) => {
     colorLight: '#FFFFFF',
     correctLevel: QRCode.CorrectLevel.H,
   });
-
   document.getElementById('modal-qr-viewer').classList.add('open');
 };
-
-window.closeQRViewer = () => {
-  document.getElementById('modal-qr-viewer').classList.remove('open');
-};
+window.closeQRViewer = () => document.getElementById('modal-qr-viewer').classList.remove('open');
 
 // ─────────────────────────────────────────
-// QR SCANNER
+// QR SCANNER (scan QR guru → rekam absensi)
+// Format absensi diselaraskan penuh dengan index.html
 // ─────────────────────────────────────────
-let _scanStream     = null;
-let _scanAnimFrame  = null;
-let _scanCooldown   = false;
-let _scanType       = 'masuk';  // 'masuk' | 'pulang'
+let _scanStream    = null;
+let _scanAnimFrame = null;
+let _scanCooldown  = false;
+let _scanType      = 'masuk'; // 'masuk' | 'pulang'
 
 window.setScanType = (type) => {
   _scanType = type;
@@ -2005,9 +1634,8 @@ window.closeQRScanner = () => {
 async function startScanner() {
   const statusEl = document.getElementById('scanner-status');
   const video    = document.getElementById('qr-video');
-  statusEl.className = 'scanner-status';
+  statusEl.className   = 'scanner-status';
   statusEl.textContent = 'Meminta akses kamera…';
-
   try {
     _scanStream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: 'environment', width: { ideal: 640 }, height: { ideal: 640 } }
@@ -2018,13 +1646,9 @@ async function startScanner() {
     scanLoop();
   } catch (err) {
     statusEl.className = 'scanner-status error';
-    if (err.name === 'NotAllowedError') {
-      statusEl.textContent = '❌ Akses kamera ditolak. Izinkan kamera di browser Anda.';
-    } else if (err.name === 'NotFoundError') {
-      statusEl.textContent = '❌ Tidak ada kamera yang ditemukan.';
-    } else {
-      statusEl.textContent = '❌ Gagal mengakses kamera: ' + err.message;
-    }
+    if      (err.name === 'NotAllowedError') statusEl.textContent = '❌ Akses kamera ditolak. Izinkan kamera di browser.';
+    else if (err.name === 'NotFoundError')   statusEl.textContent = '❌ Tidak ada kamera yang ditemukan.';
+    else                                     statusEl.textContent = '❌ Gagal akses kamera: ' + err.message;
   }
 }
 
@@ -2032,16 +1656,14 @@ function stopScanner() {
   if (_scanAnimFrame) { cancelAnimationFrame(_scanAnimFrame); _scanAnimFrame = null; }
   if (_scanStream)    { _scanStream.getTracks().forEach(t => t.stop()); _scanStream = null; }
   const video = document.getElementById('qr-video');
-  if (video) { video.srcObject = null; }
+  if (video) video.srcObject = null;
 }
 
 function scanLoop() {
   const video  = document.getElementById('qr-video');
   const canvas = document.getElementById('qr-canvas');
   if (!video || !canvas || !_scanStream) return;
-
   const ctx = canvas.getContext('2d');
-
   function tick() {
     if (!_scanStream) return;
     if (video.readyState === video.HAVE_ENOUGH_DATA) {
@@ -2052,9 +1674,7 @@ function scanLoop() {
       const code = jsQR(imageData.data, imageData.width, imageData.height, {
         inversionAttempts: 'dontInvert',
       });
-      if (code && !_scanCooldown) {
-        handleQRScan(code.data);
-      }
+      if (code && !_scanCooldown) handleQRScan(code.data);
     }
     _scanAnimFrame = requestAnimationFrame(tick);
   }
@@ -2070,7 +1690,6 @@ async function handleQRScan(uid) {
   const resultNama = document.getElementById('scan-result-nama');
   const resultInfo = document.getElementById('scan-result-info');
 
-  // Cek apakah uid ada di daftar guru
   if (!state.users) {
     try {
       const snap = await get(ref(db, 'users'));
@@ -2080,67 +1699,84 @@ async function handleQRScan(uid) {
 
   const u = state.users?.[uid];
   if (!u || (u.role !== 'guru' && u.role !== 'kepala_sekolah')) {
-    statusEl.className = 'scanner-status error';
+    statusEl.className   = 'scanner-status error';
     statusEl.textContent = '❌ QR tidak dikenali atau bukan akun guru';
     resultNama.textContent = 'Tidak dikenali';
     resultInfo.textContent = uid.substring(0, 20) + '…';
-    resultBox.style.display = 'block';
+    resultBox.style.display     = 'block';
     resultBox.style.borderColor = 'var(--err)';
-    setTimeout(() => { _scanCooldown = false; statusEl.className = 'scanner-status'; statusEl.textContent = 'Arahkan kamera ke QR code guru…'; }, 3000);
+    setTimeout(() => {
+      _scanCooldown = false;
+      statusEl.className   = 'scanner-status';
+      statusEl.textContent = 'Arahkan kamera ke QR code guru…';
+    }, 3000);
     return;
   }
 
   const nama = u.nama || uid;
   const jab  = JABATAN_LABEL[u.jabatan] || 'Guru';
-
-  // Rekam absensi
-  const now   = new Date();
-  const hh    = String(now.getHours()).padStart(2,'0');
-  const mm    = String(now.getMinutes()).padStart(2,'0');
+  const now  = new Date();
+  const hh   = String(now.getHours()).padStart(2,'0');
+  const mm   = String(now.getMinutes()).padStart(2,'0');
   const waktu = `${hh}:${mm}`;
   const today = todayISO();
 
-  // Hitung jadwal & status
-  const defM = u?.jadwal?.masuk  || '07:20';
-  const defP = u?.jadwal?.pulang || '12:00';
-  const ov   = u?.jadwal?.override?.[today];
-  const dayIdx = now.getDay();
-  const jh   = u?.jadwal?.hari?.[dayIdx];
-  let jadwalMasuk  = (ov?.masuk  || jh?.masuk  || defM);
-  let jadwalPulang = (ov?.pulang || jh?.pulang || defP);
-
-  const tipe = _scanType;
-  const jadwalWkt = tipe === 'masuk' ? jadwalMasuk : jadwalPulang;
+  // Hitung jadwal efektif — identik dengan index.html (override → hari → default)
+  const jadwal      = getJadwalEfektif(state.users, uid, today);
+  const jadwalWkt   = _scanType === 'masuk' ? jadwal.masuk : jadwal.pulang;
   const [jW_h, jW_m] = jadwalWkt.split(':').map(Number);
-  const [w_h, w_m]   = waktu.split(':').map(Number);
+  const [w_h,  w_m]  = waktu.split(':').map(Number);
   const diff = (w_h * 60 + w_m) - (jW_h * 60 + jW_m);
 
+  // Format status & keterangan — diselaraskan dengan index.html
   let status, ket;
-  if (tipe === 'masuk') {
-    status = diff > 0 ? `Terlambat ${diff} menit` : diff < 0 ? `Tepat Waktu (+${Math.abs(diff)} menit)` : 'Tepat Waktu';
-    ket    = diff > 0 ? `${diff} menit terlambat` : diff < 0 ? `${Math.abs(diff)} menit lebih awal` : 'Tepat waktu';
+  if (_scanType === 'masuk') {
+    if (diff > 0) {
+      status = `Terlambat ${diff} menit`;
+      ket    = `${diff} menit terlambat dari jadwal`;
+    } else if (diff < 0) {
+      status = `Tepat Waktu (+${Math.abs(diff)} menit)`;
+      ket    = `${Math.abs(diff)} menit lebih awal dari jadwal`;
+    } else {
+      status = 'Tepat Waktu';
+      ket    = 'Tepat waktu';
+    }
   } else {
-    status = diff < 0 ? `Pulang Lebih Awal ${Math.abs(diff)} menit` : diff > 0 ? `Melebihi Jadwal +${diff} menit` : 'Tepat Waktu';
-    ket    = diff < 0 ? `${Math.abs(diff)} menit lebih awal pulang` : diff > 0 ? `${diff} menit melebihi jadwal` : 'Tepat waktu';
+    if (diff < 0) {
+      status = `Pulang Lebih Awal ${Math.abs(diff)} menit`;
+      ket    = `${Math.abs(diff)} menit lebih awal dari jadwal pulang`;
+    } else if (diff > 0) {
+      status = `Melebihi Jadwal +${diff} menit`;
+      ket    = `${diff} menit melebihi jadwal pulang`;
+    } else {
+      status = 'Tepat Waktu';
+      ket    = 'Tepat waktu';
+    }
   }
 
   try {
+    // Path absensi — identik dengan index.html: absensi/{tgl}/{uid}/{tipe}
     const updates = {};
-    updates[`absensi/${today}/${uid}/${tipe}`] = { waktu, status, keterangan: ket, timestamp: Date.now() };
-    updates[`absensi/${today}/${uid}/nama`]    = nama;
+    updates[`absensi/${today}/${uid}/${_scanType}`] = {
+      waktu,
+      status,
+      keterangan: ket,
+      timestamp:  Date.now(), // tambahan untuk audit trail
+    };
+    updates[`absensi/${today}/${uid}/nama`] = nama;
     await update(ref(db, '/'), updates);
 
-    statusEl.className = 'scanner-status success';
-    statusEl.textContent = `✅ Absen ${tipe} ${nama} berhasil dicatat!`;
-    resultBox.style.display  = 'block';
+    statusEl.className   = 'scanner-status success';
+    statusEl.textContent = `✅ Absen ${_scanType} ${nama} berhasil dicatat!`;
+    resultBox.style.display     = 'block';
     resultBox.style.borderColor = 'var(--ok)';
-    resultNama.textContent = `${tipe === 'masuk' ? '⬆️' : '⬇️'} ${nama}`;
+    resultNama.textContent = `${_scanType === 'masuk' ? '⬆️' : '⬇️'} ${nama}`;
     resultInfo.textContent = `${jab} · ${waktu} · ${status}`;
-    showToast(`✅ Absen ${tipe} ${nama}: ${waktu}`, 'success');
+    showToast(`✅ Absen ${_scanType} ${nama}: ${waktu}`, 'success');
   } catch (err) {
-    statusEl.className = 'scanner-status error';
+    statusEl.className   = 'scanner-status error';
     statusEl.textContent = '❌ Gagal menyimpan: ' + err.message;
-    resultBox.style.display = 'block';
+    resultBox.style.display     = 'block';
     resultBox.style.borderColor = 'var(--err)';
     resultNama.textContent = nama;
     resultInfo.textContent = 'Gagal disimpan: ' + err.message;
@@ -2148,13 +1784,13 @@ async function handleQRScan(uid) {
 
   setTimeout(() => {
     _scanCooldown = false;
-    statusEl.className = 'scanner-status';
+    statusEl.className   = 'scanner-status';
     statusEl.textContent = 'Arahkan kamera ke QR code guru berikutnya…';
   }, 3500);
 }
 
 // ─────────────────────────────────────────
-// KOREKSI ABSENSI
+// KOREKSI ABSENSI (admin)
 // ─────────────────────────────────────────
 window.openKoreksi = async (uid, nama) => {
   state.koreksiUID = uid;
@@ -2173,10 +1809,9 @@ window.openKoreksi = async (uid, nama) => {
       document.getElementById('koreksi-pulang').value = d.pulang?.waktu || '';
       document.getElementById('btn-hapus-ab').style.display = 'inline-flex';
     }
-  } catch (_) { /* tidak ada data — tidak apa-apa */ }
+  } catch (_) {}
   document.getElementById('modal-koreksi').classList.add('open');
 };
-
 window.closeKoreksi = () => document.getElementById('modal-koreksi').classList.remove('open');
 
 window.submitKoreksi = async () => {
@@ -2184,19 +1819,19 @@ window.submitKoreksi = async () => {
   const tgl    = document.getElementById('koreksi-tgl').value;
   const masuk  = document.getElementById('koreksi-masuk').value;
   const pulang = document.getElementById('koreksi-pulang').value;
-  const ket    = document.getElementById('koreksi-ket').value.trim() || 'Dikoreksi admin';
+  const ketIn  = document.getElementById('koreksi-ket').value.trim() || 'Dikoreksi admin';
   if (!tgl) { showToast('Pilih tanggal', 'warning'); return; }
   if (!masuk && !pulang) { showToast('Isi minimal satu waktu (masuk atau pulang)', 'warning'); return; }
   try {
     const updates = {};
-    if (masuk)  updates[`absensi/${tgl}/${state.koreksiUID}/masuk`]  = { waktu: masuk,  status: 'Koreksi Admin', keterangan: ket };
-    if (pulang) updates[`absensi/${tgl}/${state.koreksiUID}/pulang`] = { waktu: pulang, status: 'Koreksi Admin', keterangan: ket };
+    const ts = Date.now();
+    if (masuk)  updates[`absensi/${tgl}/${state.koreksiUID}/masuk`]  = { waktu: masuk,  status: 'Koreksi Admin', keterangan: ketIn, timestamp: ts };
+    if (pulang) updates[`absensi/${tgl}/${state.koreksiUID}/pulang`] = { waktu: pulang, status: 'Koreksi Admin', keterangan: ketIn, timestamp: ts };
     const nama = state.users?.[state.koreksiUID]?.nama;
     if (nama) updates[`absensi/${tgl}/${state.koreksiUID}/nama`] = nama;
     await update(ref(db, '/'), updates);
     showToast('✅ Koreksi absensi berhasil disimpan', 'success');
     closeKoreksi();
-    // Dashboard auto-update via onValue listener
   } catch (err) {
     showToast('❌ Gagal menyimpan: ' + err.message, 'error');
   }
@@ -2216,7 +1851,7 @@ window.hapusAbsensi = async () => {
 };
 
 // ─────────────────────────────────────────
-// LAPORAN — QUERY EFISIEN PER BULAN
+// LAPORAN — QUERY PER BULAN
 // ─────────────────────────────────────────
 function initFilters() {
   const now = new Date();
@@ -2233,12 +1868,11 @@ function initFilters() {
 }
 
 async function populateGuruFilter(users) {
-  const sel      = document.getElementById('f-guru');
-  const curVal   = sel.value;
-  const guruList = Object.entries(users)
-    .filter(([, u]) => u.role === 'guru' || u.role === 'kepala_sekolah');
+  const sel    = document.getElementById('f-guru');
+  const curVal = sel.value;
+  const list   = Object.entries(users).filter(([, u]) => u.role === 'guru' || u.role === 'kepala_sekolah');
   sel.innerHTML = `<option value="">Semua Guru</option>` +
-    guruList.map(([uid, u]) =>
+    list.map(([uid, u]) =>
       `<option value="${uid}" ${curVal === uid ? 'selected' : ''}>${u.nama || uid}</option>`
     ).join('');
 }
@@ -2277,20 +1911,18 @@ window.fetchLaporan = async () => {
 
     const allData  = abSnap.val();
     const allDates = Object.keys(allData).sort();
+    const daysInMonth  = new Date(parseInt(tahun), parseInt(bulan), 0).getDate();
+    const allDatesSet  = new Set(allDates);
 
-    // Baris hari libur yang tidak ada di database absensi
-    const allDatesSet    = new Set(allDates);
-    const daysInMonth    = new Date(parseInt(tahun), parseInt(bulan), 0).getDate();
+    // Baris hari libur yang tidak ada di absensi
     const extraLiburRows = [];
     for (let dd = 1; dd <= daysInMonth; dd++) {
       const tgl       = `${tahun}-${bulan}-${String(dd).padStart(2,'0')}`;
       const namaLibur = liburKhusus[tgl] || LIBUR_NASIONAL[tgl];
-      if (namaLibur && !allDatesSet.has(tgl)) {
+      if (namaLibur && !allDatesSet.has(tgl))
         extraLiburRows.push({ tgl, type: 'libur', namaLibur });
-      }
     }
 
-    // Gabungkan dan urutkan semua baris
     const semua = [
       ...extraLiburRows,
       ...allDates.flatMap(tgl =>
@@ -2306,28 +1938,26 @@ window.fetchLaporan = async () => {
         if (guruFilter) return;
         rows += `<tr style="background:#FDF4FF;">
           <td class="td-mono">${formatTgl(item.tgl)}</td>
-          <td style="color:var(--ink3);font-size:11px;">${namaHari(item.tgl)}</td>
-          <td colspan="10" style="font-size:11px;font-weight:700;color:#7C3AED;">
-            🎉 Hari Libur — ${item.namaLibur}
-          </td>
+          <td style="font-size:11px;color:var(--ink3);">${namaHari(item.tgl)}</td>
+          <td colspan="10" style="font-size:11px;font-weight:700;color:#7C3AED;">🎉 Hari Libur — ${item.namaLibur}</td>
         </tr>`;
         return;
       }
 
       const { tgl, uid, d } = item;
-      const tanpaJ   = isTanpaJadwal(users, uid, tgl);
-      const u        = users[uid] || {};
-      const nama     = d.nama || u.nama || uid;
-      const jab      = JABATAN_LABEL[u.jabatan] || 'Guru Kelas';
-      // ★ Gunakan getJadwalEfektif — cek override terlebih dahulu
-      const jadwal   = getJadwalEfektif(users, uid, tgl);
-      const isOverride = !!users?.[uid]?.jadwal?.override?.[tgl];
-      const masukW   = d.masuk?.waktu  || '–';
-      const pulangW  = d.pulang?.waktu || '–';
-      const masukS   = d.masuk?.status || null;
-      const tc       = calcTelatCepat(d);
-      const pl       = calcPswLewat(d);
+      const tanpaJ = isTanpaJadwal(users, uid, tgl);
+      const u      = users[uid] || {};
+      const nama   = d.nama || u.nama || uid;
+      const jab    = JABATAN_LABEL[u.jabatan] || 'Guru Kelas';
+      const jadwal = getJadwalEfektif(users, uid, tgl);
+      const isOv   = !!users?.[uid]?.jadwal?.override?.[tgl];
+      const masukW = d.masuk?.waktu  || '–';
+      const pulangW= d.pulang?.waktu || '–';
+      const masukS = d.masuk?.status || null;
+      const tc     = calcTelatCepat(d);
+      const pl     = calcPswLewat(d);
 
+      // Keterangan: libur > alasanTidakHadir > tdk ada jadwal > default
       const keterangan = tanpaJ
         ? '🗓 Tdk Ada Jadwal Mengajar'
         : liburKhusus[tgl] || LIBUR_NASIONAL[tgl]
@@ -2336,27 +1966,27 @@ window.fetchLaporan = async () => {
             : '–');
 
       let chipCls, chipTxt, rowStatus;
-      if (tanpaJ)                             { chipCls = 'chip-purple'; chipTxt = 'Tdk Jadwal'; rowStatus = 'tanpa_jadwal'; }
-      else if (!d.masuk)                      { chipCls = 'chip-gray';   chipTxt = 'Belum';      rowStatus = 'belum'; }
-      else if (masukS?.includes('Terlambat')) { chipCls = 'chip-warn';   chipTxt = 'Terlambat';  rowStatus = 'terlambat'; }
-      else                                    { chipCls = 'chip-ok';     chipTxt = 'Tepat';      rowStatus = 'hadir'; }
+      if (tanpaJ)                            { chipCls='chip-purple'; chipTxt='Tdk Jadwal'; rowStatus='tanpa_jadwal'; }
+      else if (!d.masuk)                     { chipCls='chip-gray';   chipTxt='Belum';      rowStatus='belum'; }
+      else if (masukS?.includes('Terlambat')){ chipCls='chip-warn';   chipTxt='Terlambat';  rowStatus='terlambat'; }
+      else                                   { chipCls='chip-ok';     chipTxt='Tepat';      rowStatus='hadir'; }
 
       if (statusFilter && rowStatus !== statusFilter) return;
 
-      const jadwalMasukCell  = tanpaJ ? '–' : (isOverride ? `<span title="Override">${jadwal.masuk}🔀</span>` : jadwal.masuk);
-      const jadwalPulangCell = tanpaJ ? '–' : (isOverride ? `<span title="Override">${jadwal.pulang}🔀</span>` : jadwal.pulang);
+      const jMasukCell  = tanpaJ ? '–' : (isOv ? `<span title="Override">${jadwal.masuk} 🔀</span>`  : jadwal.masuk);
+      const jPulangCell = tanpaJ ? '–' : (isOv ? `<span title="Override">${jadwal.pulang} 🔀</span>` : jadwal.pulang);
 
       rows += `<tr ${tanpaJ ? 'style="background:#F5F3FF;"' : ''}>
         <td class="td-mono">${formatTgl(tgl)}</td>
-        <td style="color:var(--ink3);font-size:11px;">${namaHari(tgl)}</td>
+        <td style="font-size:11px;color:var(--ink3);">${namaHari(tgl)}</td>
         <td class="td-name">${nama}</td>
         <td style="font-size:11px;color:var(--ink3);">${jab}</td>
-        <td class="td-mono">${jadwalMasukCell}</td>
+        <td class="td-mono">${jMasukCell}</td>
         <td class="td-mono" style="color:${masukW==='–'?'var(--ink3)':'var(--prim)'};font-weight:700;">${tanpaJ ? '–' : masukW}</td>
-        <td class="td-mono" style="color:${tc<0?'var(--err)':tc>0?'var(--ok)':'var(--ink3)'};font-weight:700;">${tanpaJ ? '–' : fmtMenit(tc)}'</td>
-        <td class="td-mono">${jadwalPulangCell}</td>
+        <td class="td-mono" style="color:${tc<0?'var(--err)':tc>0?'var(--ok)':'var(--ink3)'};font-weight:700;">${tanpaJ ? '–' : fmtMenit(tc)}</td>
+        <td class="td-mono">${jPulangCell}</td>
         <td class="td-mono" style="color:${pulangW==='–'?'var(--ink3)':'var(--ok)'};font-weight:700;">${tanpaJ ? '–' : pulangW}</td>
-        <td class="td-mono" style="color:${pl<0?'var(--warn)':pl>0?'var(--cyan)':'var(--ink3)'};font-weight:700;">${tanpaJ ? '–' : fmtMenit(pl)}'</td>
+        <td class="td-mono" style="color:${pl<0?'var(--warn)':pl>0?'var(--cyan)':'var(--ink3)'};font-weight:700;">${tanpaJ ? '–' : fmtMenit(pl)}</td>
         <td><span class="chip ${chipCls}">${chipTxt}</span></td>
         <td style="font-size:10px;color:${tanpaJ?'#7C3AED':'var(--ink3)'};max-width:160px;">${keterangan}</td>
       </tr>`;
@@ -2421,7 +2051,6 @@ window.doExport = () => {
       .forEach(([uid, d]) => {
         const u      = users[uid] || {};
         const tanpaJ = isTanpaJadwal(users, uid, tgl);
-        // ★ Gunakan getJadwalEfektif — cek override terlebih dahulu
         const jadwal = getJadwalEfektif(users, uid, tgl);
         const ket    = tanpaJ
           ? 'Tdk Ada Jadwal Mengajar'
@@ -2474,7 +2103,7 @@ window.doPrint = () => {
       });
   });
 
-  // Tambahkan baris hari libur
+  // Baris hari libur
   const daysInMonth = new Date(parseInt(tahun), parseInt(bulan), 0).getDate();
   for (let dd = 1; dd <= daysInMonth; dd++) {
     const tgl       = `${tahun}-${bulan}-${String(dd).padStart(2,'0')}`;
@@ -2520,20 +2149,23 @@ window.doPrint = () => {
         </tr>`;
         return;
       }
-      // ★ Gunakan getJadwalEfektif — cek override terlebih dahulu
       const jadwal = getJadwalEfektif(users, uid, tgl);
       const tc     = calcTelatCepat(d);
       const pl     = calcPswLewat(d);
-      const ket    = liburKhusus[tgl] || LIBUR_NASIONAL[tgl] || (d.alasanTidakHadir ? d.alasanTidakHadir.tipe : '–');
+      // Keterangan lengkap — identik dengan index.html
+      const ket = liburKhusus[tgl] || LIBUR_NASIONAL[tgl]
+        || (d.alasanTidakHadir
+          ? d.alasanTidakHadir.tipe + (d.alasanTidakHadir.detail ? ': ' + d.alasanTidakHadir.detail : '')
+          : '–');
       tbody += `<tr style="background:${bg}">
         <td style="${tdS('center')}">${formatTgl(tgl)}</td>
         <td style="${tdS('center')}">${namaHari(tgl)}</td>
         <td style="${tdS('center','font-weight:700;')}">${jadwal.masuk}</td>
         <td style="${tdS('center','font-weight:700;color:#4F46E5;')}">${d.masuk?.waktu || '–'}</td>
-        <td style="${tdS('center',`font-weight:700;color:${tc<0?'#DC2626':tc>0?'#059669':'#94A3B8'};`)}">${fmtMenit(tc)}'</td>
+        <td style="${tdS('center',`font-weight:700;color:${tc<0?'#DC2626':tc>0?'#059669':'#94A3B8'};`)}">${fmtMenit(tc)}</td>
         <td style="${tdS('center','font-weight:700;')}">${jadwal.pulang}</td>
         <td style="${tdS('center','font-weight:700;color:#059669;')}">${d.pulang?.waktu || '–'}</td>
-        <td style="${tdS('center',`font-weight:700;color:${pl<0?'#D97706':pl>0?'#2563EB':'#94A3B8'};`)}">${fmtMenit(pl)}'</td>
+        <td style="${tdS('center',`font-weight:700;color:${pl<0?'#D97706':pl>0?'#2563EB':'#94A3B8'};`)}">${fmtMenit(pl)}</td>
         <td style="${tdS('left','font-size:8px;color:#475569;')}">${ket}</td>
       </tr>`;
     });
@@ -2553,7 +2185,7 @@ window.doPrint = () => {
           <th style="${thS}">TANGGAL</th><th style="${thS}">HARI</th>
           <th style="${thS}">JAM MASUK</th><th style="${thS}">ABSEN MASUK</th><th style="${thS}">SELISIH</th>
           <th style="${thS}">JAM PULANG</th><th style="${thS}">ABSEN PULANG</th><th style="${thS}">SELISIH</th>
-          <th style="${thS}">KET</th>
+          <th style="${thS}">KETERANGAN</th>
         </tr></thead>
         <tbody>${tbody}</tbody>
       </table>
@@ -2591,35 +2223,32 @@ window.fetchJadwal = async () => {
 };
 
 function renderJadwalCard(uid, u) {
-  const jm  = u.jadwal?.masuk  || '07:20';
-  const jp  = u.jadwal?.pulang || '12:00';
+  const jm  = u.jadwal?.masuk  || DEFAULT_MASUK;
+  const jp  = u.jadwal?.pulang || DEFAULT_PULANG;
   const jab = u.jabatan || 'kelas';
   const htj = u.jadwal?.hari_tanpa_jadwal || {};
   const overrideData = u.jadwal?.override || {};
 
-  // ── Jadwal per hari ──
-  let hariInputsHtml = `<div style="display:grid;grid-template-columns:80px repeat(6,1fr);gap:6px;margin-top:10px;">
-    <div></div>`;
+  // Jadwal per hari
+  let hariHtml = `<div style="display:grid;grid-template-columns:80px repeat(6,1fr);gap:6px;margin-top:10px;"><div></div>`;
   [1,2,3,4,5,6].forEach(h => {
-    hariInputsHtml += `<div style="text-align:center;font-size:9px;font-weight:800;color:var(--ink3);padding:4px 0;">${HARI_PENDEK[h]}</div>`;
+    hariHtml += `<div style="text-align:center;font-size:9px;font-weight:800;color:var(--ink3);padding:4px 0;">${HARI_PENDEK[h]}</div>`;
   });
-  hariInputsHtml += `<div style="font-size:10px;font-weight:700;color:var(--ink3);display:flex;align-items:center;">Masuk</div>`;
-  [1,2,3,4,5,6].forEach(h => {
-    const hd = u.jadwal?.hari?.[h] || {};
-    hariInputsHtml += `<input type="time" id="jhm-${uid}-${h}" value="${hd.masuk||jm}" style="padding:6px 4px;font-size:10px;text-align:center;">`;
-  });
-  hariInputsHtml += `<div style="font-size:10px;font-weight:700;color:var(--ink3);display:flex;align-items:center;">Pulang</div>`;
+  hariHtml += `<div style="font-size:10px;font-weight:700;color:var(--ink3);display:flex;align-items:center;">Masuk</div>`;
   [1,2,3,4,5,6].forEach(h => {
     const hd = u.jadwal?.hari?.[h] || {};
-    hariInputsHtml += `<input type="time" id="jhp-${uid}-${h}" value="${hd.pulang||jp}" style="padding:6px 4px;font-size:10px;text-align:center;">`;
+    hariHtml += `<input type="time" id="jhm-${uid}-${h}" value="${hd.masuk||jm}" style="padding:6px 4px;font-size:10px;text-align:center;">`;
   });
-  hariInputsHtml += `</div>`;
+  hariHtml += `<div style="font-size:10px;font-weight:700;color:var(--ink3);display:flex;align-items:center;">Pulang</div>`;
+  [1,2,3,4,5,6].forEach(h => {
+    const hd = u.jadwal?.hari?.[h] || {};
+    hariHtml += `<input type="time" id="jhp-${uid}-${h}" value="${hd.pulang||jp}" style="padding:6px 4px;font-size:10px;text-align:center;">`;
+  });
+  hariHtml += `</div>`;
 
-  // ── Hari tanpa jadwal ──
+  // Hari tanpa jadwal
   let htjHtml = `<div class="htj-grid"><div></div>`;
-  [1,2,3,4,5,6].forEach(h => {
-    htjHtml += `<div class="htj-head">${HARI_PENDEK[h]}</div>`;
-  });
+  [1,2,3,4,5,6].forEach(h => { htjHtml += `<div class="htj-head">${HARI_PENDEK[h]}</div>`; });
   htjHtml += `<div class="htj-label">Tdk Ada<br>Jadwal</div>`;
   [1,2,3,4,5,6].forEach(h => {
     const isTanpa = !!htj[h];
@@ -2638,19 +2267,18 @@ function renderJadwalCard(uid, u) {
     💾 Simpan Hari Tanpa Jadwal
   </button>`;
 
-  // ── Override per tanggal ──
+  // Override per tanggal
   const overrideItems = Object.entries(overrideData)
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([tgl, ov]) => {
       const [y, m, d] = tgl.split('-');
-      const namaH     = NAMA_HARI[new Date(parseInt(y), parseInt(m)-1, parseInt(d)).getDay()];
+      const namaH = NAMA_HARI[new Date(parseInt(y), parseInt(m)-1, parseInt(d)).getDay()];
       return `<div class="override-item">
         <div class="override-item-date">${d}-${m}-${y} · ${namaH}</div>
         <div class="override-item-time">Masuk: <strong>${ov.masuk}</strong> · Pulang: <strong>${ov.pulang}</strong></div>
         <button class="override-item-del" onclick="deleteOverride('${uid}','${tgl}')" title="Hapus override">✕</button>
       </div>`;
     });
-
   const overrideListHtml = overrideItems.length > 0
     ? `<div class="override-list">${overrideItems.join('')}</div>`
     : `<div class="override-empty">Belum ada override untuk guru ini</div>`;
@@ -2667,8 +2295,7 @@ function renderJadwalCard(uid, u) {
       </div>
     </div>
     <div class="jadwal-body">
-
-      <!-- Jadwal default & jabatan -->
+      <!-- Default & jabatan -->
       <div class="jadwal-fields">
         <div class="field-group">
           <label class="field-label">Jam Masuk Default</label>
@@ -2690,23 +2317,20 @@ function renderJadwalCard(uid, u) {
           Simpan
         </button>
       </div>
-
-      <!-- Jadwal per hari -->
+      <!-- Per hari -->
       <button class="hari-toggle" onclick="toggleHari('panel-hari-${uid}')">▼ Jadwal Per Hari (Sen–Sab)</button>
       <div class="hari-section" id="panel-hari-${uid}">
-        ${hariInputsHtml}
+        ${hariHtml}
         <button class="btn btn-ghost" style="margin-top:12px;" onclick="saveJadwalHari('${uid}','${u.nama||uid}')">
           💾 Simpan Jadwal Per Hari
         </button>
       </div>
-
       <!-- Hari tanpa jadwal -->
       <button class="hari-toggle" style="margin-top:10px;color:var(--purple);" onclick="toggleHari('panel-htj-${uid}')">🗓 Atur Hari Tanpa Jadwal Mengajar</button>
       <div class="hari-section" id="panel-htj-${uid}">
         ${htjHtml}
       </div>
-
-      <!-- Override per tanggal (NEW) -->
+      <!-- Override per tanggal -->
       <button class="hari-toggle" style="margin-top:10px;color:var(--orange);" onclick="toggleHari('panel-override-${uid}')">🔀 Override Jadwal Per Tanggal</button>
       <div class="hari-section" id="panel-override-${uid}">
         <div class="override-section">
@@ -2727,16 +2351,11 @@ function renderJadwalCard(uid, u) {
               <label class="field-label">Pulang</label>
               <input type="time" id="ov-pulang-${uid}" value="${jp}">
             </div>
-            <button class="btn btn-orange" onclick="saveOverride('${uid}','${u.nama||uid}')" style="align-self:flex-end;">
-              ＋ Tambah
-            </button>
+            <button class="btn btn-orange" onclick="saveOverride('${uid}','${u.nama||uid}')" style="align-self:flex-end;">＋ Tambah</button>
           </div>
-          <div id="override-list-${uid}">
-            ${overrideListHtml}
-          </div>
+          <div id="override-list-${uid}">${overrideListHtml}</div>
         </div>
       </div>
-
     </div>
   </div>`;
 }
@@ -2745,33 +2364,22 @@ function renderJadwalCard(uid, u) {
 // OVERRIDE — SAVE & DELETE
 // Firebase path: users/{uid}/jadwal/override/YYYY-MM-DD
 // ─────────────────────────────────────────
-
-/**
- * Simpan override jadwal untuk tanggal tertentu.
- * Path: users/{uid}/jadwal/override/{YYYY-MM-DD}
- */
 window.saveOverride = async (uid, nama) => {
   const tgl    = document.getElementById(`ov-tgl-${uid}`).value;
   const masuk  = document.getElementById(`ov-masuk-${uid}`).value;
   const pulang = document.getElementById(`ov-pulang-${uid}`).value;
-
   if (!tgl)    { showToast('Pilih tanggal override', 'warning'); return; }
   if (!masuk)  { showToast('Isi jam masuk', 'warning'); return; }
   if (!pulang) { showToast('Isi jam pulang', 'warning'); return; }
-
   try {
     await set(ref(db, `users/${uid}/jadwal/override/${tgl}`), { masuk, pulang });
     showToast(`✅ Override ${tgl} untuk ${nama} disimpan`, 'success');
-    // Refresh kartu jadwal guru ini saja
     fetchJadwal();
   } catch (err) {
     showToast('❌ Gagal menyimpan override: ' + err.message, 'error');
   }
 };
 
-/**
- * Hapus override jadwal untuk tanggal tertentu.
- */
 window.deleteOverride = async (uid, tgl) => {
   if (!confirm(`Hapus override jadwal untuk tanggal ${tgl}?`)) return;
   try {
@@ -2784,7 +2392,7 @@ window.deleteOverride = async (uid, tgl) => {
 };
 
 // ─────────────────────────────────────────
-// JADWAL — HARI TANPA JADWAL
+// HARI TANPA JADWAL
 // ─────────────────────────────────────────
 window.toggleHTJ = (uid, hari) => {
   const el = document.getElementById(`htj-${uid}-${hari}`);
@@ -2854,7 +2462,7 @@ function initKalender() {
   const now = new Date();
   const bEl = document.getElementById('kal-bulan');
   const tEl = document.getElementById('kal-tahun');
-  if (!bEl || bEl.options.length > 0) return; // sudah diinit
+  if (!bEl || bEl.options.length > 0) return;
   bEl.innerHTML = NAMA_BULAN.slice(1).map((n, i) =>
     `<option value="${i+1}" ${i+1 === now.getMonth()+1 ? 'selected' : ''}>${n}</option>`
   ).join('');
@@ -2882,11 +2490,11 @@ window.renderKalender = async () => {
 };
 
 function renderKalenderGrid(bulan, tahun) {
-  const wrap    = document.getElementById('kalender-wrap');
-  const today   = todayISO();
-  const HARI    = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
-  const firstDay= new Date(tahun, bulan-1, 1).getDay();
-  const lastDate= new Date(tahun, bulan, 0).getDate();
+  const wrap     = document.getElementById('kalender-wrap');
+  const today    = todayISO();
+  const HARI     = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+  const firstDay = new Date(tahun, bulan-1, 1).getDay();
+  const lastDate = new Date(tahun, bulan, 0).getDate();
 
   let html = `<div class="kal-grid" style="margin-bottom:4px;">`;
   HARI.forEach(h => html += `<div class="kal-head">${h}</div>`);
@@ -2908,9 +2516,9 @@ function renderKalenderGrid(bulan, tahun) {
     else if (isNasional) cls += ' libur-nasional';
     if (tgl === today)   cls += ' today';
 
-    const ket      = state.kalender.liburBaru[tgl] || state.kalender.liburKhusus[tgl] || LIBUR_NASIONAL[tgl] || '';
-    const onclick  = (isMinggu || isNasional) ? '' : `onclick="klikTanggal('${tgl}')"`;
-    const hapusBtn = (isKhusus || isBaru)
+    const ket     = state.kalender.liburBaru[tgl] || state.kalender.liburKhusus[tgl] || LIBUR_NASIONAL[tgl] || '';
+    const onclick = (isMinggu || isNasional) ? '' : `onclick="klikTanggal('${tgl}')"`;
+    const hapusBtn= (isKhusus || isBaru)
       ? `<button class="kal-hapus" onclick="event.stopPropagation();hapusLiburKal('${tgl}')">✕</button>`
       : '';
 
@@ -3047,12 +2655,9 @@ window.hapusLiburItem = async (tgl, ket) => {
 
 // ─────────────────────────────────────────
 // HELPER — JADWAL
+// Logika identik dengan index.html (sharedJadwal)
+// Prioritas: override per-tanggal → per-hari → default
 // ─────────────────────────────────────────
-
-/**
- * Cek apakah guru punya jadwal pada hari tertentu.
- * Keys di Firebase: 1=Senin … 6=Sabtu (konsisten dengan JS getDay())
- */
 function isTanpaJadwal(users, uid, tgl) {
   const htj = users?.[uid]?.jadwal?.hari_tanpa_jadwal;
   if (!htj) return false;
@@ -3060,62 +2665,60 @@ function isTanpaJadwal(users, uid, tgl) {
   return !!htj[dayKey];
 }
 
-/**
- * Dapatkan jadwal efektif untuk guru pada tanggal tertentu.
- * Prioritas: override per tanggal → per hari → default
- *
- * Firebase path override: users/{uid}/jadwal/override/YYYY-MM-DD
- */
 function getJadwalEfektif(users, uid, tgl) {
   const u    = users?.[uid];
-  const defM = u?.jadwal?.masuk  || '07:20';
-  const defP = u?.jadwal?.pulang || '12:00';
-
-  // 1. Cek override untuk tanggal spesifik
+  const defM = u?.jadwal?.masuk  || DEFAULT_MASUK;
+  const defP = u?.jadwal?.pulang || DEFAULT_PULANG;
+  // 1. Override per tanggal (prioritas tertinggi)
   const ov = u?.jadwal?.override?.[tgl];
-  if (ov?.masuk && ov?.pulang) {
-    return { masuk: ov.masuk, pulang: ov.pulang, source: 'override' };
-  }
-
-  // 2. Cek jadwal per hari
+  if (ov?.masuk && ov?.pulang) return { masuk: ov.masuk, pulang: ov.pulang, source: 'override' };
+  // 2. Jadwal per hari
   const day = new Date(tgl + 'T00:00:00').getDay();
   const jh  = u?.jadwal?.hari?.[day];
-  if (jh?.masuk || jh?.pulang) {
-    return { masuk: jh.masuk || defM, pulang: jh.pulang || defP, source: 'hari' };
-  }
-
-  // 3. Fallback ke jadwal default
+  if (jh?.masuk || jh?.pulang) return { masuk: jh.masuk || defM, pulang: jh.pulang || defP, source: 'hari' };
+  // 3. Default
   return { masuk: defM, pulang: defP, source: 'default' };
 }
 
 // ─────────────────────────────────────────
-// HELPER — KALKULASI
+// HELPER — KALKULASI SELISIH
+// Diselaraskan dengan format data yang ditulis index.html dan admin (handleQRScan)
+// Format keterangan: "N menit terlambat dari jadwal" / "N menit lebih awal dari jadwal"
+// Format status: "Terlambat N menit" / "Tepat Waktu (+N menit)" / "Tepat Waktu"
+//                "Pulang Lebih Awal N menit" / "Melebihi Jadwal +N menit"
 // ─────────────────────────────────────────
 
 /**
  * Hitung selisih masuk dalam menit.
- * Negatif = terlambat, positif = lebih awal dari jadwal.
+ * Negatif = terlambat, positif = lebih awal, 0 = tepat.
  */
 function calcTelatCepat(d) {
   if (!d.masuk) return 0;
-  const ket = d.masuk.keterangan || '';
-  const m   = ket.match(/(\d+)\s*menit/);
-  const mnt = m ? parseInt(m[1]) : 0;
-  if (d.masuk.status?.includes('Terlambat')) return mnt > 0 ? -mnt : 0;
+  const status = d.masuk.status || '';
+  const ket    = d.masuk.keterangan || '';
+  // Ekstrak angka menit dari status atau keterangan
+  const mStatus = (status + ' ' + ket).match(/(\d+)\s*menit/);
+  const mnt     = mStatus ? parseInt(mStatus[1]) : 0;
+  // Terlambat → negatif
+  if (status.includes('Terlambat') || ket.includes('terlambat')) return mnt > 0 ? -mnt : 0;
+  // Lebih awal / tepat+bonus → positif
   if (mnt > 0) return mnt;
   return 0;
 }
 
 /**
  * Hitung selisih pulang dalam menit.
- * Negatif = pulang lebih awal (PSW), positif = melebihi jadwal.
+ * Negatif = PSW (pulang lebih awal), positif = melebihi jadwal, 0 = tepat.
  */
 function calcPswLewat(d) {
   if (!d.pulang) return 0;
-  const ket = d.pulang.keterangan || '';
-  const m   = ket.match(/(\d+)\s*menit/);
-  const mnt = m ? parseInt(m[1]) : 0;
-  if (d.pulang.status?.includes('Lebih Awal')) return mnt > 0 ? -mnt : 0;
+  const status = d.pulang.status || '';
+  const ket    = d.pulang.keterangan || '';
+  const mStatus = (status + ' ' + ket).match(/(\d+)\s*menit/);
+  const mnt     = mStatus ? parseInt(mStatus[1]) : 0;
+  // Pulang lebih awal → negatif
+  if (status.includes('Lebih Awal') || ket.includes('lebih awal')) return mnt > 0 ? -mnt : 0;
+  // Melebihi jadwal → positif
   if (mnt > 0) return mnt;
   return 0;
 }
@@ -3124,29 +2727,32 @@ function calcPswLewat(d) {
 // HELPER — FORMAT
 // ─────────────────────────────────────────
 
-/** Kembalikan tanggal hari ini dalam format YYYY-MM-DD */
+/** Tanggal hari ini format YYYY-MM-DD — identik dengan index.html */
 function todayISO() {
   return new Date().toLocaleDateString('sv-SE');
 }
 
+/** Format selisih menit: +5 / -3 / 0 */
 function fmtMenit(v) {
   if (v > 0) return `+${v}`;
   if (v < 0) return `${v}`;
   return '0';
 }
 
+/** Format tanggal YYYY-MM-DD → DD-MM-YYYY */
 function formatTgl(s) {
   const [y, m, d] = s.split('-');
   return `${d}-${m}-${y}`;
 }
 
+/** Nama hari dari string YYYY-MM-DD */
 function namaHari(s) {
   const [y, m, d] = s.split('-').map(Number);
   return NAMA_HARI[new Date(y, m-1, d).getDay()];
 }
 
 // ─────────────────────────────────────────
-// TOAST
+// TOAST — diselaraskan dengan index.html
 // ─────────────────────────────────────────
 window.showToast = (msg, type = 'info') => {
   const el = document.getElementById('toast');
