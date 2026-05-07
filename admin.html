@@ -1096,22 +1096,31 @@ const HARI_PENDEK = ['','Sen','Sel','Rab','Kam','Jum','Sab'];
 
 // Libur nasional — diselaraskan penuh dengan index.html
 const LIBUR_NASIONAL = {
-  '2025-01-01':'Tahun Baru 2025',
-  '2025-01-27':'Isra Mikraj',
+  // 2025 — diselaraskan penuh dengan index.html (termasuk semua cuti bersama)
+  '2025-01-01':'Tahun Baru Masehi',
+  '2025-01-27':'Isra Mi\'raj',
+  '2025-01-28':'Cuti Bersama',
   '2025-01-29':'Tahun Baru Imlek',
-  '2025-03-29':'Hari Suci Nyepi',
+  '2025-03-28':'Cuti Bersama',
+  '2025-03-29':'Hari Raya Nyepi',
+  '2025-03-30':'Idul Fitri 1446 H',
   '2025-03-31':'Idul Fitri 1446 H',
-  '2025-04-01':'Idul Fitri 1446 H',
-  '2025-04-18':'Wafat Isa Almasih',
+  '2025-04-01':'Cuti Bersama',
+  '2025-04-02':'Cuti Bersama',
+  '2025-04-04':'Cuti Bersama',
+  '2025-04-18':'Wafat Isa Al-Masih',
   '2025-05-01':'Hari Buruh',
   '2025-05-12':'Hari Raya Waisak',
-  '2025-05-29':'Kenaikan Isa Almasih',
+  '2025-05-13':'Cuti Bersama Waisak',
+  '2025-05-29':'Kenaikan Isa Al-Masih',
   '2025-06-01':'Hari Lahir Pancasila',
   '2025-06-06':'Idul Adha 1446 H',
-  '2025-06-27':'Tahun Baru Hijriah 1447 H',
-  '2025-08-17':'HUT Kemerdekaan RI',
-  '2025-09-05':'Maulid Nabi Muhammad SAW',
+  '2025-06-27':'Tahun Baru Islam 1447 H',
+  '2025-08-17':'HUT RI ke-80',
+  '2025-09-05':'Maulid Nabi SAW',
   '2025-12-25':'Hari Raya Natal',
+  '2025-12-26':'Cuti Bersama Natal',
+  // 2026
   '2026-01-01':'Tahun Baru 2026',
   '2026-01-27':'Isra Mikraj',
   '2026-01-29':'Tahun Baru Imlek',
@@ -1564,7 +1573,7 @@ window.submitKoreksi = async () => {
       status      = `Terlambat ${mnt} menit`;
       keterangan  = `${mnt} menit terlambat dari jadwal (Koreksi Admin: ${ketIn})`;
     } else if (selisih > 0) {
-      status      = `Tepat Waktu (+${selisih} menit)`;
+      status      = 'Hadir Lebih Awal';
       keterangan  = `${selisih} menit lebih awal dari jadwal (Koreksi Admin: ${ketIn})`;
     } else {
       status      = 'Tepat Waktu';
@@ -1587,7 +1596,7 @@ window.submitKoreksi = async () => {
       status      = `Pulang Lebih Awal ${mnt} menit`;
       keterangan  = `${mnt} menit lebih awal dari jadwal (Koreksi Admin: ${ketIn})`;
     } else if (selisih > 0) {
-      status      = `Melebihi Jadwal +${selisih} menit`;
+      status      = 'Pulang';
       keterangan  = `${selisih} menit melebihi jadwal pulang (Koreksi Admin: ${ketIn})`;
     } else {
       status      = 'Tepat Waktu';
@@ -2473,8 +2482,8 @@ function getJadwalEfektif(users, uid, tgl) {
 // HELPER — KALKULASI SELISIH
 // Diselaraskan dengan format data yang ditulis index.html
 // Format keterangan: "N menit terlambat dari jadwal" / "N menit lebih awal dari jadwal"
-// Format status: "Terlambat N menit" / "Tepat Waktu (+N menit)" / "Tepat Waktu"
-//                "Pulang Lebih Awal N menit" / "Melebihi Jadwal +N menit"
+// Format status: "Terlambat N menit" / "Hadir Lebih Awal" / "Tepat Waktu"
+//                "Pulang Lebih Awal N menit" / "Pulang" (melebihi jadwal)
 // ─────────────────────────────────────────
 
 /**
