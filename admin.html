@@ -1051,7 +1051,7 @@ import { initializeApp }
   from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
   from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getDatabase, ref, get, set, update, remove, onValue,
+import { getDatabase, ref, get, set, update, remove, onValue, child,
          query as dbQuery, orderByKey, startAt, endAt }
   from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
@@ -1613,14 +1613,77 @@ window.submitEditGuru = async () => {
 // Dapat dilihat di file original admin.html yang sudah direkonstruksi di atas.
 
 // Placeholder untuk fitur lengkap
+// ═══════════════════════════════════════════════════════════
+// KOREKSI ABSENSI — FULLY IMPLEMENTED
+// ═══════════════════════════════════════════════════════════
+
 window.openKoreksi = async (uid, nama) => {
   state.koreksiUID = uid;
-  document.getElementById('koreksi-sub').textContent = `Guru: ${esc(nama)}`;
+  const tgl = todayISO();
+  document.getElementById('koreksi-sub').textContent = `Guru: ${esc(nama)} · ${esc(tgl)}`;
+  document.getElementById('koreksi-tgl').value = tgl;
+  
+  const snap = await get(ref(db, `absensi/${tgl}/${uid}`));
+  if (snap.exists()) {
+    const ab = snap.val();
+    document.getElementById('koreksi-masuk').value = ab.masuk?.waktu || '';
+    document.getElementById('koreksi-pulang').value = ab.pulang?.waktu || '';
+    document.getElementById('btn-hapus-ab').style.display = 'block';
+  } else {
+    document.getElementById('koreksi-masuk').value = '';
+    document.getElementById('koreksi-pulang').value = '';
+    document.getElementById('btn-hapus-ab').style.display = 'none';
+  }
   document.getElementById('modal-koreksi').classList.add('open');
 };
+
 window.closeKoreksi = () => document.getElementById('modal-koreksi').classList.remove('open');
-window.submitKoreksi = async () => showToast('Fitur dalam implementasi', 'info');
-window.hapusAbsensi = async () => showToast('Fitur dalam implementasi', 'info');
+
+window.submitKoreksi = async () => {
+  const uid    = state.koreksiUID;
+  const tgl    = document.getElementById('koreksi-tgl').value;
+  const masuk  = document.getElementById('koreksi-masuk').value;
+  const pulang = document.getElementById('koreksi-pulang').value;
+  const ket    = document.getElementById('koreksi-ket').value.trim();
+  
+  if (!uid || !tgl) { showToast('Data tidak valid', 'error'); return; }
+  if (masuk) {
+    const jad = getJadwalEfektif(state.users, uid, tgl);
+    const menitSekarang = (masuk.split(':')[0] * 60) + parseInt(masuk.split(':')[1]);
+    const menitJadwal = (jad.masuk.split(':')[0] * 60) + parseInt(jad.masuk.split(':')[1]);
+    const selisih = menitSekarang - menitJadwal;
+    const status = selisih < 0 ? 'Hadir Lebih Awal' : selisih === 0 ? 'Hadir' : `Terlambat ${selisih} menit`;
+    const keterangan = `${selisih} menit ${selisih < 0 ? 'lebih awal' : 'keterlambatan'}`;
+    await set(ref(db, `absensi/${tgl}/${uid}/masuk`), {
+      waktu: masuk,
+      status: status,
+      keterangan: keterangan,
+      gps: null
+    });
+  }
+  if (pulang) {
+    await set(ref(db, `absensi/${tgl}/${uid}/pulang`), {
+      waktu: pulang,
+      status: 'Pulang',
+      keterangan: ket || 'Koreksi dari admin'
+    });
+  }
+  if (!masuk && !pulang) { showToast('Isi minimal satu waktu absensi', 'warning'); return; }
+  
+  showToast('✅ Koreksi absensi disimpan', 'success');
+  closeKoreksi();
+};
+
+window.hapusAbsensi = async () => {
+  if (!confirm('Hapus data absensi? Tindakan tidak dapat dibatalkan.')) return;
+  const uid = state.koreksiUID;
+  const tgl = document.getElementById('koreksi-tgl').value;
+  try {
+    await remove(ref(db, `absensi/${tgl}/${uid}`));
+    showToast('✅ Data absensi dihapus', 'success');
+    closeKoreksi();
+  } catch (e) { showToast('❌ Gagal: ' + e.message, 'error'); }
+};
 
 window.fetchLaporan = async () => {
   const el = document.getElementById('laporan-table');
@@ -1884,57 +1947,73 @@ window.fetchJadwal = async () => {
 };
 
 // Helper functions untuk jadwal management
+window.resetJadwalHari = async (uid, day) => {
+  if (!confirm(`Reset jadwal ${NAMA_HARI[day]}?`)) return;
+  try {
+    await set(ref(db, `users/${uid}/jadwal/hari/${day}`), null);
+    showToast('✅ Jadwal direset ke default', 'success');
+    fetchJadwal();
+  } catch(e) { showToast('❌ Gagal: ' + e.message, 'error'); }
+};
+
 window.saveJadwalDefault = async (uid) => {
-  const jm = document.getElementById(`jm-${uid}`).value;
-  const jp = document.getElementById(`jp-${uid}`).value;
-  if (!jm || !jp) { showToast('Isi jadwal masuk dan pulang', 'warning'); return; }
+  const jm = document.getElementById(`jm-${uid}`)?.value;
+  const jp = document.getElementById(`jp-${uid}`)?.value;
+  if (!jm || !jp) { showToast('❌ Isi jadwal masuk dan pulang', 'warning'); return; }
   try {
     await update(ref(db, `users/${uid}/jadwal`), { masuk: jm, pulang: jp });
     showToast('✅ Jadwal default disimpan', 'success');
+    fetchJadwal();
   } catch(e) { showToast('❌ Gagal: ' + e.message, 'error'); }
 };
 
 window.saveJadwalPerHari = async (uid) => {
   const hariData = {};
-  document.querySelectorAll(`input[type="time"][data-uid="${uid}"]:not([data-day])`).forEach(inp => {
+  document.querySelectorAll(`input[type="time"][data-uid="${uid}"][data-day]`).forEach(inp => {
     const day = parseInt(inp.dataset.day);
     const type = inp.dataset.type;
     if (!hariData[day]) hariData[day] = {};
     hariData[day][type] = inp.value;
   });
   try {
+    if (Object.keys(hariData).length === 0) { showToast('⚠️ Tidak ada perubahan jadwal per hari', 'info'); return; }
     await update(ref(db, `users/${uid}/jadwal/hari`), hariData);
     showToast('✅ Jadwal per hari disimpan', 'success');
+    fetchJadwal();
   } catch(e) { showToast('❌ Gagal: ' + e.message, 'error'); }
 };
 
 window.saveHTJForGuru = async (uid) => {
   const htj = {};
   document.querySelectorAll(`input[type="checkbox"][data-uid="${uid}"]`).forEach(inp => {
-    if (inp.checked) htj[inp.dataset.day] = true;
+    if (inp.checked) htj[parseInt(inp.dataset.day)] = true;
   });
   try {
     await update(ref(db, `users/${uid}/jadwal/hari_tanpa_jadwal`), htj);
     showToast('✅ Hari tanpa jadwal disimpan', 'success');
+    fetchJadwal();
   } catch(e) { showToast('❌ Gagal: ' + e.message, 'error'); }
 };
 
 window.deleteOverrideDate = async (uid, tgl) => {
   if (!confirm(`Hapus override untuk ${tgl}?`)) return;
   try {
-    await remove(ref(db, `users/${uid}/jadwal/override/${tgl}`));
+    await set(ref(db, `users/${uid}/jadwal/override/${tgl}`), null);
     showToast('✅ Override dihapus', 'success');
     fetchJadwal();
   } catch(e) { showToast('❌ Gagal: ' + e.message, 'error'); }
 };
 
 window.promptAddOverride = async (uid) => {
-  const tgl = prompt('Tanggal override (YYYY-MM-DD):');
-  if (!tgl) return;
-  const jm = prompt('Jam masuk (HH:MM):');
-  if (!jm) return;
-  const jp = prompt('Jam pulang (HH:MM):');
-  if (!jp) return;
+  const tgl = prompt('Tanggal override (YYYY-MM-DD):', new Date().toLocaleDateString('sv-SE'));
+  if (!tgl || !/^\d{4}-\d{2}-\d{2}$/.test(tgl)) { showToast('❌ Format tanggal tidak valid', 'warning'); return; }
+  
+  const jm = prompt('Jam masuk (HH:MM):', '07:20');
+  if (!jm || !/^\d{2}:\d{2}$/.test(jm)) { showToast('❌ Format jam tidak valid', 'warning'); return; }
+  
+  const jp = prompt('Jam pulang (HH:MM):', '12:00');
+  if (!jp || !/^\d{2}:\d{2}$/.test(jp)) { showToast('❌ Format jam tidak valid', 'warning'); return; }
+  
   try {
     await update(ref(db, `users/${uid}/jadwal/override/${tgl}`), { masuk: jm, pulang: jp });
     showToast('✅ Override ditambahkan', 'success');
@@ -1942,23 +2021,214 @@ window.promptAddOverride = async (uid) => {
   } catch(e) { showToast('❌ Gagal: ' + e.message, 'error'); }
 };
 
-window.resetJadwalHari = async (uid, day) => {
-  if (!confirm(`Reset jadwal ${['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'][day]}?`)) return;
-  try {
-    await remove(ref(db, `users/${uid}/jadwal/hari/${day}`));
-    showToast('✅ Jadwal direset ke default', 'success');
-    fetchJadwal();
-  } catch(e) { showToast('❌ Gagal: ' + e.message, 'error'); }
-};
-window.saveJadwal = async () => showToast('Fitur dalam implementasi', 'info');
-window.saveJadwalHari = async () => showToast('Fitur dalam implementasi', 'info');
-window.toggleHTJ = (uid, hari) => showToast('Fitur dalam implementasi', 'info');
-window.saveHTJ = async () => showToast('Fitur dalam implementasi', 'info');
-window.saveOverride = async () => showToast('Fitur dalam implementasi', 'info');
-window.deleteOverride = async () => showToast('Fitur dalam implementasi', 'info');
+// ═══════════════════════════════════════════════════════════
+// KALENDER LIBUR KHUSUS — FULLY IMPLEMENTED
+// ═══════════════════════════════════════════════════════════
 
-window.renderKalender = async () => showToast('Fitur dalam implementasi', 'info');
-window.initKalender = () => {};
+window.initKalender = () => {
+  const now = new Date();
+  const bulanEl = document.getElementById('kal-bulan');
+  const tahunEl = document.getElementById('kal-tahun');
+  
+  bulanEl.innerHTML = NAMA_BULAN.slice(1).map((m, i) =>
+    `<option value="${String(i+1).padStart(2,'0')}" ${i+1===now.getMonth()+1?'selected':''}>${m}</option>`
+  ).join('');
+  
+  const y = now.getFullYear();
+  tahunEl.innerHTML = [y-1, y, y+1].map(yr =>
+    `<option value="${yr}" ${yr===y?'selected':''}>${yr}</option>`
+  ).join('');
+};
+
+async function loadLiburKhusus() {
+  try {
+    const snap = await get(ref(db, 'libur_khusus'));
+    state.kalender.liburKhusus = snap.exists() ? snap.val() : {};
+  } catch (e) {
+    console.warn('Load libur khusus:', e.message);
+    state.kalender.liburKhusus = {};
+  }
+}
+
+window.renderKalender = async () => {
+  await loadLiburKhusus();
+  
+  const bulan = parseInt(document.getElementById('kal-bulan').value);
+  const tahun = parseInt(document.getElementById('kal-tahun').value);
+  
+  const firstDay = new Date(tahun, bulan - 1, 1).getDay();
+  const lastDate = new Date(tahun, bulan, 0).getDate();
+  
+  const cal = document.getElementById('kalender-wrap');
+  let html = '<div class="kal-grid">';
+  
+  // Header
+  ['Min','Sen','Sel','Rab','Kam','Jum','Sab'].forEach(h => {
+    html += `<div class="kal-head">${h}</div>`;
+  });
+  
+  // Empty cells
+  for (let i = 0; i < firstDay; i++) {
+    html += '<div class="kal-day empty"></div>';
+  }
+  
+  const today = todayISO();
+  for (let d = 1; d <= lastDate; d++) {
+    const tglStr = `${tahun}-${String(bulan).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = tglStr === today;
+    const liburNas = LIBUR_NASIONAL[tglStr] || '';
+    const liburKhusus = state.kalender.liburKhusus[tglStr] || '';
+    const liburBaru = state.kalender.liburBaru[tglStr] || '';
+    const liburHapus = state.kalender.liburHapus.includes(tglStr);
+    
+    let className = 'kal-day';
+    let ket = '';
+    
+    if (isToday) className += ' today';
+    if (liburHapus) className += ' libur-baru'; // Ditandai untuk dihapus
+    else if (liburNas) { className += ' libur-nasional'; ket = liburNas; }
+    else if (liburBaru) { className += ' libur-baru'; ket = liburBaru; }
+    else if (liburKhusus) { className += ' libur-khusus'; ket = liburKhusus; }
+    
+    const hapusBtn = (liburKhusus || liburBaru) && !liburNas
+      ? `<button class="kal-hapus" onclick="markDeleteLibur('${tglStr}')">✕ Hapus</button>`
+      : '';
+    
+    html += `<div class="${className}" onclick="selectTgl('${tglStr}')">
+      <span class="kal-tgl">${d}</span>
+      <div class="kal-ket">${esc(ket)}</div>
+      ${hapusBtn}
+    </div>`;
+  }
+  
+  // Empty cells at end
+  const totalCells = firstDay + lastDate;
+  for (let i = totalCells; i < (Math.ceil(totalCells / 7) * 7); i++) {
+    html += '<div class="kal-day empty"></div>';
+  }
+  
+  html += '</div>';
+  cal.innerHTML = html;
+  loadLiburList();
+};
+
+let tglSelectedForLibur = null;
+
+window.selectTgl = (tgl) => {
+  const existing = LIBUR_NASIONAL[tgl] || state.kalender.liburKhusus[tgl];
+  if (existing) { showToast('⚠️ Tanggal ini sudah libur nasional atau khusus', 'warning'); return; }
+  
+  tglSelectedForLibur = tgl;
+  document.getElementById('dialog-tgl-label').textContent = `📅 ${tgl} (${namaHari(tgl)})`;
+  document.getElementById('dialog-ket').value = '';
+  document.getElementById('libur-dialog').style.display = 'block';
+};
+
+window.tutupDialog = () => {
+  document.getElementById('libur-dialog').style.display = 'none';
+  tglSelectedForLibur = null;
+};
+
+window.konfirmasiTambahLibur = () => {
+  if (!tglSelectedForLibur) return;
+  const ket = document.getElementById('dialog-ket').value.trim();
+  if (!ket) { showToast('Isi keterangan libur', 'warning'); return; }
+  
+  state.kalender.liburBaru[tglSelectedForLibur] = ket;
+  state.kalender.liburHapus = state.kalender.liburHapus.filter(t => t !== tglSelectedForLibur);
+  tutupDialog();
+  renderKalender();
+  showBulkSaveWrap();
+};
+
+window.markDeleteLibur = (tgl) => {
+  const isKhusus = state.kalender.liburKhusus[tgl];
+  if (isKhusus && !state.kalender.liburHapus.includes(tgl)) {
+    state.kalender.liburHapus.push(tgl);
+  } else if (!isKhusus && state.kalender.liburBaru[tgl]) {
+    delete state.kalender.liburBaru[tgl];
+  }
+  renderKalender();
+  showBulkSaveWrap();
+};
+
+function showBulkSaveWrap() {
+  const addCount = Object.keys(state.kalender.liburBaru).length;
+  const delCount = state.kalender.liburHapus.length;
+  const total = addCount + delCount;
+  const el = document.getElementById('bulk-save-wrap');
+  if (total > 0) {
+    el.style.display = 'flex';
+    document.getElementById('bulk-info').textContent = `${total} perubahan (${addCount} tambah, ${delCount} hapus)`;
+  } else {
+    el.style.display = 'none';
+  }
+}
+
+window.simpanSemuaLibur = async () => {
+  const updates = {};
+  
+  // Add libur baru
+  Object.entries(state.kalender.liburBaru).forEach(([tgl, ket]) => {
+    updates[`libur_khusus/${tgl}`] = ket;
+  });
+  
+  // Remove libur yang dihapus
+  state.kalender.liburHapus.forEach(tgl => {
+    updates[`libur_khusus/${tgl}`] = null;
+  });
+  
+  if (Object.keys(updates).length === 0) { showToast('Tidak ada perubahan untuk disimpan', 'warning'); return; }
+  
+  try {
+    await update(ref(db), updates);
+    showToast(`✅ Libur khusus disimpan (${Object.keys(updates).length} perubahan)`, 'success');
+    state.kalender.liburBaru = {};
+    state.kalender.liburHapus = [];
+    renderKalender();
+  } catch (e) {
+    showToast('❌ Gagal menyimpan: ' + e.message, 'error');
+  }
+};
+
+window.batalSemuaLibur = () => {
+  state.kalender.liburBaru = {};
+  state.kalender.liburHapus = [];
+  renderKalender();
+  showBulkSaveWrap();
+};
+
+async function loadLiburList() {
+  const el = document.getElementById('libur-list');
+  try {
+    const snap = await get(ref(db, 'libur_khusus'));
+    if (!snap.exists()) { el.innerHTML = '<div class="empty">Belum ada libur khusus</div>'; return; }
+    
+    const libur = snap.val();
+    const items = Object.entries(libur).sort((a, b) => a[0].localeCompare(b[0])).map(([tgl, ket]) => `
+      <div class="libur-item">
+        <div class="libur-info">
+          <div class="libur-tgl">${esc(tgl)}</div>
+          <div class="libur-ket">${esc(ket)} · ${esc(namaHari(tgl))}</div>
+        </div>
+        <button class="btn-hapus-libur" onclick="deleteLiburKhusus('${tgl}')">🗑 Hapus</button>
+      </div>
+    `);
+    el.innerHTML = items.join('');
+  } catch (e) {
+    console.error('loadLiburList:', e);
+    el.innerHTML = '<div class="empty">❌ Gagal memuat data</div>';
+  }
+}
+
+window.deleteLiburKhusus = async (tgl) => {
+  if (!confirm(`Hapus libur khusus untuk ${tgl}?`)) return;
+  try {
+    await set(ref(db, `libur_khusus/${tgl}`), null);
+    showToast('✅ Libur khusus dihapus', 'success');
+    renderKalender();
+  } catch (e) { showToast('❌ Gagal: ' + e.message, 'error'); }
+};
 
 function initFilters() {
   const now = new Date();
