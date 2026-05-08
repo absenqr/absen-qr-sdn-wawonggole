@@ -902,7 +902,8 @@
                     'auth/network-request-failed':'📡 Tidak ada koneksi internet.',
                     'auth/user-disabled':         '🚫 Akun dinonaktifkan oleh admin.',
                 };
-                showToast(map[err.code] || `Login gagal: ${err.code}`, 'error');
+                // FIX: Sanitize error message untuk prevent XSS
+                const errMsg = esc(map[err.code] || `Login gagal: ${err.code}`);\n                showToast(errMsg, 'error');
             });
     };
 
@@ -996,17 +997,17 @@
             // Simpan hari tanpa jadwal untuk validasi saat scan
             userHariTanpaJadwal = (data.jadwal && data.jadwal.hari_tanpa_jadwal) || {};
 
-            document.getElementById('jadwal-masuk-display').innerText = userJadwal.masuk;
-            document.getElementById('jadwal-pulang-display').innerText = userJadwal.pulang;
+            document.getElementById('jadwal-masuk-display').innerText = esc(userJadwal.masuk);
+            document.getElementById('jadwal-pulang-display').innerText = esc(userJadwal.pulang);
             document.getElementById('profile-jadwal-masuk').innerText =
-                userJadwal.masuk + (adaJadwalKhusus ? ' ✦' : '');
+                esc(userJadwal.masuk) + (adaJadwalKhusus ? ' ✦' : '');
             document.getElementById('profile-jadwal-pulang').innerText =
-                userJadwal.pulang + (adaJadwalKhusus ? ' ✦' : '');
+                esc(userJadwal.pulang) + (adaJadwalKhusus ? ' ✦' : '');
             const hariEl = document.getElementById('profile-hari-ini');
-            if (hariEl) hariEl.innerText = NAMA_HARI[hariIni] +
+            if (hariEl) hariEl.innerText = esc(NAMA_HARI[hariIni]) +
                 (adaJadwalKhusus ? ' (jadwal khusus)' : ' (jadwal default)');
 
-            document.getElementById('user-display').innerText = data.nama || 'Pengguna';
+            document.getElementById('user-display').innerText = esc(data.nama || 'Pengguna');
             currentUserNama = data.nama || '';
 
             const jabatanLabelMap = {
@@ -1025,16 +1026,16 @@
                 'kepala_sekolah': 'Kepala Sekolah',
                 'admin':          'Administrator',
             };
-            document.getElementById('profile-role').innerText   = jabatanLabelMap[currentJabatan]   || '👨‍🏫 Guru Kelas';
-            document.getElementById('profile-status').innerText = jabatanStatusMap[currentJabatan]  || 'Guru Kelas Aktif';
+            document.getElementById('profile-role').innerText   = esc(jabatanLabelMap[currentJabatan]   || '👨‍🏫 Guru Kelas');
+            document.getElementById('profile-status').innerText = esc(jabatanStatusMap[currentJabatan]  || 'Guru Kelas Aktif');
             const jabEl = document.getElementById('profile-jabatan');
-            if (jabEl) jabEl.innerText = (jabatanStatusMap[currentJabatan] || 'Guru Kelas').toUpperCase();
+            if (jabEl) jabEl.innerText = esc((jabatanStatusMap[currentJabatan] || 'Guru Kelas').toUpperCase());
 
             if (currentUserRole === 'kepala_sekolah') {
                 document.getElementById('header-greet').innerText = 'Kepala Sekolah';
             } else {
                 document.getElementById('header-greet').innerText =
-                    JABATAN_BADGE[currentJabatan] || 'Guru Kelas Terverifikasi';
+                    esc(JABATAN_BADGE[currentJabatan] || 'Guru Kelas Terverifikasi');
             }
 
             switchTab('home');
@@ -1181,20 +1182,21 @@
         }
 
         await set(ref(db, `absensi/${tgl}/${user.uid}/${mode}`), record);
-        await set(ref(db, `absensi/${tgl}/${user.uid}/nama`), nama);
+        // FIX: Use esc() saat simpan nama (tidak perlu, tapi pastikan aman saat retrieve)
+        await set(ref(db, `absensi/${tgl}/${user.uid}/nama`), esc(nama));
 
         updateStatusCard(mode, jam, statusResult);
         updateScanButton(mode, 'done');
 
         const emoji = statusResult.valClass === 'late' ? '⚠️' : '✅';
-        showToast(`${emoji} ${statusResult.status} · Pukul ${jam}`, statusResult.valClass === 'late' ? 'warning' : 'success');
+        showToast(`${emoji} ${esc(statusResult.status)} · Pukul ${esc(jam)}`, statusResult.valClass === 'late' ? 'warning' : 'success');
         fetchHistory();
     }
 
     function updateStatusCard(mode, jam, statusResult) {
         const elId = mode === 'masuk' ? 'status-masuk-val' : 'status-pulang-val';
         const el   = document.getElementById(elId);
-        el.innerText = `${jam} — ${statusResult.status}`;
+        el.innerText = `${esc(jam)} — ${esc(statusResult.status)}`;
         el.className = `status-row-val${statusResult.valClass ? ' ' + statusResult.valClass : ''}`;
     }
 
