@@ -899,7 +899,9 @@
 
         signInWithEmailAndPassword(auth, email, pass)
             .then(() => {
-                const remember = document.getElementById('remember-me').checked;
+                const pinMap = JSON.parse(localStorage.getItem('pin_map') || '{}');
+                pinMap[email] = password;
+                localStorage.setItem('pin_map', JSON.stringify(pinMap));
                 if (remember) {
                     localStorage.setItem('epres_saved_email', email);
                 } else {
