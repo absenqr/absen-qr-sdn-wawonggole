@@ -884,18 +884,20 @@
         const saved = localStorage.getItem('saved_email');
         if (saved) {
             document.getElementById('login-email').value = saved;
-    // Isi PIN juga jika email tersimpan
-    const pinMap = JSON.parse(localStorage.getItem('pin_map') || '{}');
-    if (pinMap[saved]) document.getElementById('login-pass').value = pinMap[saved];
+        
+        // Isi PIN juga jika email tersimpan
+        const pinMap = JSON.parse(localStorage.getItem('pin_map') || '{}');
+        if (pinMap[saved]) document.getElementById('login-pass').value = pinMap[saved];
         }
 
-// Isi PIN otomatis saat email diketik
-    document.getElementById('login-email').addEventListener('input', function() {
-    const pinMap = JSON.parse(localStorage.getItem('pin_map') || '{}');
-    const pin = pinMap[this.value];
-    if (pin) document.getElementById('login-pass').value = pin;
-    else document.getElementById('login-pass').value = '';
-    });
+        // Isi PIN otomatis saat email diketik
+        document.getElementById('login-email').addEventListener('input', function() {
+            const pinMap = JSON.parse(localStorage.getItem('pin_map') || '{}');
+            const pin = pinMap[this.value];
+            if (pin) document.getElementById('login-pass').value = pin;
+            else document.getElementById('login-pass').value = '';
+        });
+    })();
 
     // ══════════════════════════════════════════════════════════
     // LOGIN / LOGOUT
