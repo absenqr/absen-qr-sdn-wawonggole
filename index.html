@@ -881,9 +881,21 @@
     // INGAT EMAIL
     // ══════════════════════════════════════════════════════════
     (function loadSavedEmail() {
-        const saved = localStorage.getItem('epres_saved_email');
-        if (saved) document.getElementById('login-email').value = saved;
-    })();
+        const saved = localStorage.getItem('saved_email');
+        if (saved) {
+            document.getElementById('login-email').value = saved;
+    // Isi PIN juga jika email tersimpan
+    const pinMap = JSON.parse(localStorage.getItem('pin_map') || '{}');
+    if (pinMap[saved]) document.getElementById('login-pass').value = pinMap[saved];
+        }
+
+// Isi PIN otomatis saat email diketik
+    document.getElementById('login-email').addEventListener('input', function() {
+    const pinMap = JSON.parse(localStorage.getItem('pin_map') || '{}');
+    const pin = pinMap[this.value];
+    if (pin) document.getElementById('login-pass').value = pin;
+    else document.getElementById('login-pass').value = '';
+    });
 
     // ══════════════════════════════════════════════════════════
     // LOGIN / LOGOUT
@@ -902,10 +914,12 @@
                 const pinMap = JSON.parse(localStorage.getItem('pin_map') || '{}');
                 pinMap[email] = password;
                 localStorage.setItem('pin_map', JSON.stringify(pinMap));
-                if (remember) {
-                    localStorage.setItem('epres_saved_email', email);
+                
+                // Remember Me hanya untuk email
+                if (document.getElementById('remember-me').checked) {
+                    localStorage.setItem('saved_email', email);
                 } else {
-                    localStorage.removeItem('epres_saved_email');
+                    localStorage.removeItem('saved_email');
                 }
                 // onAuthStateChanged akan menangani navigasi selanjutnya
             })
