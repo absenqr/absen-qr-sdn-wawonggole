@@ -483,7 +483,7 @@
             </div>
             <div class="remember-row">
                 <input type="checkbox" id="remember-me" checked>
-                <label for="remember-me">Ingat email saya di perangkat ini</label>
+                <label for="remember-me">Ingat email &amp; PIN di perangkat ini</label>
             </div>
             <button class="btn-auth" id="btn-login" onclick="handleLogin()">
                 <div class="spinner"></div>
@@ -884,18 +884,16 @@
         const saved = localStorage.getItem('saved_email');
         if (saved) {
             document.getElementById('login-email').value = saved;
-        
-        // Isi PIN juga jika email tersimpan
-        const pinMap = JSON.parse(localStorage.getItem('pin_map') || '{}');
-        if (pinMap[saved]) document.getElementById('login-pass').value = pinMap[saved];
+            // Isi PIN otomatis jika tersimpan untuk email ini
+            const pinMap = JSON.parse(localStorage.getItem('pin_map') || '{}');
+            if (pinMap[saved]) document.getElementById('login-pass').value = pinMap[saved];
         }
 
-        // Isi PIN otomatis saat email diketik
+        // Isi PIN otomatis saat email diketik manual
         document.getElementById('login-email').addEventListener('input', function() {
             const pinMap = JSON.parse(localStorage.getItem('pin_map') || '{}');
             const pin = pinMap[this.value];
-            if (pin) document.getElementById('login-pass').value = pin;
-            else document.getElementById('login-pass').value = '';
+            document.getElementById('login-pass').value = pin || '';
         });
     })();
 
@@ -913,11 +911,12 @@
 
         signInWithEmailAndPassword(auth, email, pass)
             .then(() => {
+                // Simpan PIN ke pin_map (selalu, agar auto-fill bekerja)
                 const pinMap = JSON.parse(localStorage.getItem('pin_map') || '{}');
-                pinMap[email] = password;
+                pinMap[email] = pass; // FIX: `password` → `pass` (nama variabel yang benar)
                 localStorage.setItem('pin_map', JSON.stringify(pinMap));
-                
-                // Remember Me hanya untuk email
+
+                // Remember Me: simpan atau hapus email
                 if (document.getElementById('remember-me').checked) {
                     localStorage.setItem('saved_email', email);
                 } else {
