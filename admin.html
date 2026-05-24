@@ -975,7 +975,7 @@
 
       <!-- Panel: Kode Darurat QR -->
       <div class="panel" id="panel-kode_darurat">
-        <div class="card">
+        <div class="card" style="margin-bottom:16px;">
           <div class="card-head">
             <div>
               <div class="card-title">🔐 Kode Darurat QR</div>
@@ -984,13 +984,26 @@
             <button class="btn btn-primary" onclick="generateKodeDarurat()">+ Generate Kode</button>
           </div>
           <div class="card-body">
-            <div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:12px;padding:14px 16px;margin-bottom:20px;font-size:12px;color:#92400E;line-height:1.6;">
+            <div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:12px;color:#92400E;line-height:1.6;">
               <strong>⚠ Peraturan Kode Darurat:</strong><br>
               Kode berlaku <strong>hanya hari ini</strong> dan <strong>hanya sekali pakai</strong>. Guru tetap wajib berada dalam area GPS sekolah.
               Berikan kode secara langsung atau via pesan pribadi — jangan posting ke grup umum.
             </div>
+            <!-- Panduan Firebase Rules -->
+            <div id="kode-rules-banner" style="display:none;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:16px;margin-bottom:16px;font-size:12px;color:#1E40AF;line-height:1.7;">
+              <strong>🔧 Perlu konfigurasi Firebase Security Rules</strong><br>
+              Buka <a href="https://console.firebase.google.com/project/absen-qr-sdn-wawonggole/database/absen-qr-sdn-wawonggole-default-rtdb/rules" target="_blank" style="color:#2563EB;font-weight:700;">Firebase Console → Realtime Database → Rules</a>, lalu tambahkan rule berikut di dalam <code style="background:#DBEAFE;padding:1px 5px;border-radius:4px;">"rules"</code>:<br><br>
+              <code style="display:block;background:#1E3A5F;color:#93C5FD;padding:12px 14px;border-radius:8px;font-size:11px;white-space:pre;overflow-x:auto;">"kode_darurat": {
+  "$tgl": {
+    ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'admin'",
+    "$kode": {
+      ".write": "auth != null"
+    }
+  }
+}</code>
+            </div>
             <div id="kode-darurat-list">
-              <div class="empty">Belum ada kode darurat hari ini. Klik "+ Generate Kode" untuk membuat.</div>
+              <div class="empty">Memuat…</div>
             </div>
           </div>
         </div>
@@ -2529,17 +2542,35 @@ const _origFetchLaporan = window.fetchLaporan;
 // KODE DARURAT QR — Admin Generate & Monitor
 // Struktur Firebase: kode_darurat/{tgl}/{6digitKode} = { used, createdAt, usedBy?, usedAt? }
 // ═══════════════════════════════════════════════════════════
+function showRulesBanner(show) {
+  const el = document.getElementById('kode-rules-banner');
+  if (el) el.style.display = show ? 'block' : 'none';
+}
+
+function isPermissionDenied(e) {
+  return e && (e.code === 'PERMISSION_DENIED' || (e.message && e.message.toLowerCase().includes('permission')));
+}
+
 window.generateKodeDarurat = async function() {
   const tgl  = new Date().toLocaleDateString('sv-SE');
   const jam  = String(new Date().getHours()).padStart(2,'0') + ':' + String(new Date().getMinutes()).padStart(2,'0');
-  // Generate 6 digit unik
   const kode = String(Math.floor(100000 + Math.random() * 900000));
+  const btn  = document.querySelector('#panel-kode_darurat .btn-primary');
+  if (btn) { btn.disabled = true; btn.textContent = 'Membuat…'; }
   try {
     await set(ref(db, `kode_darurat/${tgl}/${kode}`), { used: false, createdAt: jam });
-    showToast(`✅ Kode darurat dibuat: ${kode}`, 'success', 6000);
+    showRulesBanner(false);
+    showToast(`✅ Kode darurat: ${kode}`, 'success', 7000);
     loadKodeDaruratList();
   } catch(e) {
-    showToast('Gagal membuat kode: ' + e.message, 'error');
+    if (isPermissionDenied(e)) {
+      showRulesBanner(true);
+      showToast('❌ Akses ditolak Firebase. Lihat panduan rules di atas.', 'error', 6000);
+    } else {
+      showToast('Gagal membuat kode: ' + e.message, 'error');
+    }
+  } finally {
+    if (btn) { btn.disabled = false; btn.textContent = '+ Generate Kode'; }
   }
 };
 
@@ -2550,6 +2581,7 @@ async function loadKodeDaruratList() {
   const tgl = new Date().toLocaleDateString('sv-SE');
   try {
     const snap = await get(ref(db, `kode_darurat/${tgl}`));
+    showRulesBanner(false);
     if (!snap.exists()) {
       el.innerHTML = '<div class="empty">Belum ada kode darurat hari ini. Klik "+ Generate Kode" untuk membuat.</div>';
       return;
@@ -2558,7 +2590,7 @@ async function loadKodeDaruratList() {
     const kodes = Object.entries(data).sort((a,b) => (b[1].createdAt||'').localeCompare(a[1].createdAt||''));
 
     // Resolusi nama guru dari usedBy uid
-    const uids = kodes.filter(([,v]) => v.usedBy).map(([,v]) => v.usedBy);
+    const uids = kodes.filter(([,v]) => v.usedBy && v.usedBy !== 'DIBATALKAN_ADMIN').map(([,v]) => v.usedBy);
     const namaMap = {};
     await Promise.allSettled(uids.map(async uid => {
       const s = await get(ref(db, `users/${uid}/nama`));
@@ -2577,18 +2609,24 @@ async function loadKodeDaruratList() {
           </tr>
         </thead>
         <tbody>
-          ${kodes.map(([kode, v]) => `
+          ${kodes.map(([kode, v]) => {
+            const dibatalkan = v.usedBy === 'DIBATALKAN_ADMIN';
+            return `
             <tr style="border-top:1px solid var(--line);">
-              <td style="padding:12px 14px;font-size:20px;font-weight:900;letter-spacing:.3em;color:var(--prim);font-variant-numeric:tabular-nums;">${esc(kode)}</td>
+              <td style="padding:12px 14px;font-size:22px;font-weight:900;letter-spacing:.3em;color:var(--prim);font-variant-numeric:tabular-nums;${v.used ? 'opacity:.4;' : ''}">${esc(kode)}</td>
               <td style="padding:12px 14px;color:var(--ink2);">${esc(v.createdAt || '–')}</td>
               <td style="padding:12px 14px;">
-                ${v.used
-                  ? `<span class="chip chip-ok" style="font-size:10px;">✓ Terpakai ${esc(v.usedAt||'')}</span>`
-                  : `<span class="chip chip-gray" style="font-size:10px;">⏳ Belum dipakai</span>`
+                ${dibatalkan
+                  ? `<span class="chip chip-err" style="font-size:10px;">✕ Dibatalkan</span>`
+                  : v.used
+                    ? `<span class="chip chip-ok" style="font-size:10px;">✓ Terpakai ${esc(v.usedAt||'')}</span>`
+                    : `<span class="chip chip-gray" style="font-size:10px;">⏳ Belum dipakai</span>`
                 }
               </td>
               <td style="padding:12px 14px;color:var(--ink2);font-size:12px;">
-                ${v.used && v.usedBy ? esc(namaMap[v.usedBy] || v.usedBy) : '–'}
+                ${dibatalkan ? '<em style="color:var(--ink3)">–</em>'
+                  : v.used && v.usedBy ? esc(namaMap[v.usedBy] || v.usedBy)
+                  : '–'}
               </td>
               <td style="padding:12px 14px;text-align:center;">
                 ${!v.used
@@ -2597,23 +2635,39 @@ async function loadKodeDaruratList() {
                   : '–'
                 }
               </td>
-            </tr>`).join('')}
+            </tr>`;
+          }).join('')}
         </tbody>
-      </table>`;
+      </table>
+      <p style="font-size:10px;color:var(--ink3);margin-top:12px;padding:0 4px;">
+        Total hari ini: ${kodes.length} kode · 
+        ${kodes.filter(([,v])=>v.used && v.usedBy !== 'DIBATALKAN_ADMIN').length} terpakai · 
+        ${kodes.filter(([,v])=>!v.used).length} aktif
+      </p>`;
   } catch(e) {
-    el.innerHTML = `<div class="empty">Gagal memuat: ${esc(e.message)}</div>`;
+    if (isPermissionDenied(e)) {
+      showRulesBanner(true);
+      el.innerHTML = '<div class="empty">⚠ Akses ditolak Firebase. Ikuti panduan konfigurasi rules di atas.</div>';
+    } else {
+      el.innerHTML = `<div class="empty">❌ Gagal memuat: ${esc(e.message)}</div>`;
+    }
   }
 }
 
 window.batalKodeDarurat = async function(tgl, kode) {
-  if (!confirm(`Batalkan kode ${kode}? Kode tidak bisa dipakai setelah ini.`)) return;
+  if (!confirm(`Batalkan kode ${kode}?\nKode tidak bisa digunakan setelah ini.`)) return;
   try {
-    await set(ref(db, `kode_darurat/${tgl}/${kode}/used`), true);
+    await set(ref(db, `kode_darurat/${tgl}/${kode}/used`),   true);
     await set(ref(db, `kode_darurat/${tgl}/${kode}/usedBy`), 'DIBATALKAN_ADMIN');
-    showToast(`Kode ${kode} dibatalkan.`, 'success');
+    showToast(`Kode ${kode} berhasil dibatalkan.`, 'success');
     loadKodeDaruratList();
   } catch(e) {
-    showToast('Gagal membatalkan: ' + e.message, 'error');
+    if (isPermissionDenied(e)) {
+      showRulesBanner(true);
+      showToast('❌ Akses ditolak. Lihat panduan rules di atas.', 'error', 5000);
+    } else {
+      showToast('Gagal membatalkan: ' + e.message, 'error');
+    }
   }
 };
 
