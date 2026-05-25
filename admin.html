@@ -565,14 +565,9 @@
 </head>
 <body>
 <div id="toast"></div>
-<script type="module">
-  // Dynamically import admin.js and expose functions to window
-  import('./admin.js').then(() => {
-    // Functions should be available on window after module loads
-  }).catch(err => {
-    console.error('Failed to load admin.js:', err);
-  });
-</script>
+<!-- admin.js import removed: the inline Firebase SDK script below is the
+     complete implementation. The old admin.js used a fake auth check and
+     unauthenticated fetch() calls which caused 401 Unauthorized errors. -->
 
 <!-- ════════════════════════════════════════
      LOGIN PAGE
