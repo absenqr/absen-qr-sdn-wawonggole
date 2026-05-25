@@ -9,7 +9,7 @@
 
   <style>
     /* ════════════════════════════════════════
-       DESIGN TOKENS — diselaraskan dengan index.html
+       DESIGN TOKENS
     ════════════════════════════════════════ */
     :root {
       --ink:       #0D1117;
@@ -37,9 +37,6 @@
       --head:      60px;
     }
 
-    /* ════════════════════════════════════════
-       RESET & BASE
-    ════════════════════════════════════════ */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { font-size: 14px; }
     body {
@@ -127,7 +124,6 @@
     }
     .btn-logout-sb:hover { color: var(--err); }
 
-    /* Real-time dot */
     .rt-dot {
       width: 7px; height: 7px; border-radius: 50%;
       background: var(--ok);
@@ -169,9 +165,6 @@
     }
     #content { padding: 28px; flex: 1; }
 
-    /* ════════════════════════════════════════
-       PANELS
-    ════════════════════════════════════════ */
     .panel        { display: none; }
     .panel.active { display: block; }
 
@@ -319,51 +312,6 @@
     .chip-orange { background: var(--orange-l); color: #9A3412; }
 
     /* ════════════════════════════════════════
-       JADWAL CARDS
-    ════════════════════════════════════════ */
-    .jadwal-grid { display: grid; gap: 12px; }
-    .jadwal-card { border: 1.5px solid var(--line); border-radius: 12px; overflow: hidden; }
-    .jadwal-card-head {
-      padding: 12px 16px; background: var(--bg);
-      display: flex; align-items: center; gap: 10px;
-      border-bottom: 1px solid var(--line);
-    }
-    .jadwal-name { font-size: 13px; font-weight: 700; color: var(--ink); }
-    .jadwal-meta { font-size: 10px; color: var(--ink3); }
-    .jadwal-body { padding: 14px 16px; }
-    .jadwal-fields {
-      display: grid;
-      grid-template-columns: 1fr 1fr auto auto;
-      gap: 10px; align-items: end; margin-bottom: 10px;
-    }
-    .field-group  { display: flex; flex-direction: column; gap: 5px; }
-    .field-label  { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--ink3); }
-
-    /* Collapsible */
-    .hari-section      { display: none; }
-    .hari-section.open { display: block; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
-    .hari-toggle { font-size: 10px; font-weight: 600; color: var(--prim); cursor: pointer; background: none; border: none; font-family: inherit; padding: 4px 0; }
-
-    /* Hari tanpa jadwal */
-    .htj-grid { display: grid; grid-template-columns: 80px repeat(6, 1fr); gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); }
-    .htj-head { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; color: var(--ink3); text-align: center; padding: 4px 0; }
-    .htj-label { display: flex; align-items: center; font-size: 10px; font-weight: 700; color: var(--ink3); }
-    .htj-toggle { display: flex; align-items: center; justify-content: center; height: 32px; border-radius: 8px; border: 1.5px solid var(--line); cursor: pointer; background: var(--white); transition: all .15s; font-size: 10px; font-weight: 700; color: var(--ink3); }
-    .htj-toggle.aktif    { background: var(--ok-l);  border-color: var(--ok);  color: #065F46; }
-    .htj-toggle.nonaktif { background: var(--err-l); border-color: var(--err); color: #991B1B; }
-
-    /* Override jadwal */
-    .override-section { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); }
-    .override-form { display: grid; grid-template-columns: 1fr auto auto auto; gap: 8px; align-items: end; margin-bottom: 12px; }
-    .override-list { display: grid; gap: 6px; }
-    .override-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--orange-l); border: 1.5px solid var(--orange); border-radius: 8px; }
-    .override-item-date { font-family: 'DM Mono', monospace; font-size: 11px; font-weight: 700; color: #9A3412; min-width: 90px; }
-    .override-item-time { font-size: 11px; color: var(--ink2); flex: 1; }
-    .override-item-del  { background: none; border: none; color: var(--err); cursor: pointer; font-size: 13px; padding: 2px 4px; border-radius: 4px; transition: background .15s; display: flex; align-items: center; }
-    .override-item-del:hover { background: var(--err-l); }
-    .override-empty { font-size: 11px; color: var(--ink3); text-align: center; padding: 10px; border: 1.5px dashed var(--line); border-radius: 8px; }
-
-    /* ════════════════════════════════════════
        GURU PANEL
     ════════════════════════════════════════ */
     .guru-card { border: 1.5px solid var(--line); border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 14px; transition: border-color .15s; }
@@ -410,7 +358,6 @@
     .today-times   { margin-left: auto; display: flex; gap: 8px; align-items: center; }
     .time-badge    { display: flex; align-items: center; gap: 5px; background: var(--bg); border-radius: 6px; padding: 4px 8px; font-size: 10px; font-weight: 700; font-family: 'DM Mono', monospace; color: var(--ink2); }
 
-    /* Chart */
     .dash-grid  { display: grid; grid-template-columns: 1fr 320px; gap: 16px; margin-bottom: 24px; }
     .chart-wrap { padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     #pie-canvas { max-width: 180px; }
@@ -564,10 +511,11 @@
   </style>
 </head>
 <body>
+
+<!-- ════════════════════════════════════════
+     TOAST — satu instance saja (FIX: hapus duplikat)
+════════════════════════════════════════ -->
 <div id="toast"></div>
-<!-- admin.js import removed: the inline Firebase SDK script below is the
-     complete implementation. The old admin.js used a fake auth check and
-     unauthenticated fetch() calls which caused 401 Unauthorized errors. -->
 
 <!-- ════════════════════════════════════════
      LOGIN PAGE
@@ -605,11 +553,14 @@
             <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
             </svg>
-            <input type="password" id="a-pass" placeholder="Password Anda" maxlength="20" onkeydown="if(event.key==='Enter') window.doLogin?.()"
+            <!-- FIX: tag input ditutup dengan benar -->
+            <input type="password" id="a-pass" placeholder="Password Anda" maxlength="20"
+                   onkeydown="if(event.key==='Enter') window.doLogin?.()">
           </div>
         </div>
         <div class="login-err" id="login-err"></div>
-        <button class="btn-login-main" id="btn-login" onclick="window.doLogin?.()"
+        <!-- FIX: tag button ditutup dengan benar -->
+        <button class="btn-login-main" id="btn-login" onclick="window.doLogin?.()">
           <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
             <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
             <polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/>
@@ -641,7 +592,9 @@
 
     <div class="sb-nav">
       <div class="sb-section">Menu Utama</div>
-      <div class="sb-item active" data-panel="dashboard" onclick="window.showPanel?.('dashboard')"
+
+      <!-- FIX: semua sb-item ditutup tag-nya dengan benar -->
+      <div class="sb-item active" data-panel="dashboard" onclick="window.showPanel?.('dashboard')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/>
           <rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>
@@ -649,28 +602,32 @@
         Dashboard
         <div class="rt-dot" title="Real-time aktif"></div>
       </div>
-      <div class="sb-item" data-panel="guru" onclick="window.showPanel?.('guru')"
+
+      <div class="sb-item" data-panel="guru" onclick="window.showPanel?.('guru')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
           <circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
         </svg>
         Manajemen Guru
       </div>
-      <div class="sb-item" data-panel="laporan" onclick="window.showPanel?.('laporan')"
+
+      <div class="sb-item" data-panel="laporan" onclick="window.showPanel?.('laporan')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
           <polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>
         </svg>
         Laporan Absensi
       </div>
-      <div class="sb-item" data-panel="libur" onclick="window.showPanel?.('libur')"
+
+      <div class="sb-item" data-panel="libur" onclick="window.showPanel?.('libur')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <circle cx="12" cy="12" r="10"/>
           <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
         </svg>
         Libur Khusus
       </div>
-      <div class="sb-item" data-panel="kode_darurat" onclick="window.showPanel?.('kode_darurat')"
+
+      <div class="sb-item" data-panel="kode_darurat" onclick="window.showPanel?.('kode_darurat')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <rect x="3" y="11" width="18" height="11" rx="2"/>
           <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
@@ -678,7 +635,6 @@
         </svg>
         Kode Darurat QR
       </div>
-
     </div>
 
     <div class="sb-bottom">
@@ -787,7 +743,6 @@
           Di sini Anda dapat mengelola data, jadwal, dan kehadiran guru yang sudah terdaftar.
         </div>
 
-        <!-- Kehadiran Hari Ini — Admin Control -->
         <div class="card" style="margin-bottom:16px;">
           <div class="card-head">
             <div>
@@ -814,7 +769,6 @@
           </div>
         </div>
 
-        <!-- Daftar Guru -->
         <div class="card">
           <div class="card-head">
             <div>
@@ -1002,7 +956,7 @@
               <div class="card-title">🔐 Kode Darurat QR</div>
               <div class="card-sub">Generate kode 6 digit untuk guru yang lupa membawa QR Code</div>
             </div>
-            <button class="btn btn-primary" onclick="window.generateKodeDarurat?.()">+ Generate Kode</button>
+            <button class="btn btn-prim" onclick="window.generateKodeDarurat?.()">+ Generate Kode</button>
           </div>
           <div class="card-body">
             <div style="background:#FEF3C7;border:1px solid #FDE68A;border-radius:12px;padding:14px 16px;margin-bottom:16px;font-size:12px;color:#92400E;line-height:1.6;">
@@ -1010,7 +964,6 @@
               Kode berlaku <strong>hanya hari ini</strong> dan <strong>hanya sekali pakai</strong>. Guru tetap wajib berada dalam area GPS sekolah.
               Berikan kode secara langsung atau via pesan pribadi — jangan posting ke grup umum.
             </div>
-            <!-- Panduan Firebase Rules -->
             <div id="kode-rules-banner" style="display:none;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:12px;padding:16px;margin-bottom:16px;font-size:12px;color:#1E40AF;line-height:1.7;">
               <strong>🔧 Perlu konfigurasi Firebase Security Rules</strong><br>
               Buka <a href="https://console.firebase.google.com/project/absen-qr-sdn-wawonggole/database/absen-qr-sdn-wawonggole-default-rtdb/rules" target="_blank" style="color:#2563EB;font-weight:700;">Firebase Console → Realtime Database → Rules</a>, lalu tambahkan rule berikut di dalam <code style="background:#DBEAFE;padding:1px 5px;border-radius:4px;">"rules"</code>:<br><br>
@@ -1063,8 +1016,8 @@
     </div>
     <div class="modal-actions">
       <button class="btn btn-ghost" onclick="window.closeKoreksi?.()">Batal</button>
-      <button class="btn btn-err" onclick="hapusAbsensi()" id="btn-hapus-ab" style="display:none;">🗑 Hapus</button>
-      <button class="btn btn-prim" onclick="submitKoreksi()">💾 Simpan Koreksi</button>
+      <button class="btn btn-err" onclick="window.hapusAbsensi?.()" id="btn-hapus-ab" style="display:none;">🗑 Hapus</button>
+      <button class="btn btn-prim" onclick="window.submitKoreksi?.()">💾 Simpan Koreksi</button>
     </div>
   </div>
 </div>
@@ -1072,7 +1025,7 @@
 <!-- ════════════════════════════════════════
      MODAL: EDIT GURU
 ════════════════════════════════════════ -->
-<div class="modal-overlay" id="modal-edit-guru" onclick="if(event.target===this) closeEditGuru()">
+<div class="modal-overlay" id="modal-edit-guru" onclick="if(event.target===this) window.closeEditGuru?.()">
   <div class="modal-box">
     <div class="modal-title">✏️ Edit Data Guru</div>
     <div class="modal-sub">Ubah nama, jabatan, NIP, dan NUPTK guru</div>
@@ -1104,32 +1057,16 @@
       </div>
     </div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeEditGuru()">Batal</button>
-      <button class="btn btn-prim" onclick="submitEditGuru()">💾 Simpan</button>
+      <button class="btn btn-ghost" onclick="window.closeEditGuru?.()">Batal</button>
+      <button class="btn btn-prim" onclick="window.submitEditGuru?.()">💾 Simpan</button>
     </div>
   </div>
 </div>
 
 <!-- ════════════════════════════════════════
-     PRINT AREA
-════════════════════════════════════════ -->
-<div id="print-area" style="display:none;padding:24px;font-family:'DM Sans',sans-serif;">
-  <div style="text-align:center;margin-bottom:20px;border-bottom:2px solid #4F46E5;padding-bottom:16px;">
-    <h2 style="font-size:16px;font-weight:800;color:#0D1117;">LAPORAN ABSENSI GURU</h2>
-    <p style="font-size:12px;color:#475569;margin-top:4px;">SDN WAWONGGOLE · E-Presensi</p>
-    <p style="font-size:11px;color:#94A3B8;margin-top:2px;" id="print-periode-label"></p>
-    <p style="font-size:10px;color:#94A3B8;" id="print-cetak-tgl"></p>
-    <p style="font-size:10px;color:#7C3AED;margin-top:4px;font-style:italic;display:none;" id="print-ket-tanpa-jadwal">
-      * Hari "Tdk Ada Jadwal Mengajar" dikecualikan dari perhitungan persentase kehadiran
-    </p>
-  </div>
-  <div id="print-content-area"></div>
-</div>
-
-<!-- ════════════════════════════════════════
      MODAL: TIDAK HADIR / IZIN MANUAL (Admin)
 ════════════════════════════════════════ -->
-<div class="modal-overlay" id="modal-tidak-hadir" onclick="if(event.target===this) closeTidakHadir()">
+<div class="modal-overlay" id="modal-tidak-hadir" onclick="if(event.target===this) window.closeTidakHadir?.()">
   <div class="modal-box">
     <div class="modal-title">❌ Tandai Tidak Hadir</div>
     <div class="modal-sub" id="tidak-hadir-sub">Set ketidakhadiran guru</div>
@@ -1154,16 +1091,16 @@
       </div>
     </div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeTidakHadir()">Batal</button>
-      <button class="btn btn-err" onclick="submitTidakHadir()">❌ Simpan Tidak Hadir</button>
+      <button class="btn btn-ghost" onclick="window.closeTidakHadir?.()">Batal</button>
+      <button class="btn btn-err" onclick="window.submitTidakHadir?.()">❌ Simpan Tidak Hadir</button>
     </div>
   </div>
 </div>
 
 <!-- ════════════════════════════════════════
-     MODAL: CETAK ABSENSI PER GURU (PDF Kemenag Format)
+     MODAL: CETAK ABSENSI PER GURU
 ════════════════════════════════════════ -->
-<div class="modal-overlay" id="modal-cetak-absensi" onclick="if(event.target===this) closeCetakAbsensi()">
+<div class="modal-overlay" id="modal-cetak-absensi" onclick="if(event.target===this) window.closeCetakAbsensi?.()">
   <div class="modal-box">
     <div class="modal-title">🖨️ Cetak Absensi Guru</div>
     <div class="modal-sub" id="cetak-absensi-sub">Generate laporan kehadiran format PDF</div>
@@ -1191,8 +1128,8 @@
       </div>
     </div>
     <div class="modal-actions">
-      <button class="btn btn-ghost" onclick="closeCetakAbsensi()">Batal</button>
-      <button class="btn btn-prim" id="btn-generate-cetak" onclick="generateCetakAbsensi()">
+      <button class="btn btn-ghost" onclick="window.closeCetakAbsensi?.()">Batal</button>
+      <button class="btn btn-prim" id="btn-generate-cetak" onclick="window.generateCetakAbsensi?.()">
         <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
           <polyline points="6 9 6 2 18 2 18 9"/>
           <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
@@ -1204,11 +1141,29 @@
   </div>
 </div>
 
-<!-- Toast Notification -->
-<div id="toast"></div>
+<!-- ════════════════════════════════════════
+     PRINT AREA
+════════════════════════════════════════ -->
+<div id="print-area" style="display:none;padding:24px;font-family:'DM Sans',sans-serif;">
+  <div style="text-align:center;margin-bottom:20px;border-bottom:2px solid #4F46E5;padding-bottom:16px;">
+    <h2 style="font-size:16px;font-weight:800;color:#0D1117;">LAPORAN ABSENSI GURU</h2>
+    <p style="font-size:12px;color:#475569;margin-top:4px;">SDN WAWONGGOLE · E-Presensi</p>
+    <p style="font-size:11px;color:#94A3B8;margin-top:2px;" id="print-periode-label"></p>
+    <p style="font-size:10px;color:#94A3B8;" id="print-cetak-tgl"></p>
+    <p style="font-size:10px;color:#7C3AED;margin-top:4px;font-style:italic;display:none;" id="print-ket-tanpa-jadwal">
+      * Hari "Tdk Ada Jadwal Mengajar" dikecualikan dari perhitungan persentase kehadiran
+    </p>
+  </div>
+  <div id="print-content-area"></div>
+</div>
 
 <!-- ════════════════════════════════════════
-     JAVASCRIPT MODULE
+     JAVASCRIPT — SATU SCRIPT BLOCK SAJA
+     FIX SVG: Script Block 1 (import('./admin.js'))
+     telah dihapus sepenuhnya. Seluruh logika
+     ada di sini (Script Block 2) untuk mencegah
+     race condition yang menyebabkan window.doLogin
+     di-override oleh admin.js yang load async.
 ════════════════════════════════════════ -->
 <script type="module">
 import { initializeApp }
@@ -1245,7 +1200,6 @@ const JABATAN_LABEL = {
 
 const NAMA_BULAN  = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
 const NAMA_HARI   = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-const HARI_PENDEK = ['','Sen','Sel','Rab','Kam','Jum','Sab'];
 
 const LIBUR_NASIONAL = {
   '2025-01-01':'Tahun Baru Masehi', '2025-01-27':'Isra Mi\'raj', '2025-01-28':'Cuti Bersama',
@@ -1256,7 +1210,6 @@ const LIBUR_NASIONAL = {
   '2025-05-29':'Kenaikan Isa Al-Masih', '2025-06-01':'Hari Lahir Pancasila', '2025-06-06':'Idul Adha 1446 H',
   '2025-06-27':'Tahun Baru Islam 1447 H', '2025-08-17':'HUT RI ke-80', '2025-09-05':'Maulid Nabi SAW',
   '2025-12-25':'Hari Raya Natal', '2025-12-26':'Cuti Bersama Natal',
-  // 2026 — diperbarui sesuai Kalender Indonesia 2026 (17 Libur Nasional + 8 Cuti Bersama)
   '2026-01-01':'Tahun Baru Masehi 2026', '2026-01-16':'Isra Mikraj Nabi Muhammad SAW',
   '2026-02-16':'Cuti Bersama Tahun Baru Imlek', '2026-02-17':'Tahun Baru Imlek 2577 Kongzili',
   '2026-03-18':'Cuti Bersama Hari Suci Nyepi', '2026-03-19':'Hari Suci Nyepi Tahun Baru Saka 1948',
@@ -1296,7 +1249,6 @@ const state = {
 // HELPER FUNCTIONS
 // ═══════════════════════════════════════════════════════════
 
-/** HTML entity escape untuk XSS prevention */
 function esc(str) {
   if (str == null) return '';
   return String(str)
@@ -1307,41 +1259,31 @@ function esc(str) {
     .replace(/'/g, '&#39;');
 }
 
-// Normalize waktu ke format 24-jam HH:MM
 function normalizeTime(timeStr) {
   if (!timeStr) return '';
   timeStr = String(timeStr).trim();
-  
-  // Jika sudah format HH:MM (24 jam), tinggal pad-start jam
   if (timeStr.match(/^\d{1,2}:\d{2}$/)) {
     const [h, m] = timeStr.split(':');
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
   }
-  
-  // Jika ada AM/PM, konversi dari 12 jam ke 24 jam
   const ampmMatch = timeStr.match(/^(\d{1,2}):(\d{2})\s*(AM|PM|am|pm)$/);
   if (ampmMatch) {
     let [, h, m, ampm] = ampmMatch;
     h = parseInt(h);
     ampm = String(ampm).toUpperCase();
-    
     if (ampm === 'PM' && h !== 12) h += 12;
     if (ampm === 'AM' && h === 12) h = 0;
-    
     return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
   }
-  
   return timeStr;
 }
 
-// Format input time untuk selalu menampilkan format 24 jam
 function formatTimeInput(input) {
   if (!input) return;
   const value = normalizeTime(input.value);
   if (value) input.value = value;
 }
 
-// Apply format 24 jam ke semua input type="time"
 function initTimeInputs() {
   document.querySelectorAll('input[type="time"]').forEach(input => {
     formatTimeInput(input);
@@ -1349,82 +1291,35 @@ function initTimeInputs() {
   });
 }
 
-// FIX #3: Timezone-aware date handling dengan proper local time conversion
 function todayISO() {
   const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, '0');
-  const day = String(now.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
 }
 
-/** Format selisih menit */
-function fmtMenit(v) {
-  if (v > 0) return `+${v}`;
-  if (v < 0) return `${v}`;
-  return '0';
-}
-
-/** Format tanggal YYYY-MM-DD → DD-MM-YYYY */
 function formatTgl(s) {
   const [y, m, d] = s.split('-');
   return `${d}-${m}-${y}`;
 }
 
-/** Nama hari dari string YYYY-MM-DD */
 function namaHari(s) {
   const [y, m, d] = s.split('-').map(Number);
   return NAMA_HARI[new Date(y, m-1, d).getDay()];
 }
 
-// FIX #1: Improved listener error handling dengan automatic reconnect
 function listen(key, dbRef, callback) {
-  // Stop existing listener untuk key ini
   if (state.listeners[key]) state.listeners[key]();
-  
-  // Setup new listener dengan error handling
-  state.listeners[key] = onValue(dbRef, callback,
-    (err) => {
-      console.error(`[listener:${key}] Error:`, err.code, err.message);
-      // Log tapi jangan stop listener - Firebase akan auto-reconnect
-      if (err.code === 'PERMISSION_DENIED') {
-        showToast('⚠️ Anda tidak memiliki akses ke data ini', 'warning');
-      } else if (err.code === 'NETWORK_ERROR') {
-        console.warn(`[listener:${key}] Koneksi offline, akan reconnect otomatis`);
-      }
+  state.listeners[key] = onValue(dbRef, callback, (err) => {
+    console.error(`[listener:${key}]`, err.code, err.message);
+    if (err.code === 'PERMISSION_DENIED') {
+      showToast('⚠️ Tidak memiliki akses ke data ini', 'warning');
     }
-  );
+  });
 }
 
 function stopListener(key) {
   if (state.listeners[key]) { state.listeners[key](); delete state.listeners[key]; }
 }
 
-/** Hitung selisih masuk dalam menit */
-function calcTelatCepat(d) {
-  if (!d.masuk) return 0;
-  const status = d.masuk.status || '';
-  const ket    = d.masuk.keterangan || '';
-  const mStatus = (status + ' ' + ket).match(/(\d+)\s*menit/);
-  const mnt     = mStatus ? parseInt(mStatus[1]) : 0;
-  if (status.includes('Terlambat') || ket.includes('terlambat')) return mnt > 0 ? -mnt : 0;
-  if (mnt > 0) return mnt;
-  return 0;
-}
-
-/** Hitung selisih pulang dalam menit */
-function calcPswLewat(d) {
-  if (!d.pulang) return 0;
-  const status = d.pulang.status || '';
-  const ket    = d.pulang.keterangan || '';
-  const mStatus = (status + ' ' + ket).match(/(\d+)\s*menit/);
-  const mnt     = mStatus ? parseInt(mStatus[1]) : 0;
-  if (status.includes('Lebih Awal') || ket.includes('lebih awal')) return mnt > 0 ? -mnt : 0;
-  if (mnt > 0) return mnt;
-  return 0;
-}
-
-/** Check apakah guru tidak memiliki jadwal pada tanggal tertentu */
 function isTanpaJadwal(users, uid, tgl) {
   const htj = users?.[uid]?.jadwal?.hari_tanpa_jadwal;
   if (!htj) return false;
@@ -1432,7 +1327,6 @@ function isTanpaJadwal(users, uid, tgl) {
   return !!htj[dayKey];
 }
 
-/** Dapatkan jadwal efektif (prioritas: override → per-hari → default) */
 function getJadwalEfektif(users, uid, tgl) {
   const u    = users?.[uid];
   const defM = normalizeTime(u?.jadwal?.masuk  || DEFAULT_MASUK);
@@ -1445,7 +1339,6 @@ function getJadwalEfektif(users, uid, tgl) {
   return { masuk: defM, pulang: defP, source: 'default' };
 }
 
-/** Show toast notification */
 window.showToast = (msg, type = 'info') => {
   const el = document.getElementById('toast');
   el.textContent = msg;
@@ -1494,6 +1387,8 @@ function showAppPage() {
   initTimeInputs();
 }
 
+// FIX UTAMA (dari SVG): window.doLogin didefinisikan DI SINI (sync),
+// tidak ada import('./admin.js') yang bisa meng-override fungsi ini.
 window.doLogin = async () => {
   const email = document.getElementById('a-email').value.trim();
   const pass  = document.getElementById('a-pass').value;
@@ -1525,17 +1420,12 @@ window.doLogin = async () => {
   }
 };
 
-// FIX #1: Complete cleanup on logout - prevent memory leaks & orphaned listeners
 window.doLogout = async () => {
-  // Stop all active listeners
   Object.keys(state.listeners).forEach(stopListener);
-  // Clear state
   state.users = null;
   state.report = null;
   state.koreksiUID = null;
-  // Close any open modals
   document.querySelectorAll('.modal-overlay.open').forEach(m => m.classList.remove('open'));
-  // Logout dari Firebase
   try {
     await signOut(auth);
     showToast('✅ Berhasil keluar dari sistem', 'success');
@@ -1546,7 +1436,7 @@ window.doLogout = async () => {
 };
 
 // ═══════════════════════════════════════════════════════════
-// NAVIGATION & UI UPDATES
+// NAVIGATION
 // ═══════════════════════════════════════════════════════════
 
 const PANEL_META = {
@@ -1558,11 +1448,8 @@ const PANEL_META = {
   kode_darurat: { title: '🔐 Kode Darurat QR', sub: 'Generate kode untuk guru yang lupa QR Code' },
 };
 
-// FIX #1: Cleanup listeners ketika panel berubah untuk prevent memory leak
 window.showPanel = (name) => {
-  // Cleanup semua listeners kecuali yang essential
   ['dashboard-today', 'guru-list', 'jadwal-list', 'libur-list', 'guru-kehadiran'].forEach(stopListener);
-  
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.sb-item[data-panel]').forEach(i => i.classList.remove('active'));
   document.getElementById(`panel-${name}`)?.classList.add('active');
@@ -1612,11 +1499,9 @@ function initDashboardRealtime() {
 
   function scheduleMidnightRefresh() {
     const now = new Date();
-    // Calculate time until next midnight (00:00:00)
     const midnight = new Date(now);
-    midnight.setHours(24, 0, 0, 0); // Sets to start of next day
+    midnight.setHours(24, 0, 0, 0);
     const msUntilMidnight = midnight.getTime() - now.getTime();
-    
     setTimeout(() => {
       stopListener('dashboard-today');
       state._dashTodayData = undefined;
@@ -1645,9 +1530,7 @@ function renderDashboard(users, todayData) {
 
     let chipClass, chipText;
     if (tanpaJ) {
-      tanpaJadwal++;
-      chipClass = 'chip-purple';
-      chipText  = 'Tdk Jadwal';
+      tanpaJadwal++; chipClass = 'chip-purple'; chipText = 'Tdk Jadwal';
     } else if (masukW) {
       hadir++;
       chipClass = masukS?.includes('Terlambat') ? 'chip-warn' : 'chip-ok';
@@ -1658,18 +1541,12 @@ function renderDashboard(users, todayData) {
       chipClass = tipeMap[alasan.tipe] || 'chip-warn';
       chipText  = alasan.tipe || 'Izin';
     } else {
-      belum++;
-      chipClass = 'chip-gray';
-      chipText  = 'Belum Absen';
+      belum++; chipClass = 'chip-gray'; chipText = 'Belum Absen';
     }
 
-    // Properly escape uid for onclick attribute
-    const escapedUid  = uid.replace(/'/g, '\\"');
-    const escapedNama = (u.nama || uid).replace(/'/g, '\\"');
-
-    const ovBadge = isOv
-      ? `<span class="chip chip-orange" title="Override aktif hari ini">🔀 OV</span>`
-      : '';
+    const escapedUid  = uid.replace(/'/g, "\\'");
+    const escapedNama = (u.nama || uid).replace(/'/g, "\\'");
+    const ovBadge = isOv ? `<span class="chip chip-orange" title="Override aktif hari ini">🔀 OV</span>` : '';
     const alasanBadge = alasan
       ? `<span class="chip chip-gray" style="font-size:8px;" title="Alasan: ${esc(alasan.tipe)} · ${esc(alasan.detail || '')}">📝 ${esc(alasan.tipe)}</span>`
       : '';
@@ -1689,19 +1566,16 @@ function renderDashboard(users, todayData) {
     </div>`;
   });
 
-  const listEl = document.getElementById('today-list');
-  listEl.innerHTML = rows.length > 0 ? rows.join('') : '<div class="empty">Belum ada guru terdaftar</div>';
+  document.getElementById('today-list').innerHTML = rows.length > 0 ? rows.join('') : '<div class="empty">Belum ada guru terdaftar</div>';
   document.getElementById('s-guru').textContent         = guruList.length;
   document.getElementById('s-hadir').textContent        = hadir;
   document.getElementById('s-belum').textContent        = belum;
   document.getElementById('s-tanpa-jadwal').textContent = tanpaJadwal;
-  // Update stat izin if element exists
   const sIzin = document.getElementById('s-izin');
   if (sIzin) sIzin.textContent = izinSakit;
   drawPie(hadir, belum, izinSakit);
 }
 
-// FIX: Pie chart now includes Izin/Sakit segment
 function drawPie(hadir, belum, izinSakit = 0) {
   const canvas = document.getElementById('pie-canvas');
   const ctx    = canvas.getContext('2d');
@@ -1711,9 +1585,9 @@ function drawPie(hadir, belum, izinSakit = 0) {
   const data  = total === 0
     ? [{ v: 1, color: '#E8EBF0', label: 'Tidak ada data', count: 0 }]
     : [
-        { v: hadir,     color: '#10B981', label: 'Hadir',      count: hadir },
-        { v: izinSakit, color: '#F97316', label: 'Izin/Sakit', count: izinSakit },
-        { v: belum,     color: '#F59E0B', label: 'Belum Absen',count: belum },
+        { v: hadir,     color: '#10B981', label: 'Hadir',       count: hadir },
+        { v: izinSakit, color: '#F97316', label: 'Izin/Sakit',  count: izinSakit },
+        { v: belum,     color: '#F59E0B', label: 'Belum Absen', count: belum },
       ].filter(d => d.v > 0);
   let start = -Math.PI / 2;
   data.forEach(d => {
@@ -1723,65 +1597,50 @@ function drawPie(hadir, belum, izinSakit = 0) {
     ctx.closePath(); ctx.fillStyle = d.color; ctx.fill();
     start += slice;
   });
-  const style     = getComputedStyle(document.documentElement);
-  const holeColor = style.getPropertyValue('--white').trim() || '#ffffff';
-  const textColor = style.getPropertyValue('--ink').trim()   || '#0D1117';
   ctx.beginPath(); ctx.arc(cx, cy, 44, 0, Math.PI * 2);
-  ctx.fillStyle = holeColor; ctx.fill();
-  ctx.fillStyle = textColor;
+  ctx.fillStyle = '#ffffff'; ctx.fill();
+  ctx.fillStyle = '#0D1117';
   ctx.font = 'bold 22px DM Mono,monospace';
   ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
   ctx.fillText(total === 0 ? '–' : `${Math.round((hadir / (total || 1)) * 100)}%`, cx, cy);
-  // Sanitize legend labels untuk XSS prevention
-  const legendHtml = data.map(d =>
+  document.getElementById('pie-legend').innerHTML = data.map(d =>
     `<div class="pie-legend-item">` +
     `<div class="pie-dot" style="background:${esc(d.color)}"></div>` +
     `<span>${esc(d.label)}</span>` +
     `<strong style="margin-left:auto;font-family:'DM Mono',monospace">${d.count}</strong>` +
     `</div>`
   ).join('');
-  document.getElementById('pie-legend').innerHTML = legendHtml;
 }
 
 // ═══════════════════════════════════════════════════════════
 // GURU MANAGEMENT
 // ═══════════════════════════════════════════════════════════
 
-/** Exposed for onclick refresh button */
 window.refreshGuruList = () => fetchGuruList();
 
-// FIX #1: Proper error handling dalam fetch
 window.fetchGuruList = async () => {
   const el = document.getElementById('guru-list');
   if (!el) return;
   el.innerHTML = '<div class="spinner-wrap"><div class="spin"></div></div>';
   try {
     const snap = await get(ref(db, 'users'));
-    if (!snap.exists()) { 
-      el.innerHTML = '<div class="empty">Tidak ada guru terdaftar</div>'; 
-      return; 
-    }
+    if (!snap.exists()) { el.innerHTML = '<div class="empty">Tidak ada guru terdaftar</div>'; return; }
     state.users = snap.val();
     const guruList = Object.entries(state.users)
       .filter(([, u]) => u.role === 'guru' || u.role === 'kepala_sekolah');
-    
-    if (guruList.length === 0) { 
-      el.innerHTML = '<div class="empty">Tidak ada guru</div>'; 
-      return; 
-    }
-    
+    if (guruList.length === 0) { el.innerHTML = '<div class="empty">Tidak ada guru</div>'; return; }
+
     el.innerHTML = guruList.map(([uid, u]) => {
-      const jab    = JABATAN_LABEL[u.jabatan] || 'Guru Kelas';
-      const jm     = u.jadwal?.masuk  || DEFAULT_MASUK;
-      const jp     = u.jadwal?.pulang || DEFAULT_PULANG;
-      const htjArr = Object.entries(u.jadwal?.hari_tanpa_jadwal || {})
+      const jab     = JABATAN_LABEL[u.jabatan] || 'Guru Kelas';
+      const jm      = u.jadwal?.masuk  || DEFAULT_MASUK;
+      const jp      = u.jadwal?.pulang || DEFAULT_PULANG;
+      const htjArr  = Object.entries(u.jadwal?.hari_tanpa_jadwal || {})
         .filter(([, v]) => v).map(([k]) => NAMA_HARI[parseInt(k)]);
       const htjStr  = htjArr.length > 0 ? `Tdk ada jadwal: ${htjArr.join(', ')}` : 'Ada jadwal semua hari kerja';
       const ovCount = Object.keys(u.jadwal?.override || {}).length;
       const ovStr   = ovCount > 0 ? ` · ${ovCount} override aktif` : '';
-      
-      const escapedUid  = uid.replace(/'/g, '\\"');
-      const escapedNama = (u.nama || uid).replace(/'/g, '\\"');
+      const eu      = uid.replace(/'/g, "\\'");
+      const en      = (u.nama || uid).replace(/'/g, "\\'");
       return `<div class="guru-card">
         <div class="guru-avatar">👤</div>
         <div style="flex:1;">
@@ -1789,23 +1648,18 @@ window.fetchGuruList = async () => {
           <div class="guru-meta">${esc(jab)} · ${esc(jm)}–${esc(jp)} · ${esc(htjStr)}${esc(ovStr)}</div>
         </div>
         <div class="guru-actions">
-          <button class="btn btn-ghost" onclick="openEditGuru('${escapedUid}')">✏️ Edit</button>
-          <button class="btn btn-prim" style="font-size:10px;" onclick="openCetakAbsensi('${escapedUid}','${escapedNama}')">🖨️ Cetak</button>
+          <button class="btn btn-ghost" onclick="window.openEditGuru('${eu}')">✏️ Edit</button>
+          <button class="btn btn-prim" style="font-size:10px;" onclick="window.openCetakAbsensi('${eu}','${en}')">🖨️ Cetak</button>
         </div>
       </div>`;
     }).join('');
   } catch (err) {
-    const errMsg = err.code === 'PERMISSION_DENIED'
-      ? 'Akses ditolak. Periksa izin database.'
-      : err.code === 'NETWORK_ERROR'
-      ? 'Koneksi internet bermasalah. Coba lagi.'
-      : err.message.substring(0, 60);
-    el.innerHTML = `<div class="empty" style="color:var(--err);">⚠️ ${esc(errMsg)}</div>`;
+    const msg = err.code === 'PERMISSION_DENIED' ? 'Akses ditolak.' : err.message.substring(0, 60);
+    el.innerHTML = `<div class="empty" style="color:var(--err);">⚠️ ${esc(msg)}</div>`;
     showToast('❌ Gagal memuat guru: ' + err.message, 'error');
   }
 };
 
-// FIX #2: Sanitize modal form inputs
 window.openEditGuru = (uid) => {
   const u = state.users?.[uid];
   if (!u) { showToast('Data guru tidak ditemukan', 'error'); return; }
@@ -1816,44 +1670,35 @@ window.openEditGuru = (uid) => {
   document.getElementById('edit-guru-jabatan').value = u.jabatan || 'kelas';
   document.getElementById('modal-edit-guru').classList.add('open');
 };
+
 window.closeEditGuru = () => document.getElementById('modal-edit-guru').classList.remove('open');
 
-// FIX #2: Add input validation & better error messages
 window.submitEditGuru = async () => {
-  const uid  = document.getElementById('edit-guru-uid').value;
-  const nama = document.getElementById('edit-guru-nama').value.trim();
-  const nip  = document.getElementById('edit-guru-nip').value.trim();
-  const nuptk= document.getElementById('edit-guru-nuptk').value.trim();
-  const jab  = document.getElementById('edit-guru-jabatan').value;
-  
-  if (!uid) { showToast('❌ UID tidak valid', 'error'); return; }
+  const uid   = document.getElementById('edit-guru-uid').value;
+  const nama  = document.getElementById('edit-guru-nama').value.trim();
+  const nip   = document.getElementById('edit-guru-nip').value.trim();
+  const nuptk = document.getElementById('edit-guru-nuptk').value.trim();
+  const jab   = document.getElementById('edit-guru-jabatan').value;
+  if (!uid)  { showToast('❌ UID tidak valid', 'error'); return; }
   if (!nama) { showToast('❌ Nama tidak boleh kosong', 'warning'); return; }
-  if (!['kelas', 'pjok', 'pai', 'bahasa_inggris', 'kepala_sekolah'].includes(jab)) {
-    showToast('❌ Jabatan tidak valid', 'warning');
-    return;
+  if (!['kelas','pjok','pai','bahasa_inggris','kepala_sekolah'].includes(jab)) {
+    showToast('❌ Jabatan tidak valid', 'warning'); return;
   }
-  
   try {
     const updateData = { nama, jabatan: jab };
-    if (nip) updateData.nip = nip;
+    if (nip)   updateData.nip   = nip;
     if (nuptk) updateData.nuptk = nuptk;
-    
     await update(ref(db, `users/${uid}`), updateData);
     showToast('✅ Data guru berhasil diperbarui', 'success');
     closeEditGuru();
     fetchGuruList();
   } catch (err) {
-    const errMsg = err.code === 'PERMISSION_DENIED'
-      ? 'Anda tidak memiliki izin untuk mengubah data ini'
-      : err.message.length > 50
-      ? err.message.substring(0, 50) + '...'
-      : err.message;
-    showToast('❌ Gagal: ' + errMsg, 'error');
+    showToast('❌ Gagal: ' + (err.code === 'PERMISSION_DENIED' ? 'Akses ditolak' : err.message.substring(0,50)), 'error');
   }
 };
 
 // ═══════════════════════════════════════════════════════════
-// KEHADIRAN HARI INI — MANAJEMEN GURU PANEL
+// KEHADIRAN HARI INI — GURU PANEL
 // ═══════════════════════════════════════════════════════════
 
 window.refreshGuruKehadiran = () => loadGuruKehadiran();
@@ -1880,11 +1725,8 @@ async function loadGuruKehadiran() {
   } catch (e) {
     el.innerHTML = `<div class="empty" style="color:var(--err);">❌ Gagal memuat: ${esc(e.message)}</div>`;
   }
-
-  // Realtime listener so it stays live while on guru panel
   listen('guru-kehadiran', ref(db, `absensi/${todayStr}`), (snap) => {
-    const todayData = snap.exists() ? snap.val() : {};
-    renderGuruKehadiran(state.users || {}, todayData, todayStr);
+    renderGuruKehadiran(state.users || {}, snap.exists() ? snap.val() : {}, todayStr);
   });
 }
 
@@ -1894,7 +1736,7 @@ function renderGuruKehadiran(users, todayData, todayStr) {
   const guruList = Object.entries(users).filter(([,u]) => u.role === 'guru' || u.role === 'kepala_sekolah');
   if (!guruList.length) { el.innerHTML = '<div class="empty">Belum ada guru terdaftar</div>'; return; }
 
-  const rows = guruList.map(([uid, u]) => {
+  el.innerHTML = guruList.map(([uid, u]) => {
     const tanpaJ  = isTanpaJadwal(users, uid, todayStr);
     const ab      = todayData[uid];
     const masukW  = ab?.masuk?.waktu  || null;
@@ -1905,17 +1747,14 @@ function renderGuruKehadiran(users, todayData, todayStr) {
     const jadwal  = getJadwalEfektif(users, uid, todayStr);
 
     let chipClass, chipText;
-    if (tanpaJ)       { chipClass='chip-purple'; chipText='Tdk Jadwal'; }
-    else if (masukW)  { chipClass = masukS?.includes('Terlambat') ? 'chip-warn' : 'chip-ok'; chipText = masukS?.includes('Terlambat') ? 'Terlambat' : 'Hadir'; }
-    else if (alasan)  { const m = { 'Sakit':'chip-err','Izin':'chip-blue','Dinas Luar':'chip-orange','Keperluan Keluarga':'chip-warn' }; chipClass = m[alasan.tipe]||'chip-warn'; chipText = alasan.tipe||'Izin'; }
-    else              { chipClass='chip-gray'; chipText='Belum Absen'; }
+    if (tanpaJ)      { chipClass='chip-purple'; chipText='Tdk Jadwal'; }
+    else if (masukW) { chipClass = masukS?.includes('Terlambat') ? 'chip-warn' : 'chip-ok'; chipText = masukS?.includes('Terlambat') ? 'Terlambat' : 'Hadir'; }
+    else if (alasan) { const m = { 'Sakit':'chip-err','Izin':'chip-blue','Dinas Luar':'chip-orange','Keperluan Keluarga':'chip-warn' }; chipClass = m[alasan.tipe]||'chip-warn'; chipText = alasan.tipe||'Izin'; }
+    else             { chipClass='chip-gray'; chipText='Belum Absen'; }
 
-    const esc2 = uid.replace(/'/g, "\\'").replace(/\\/g, '\\\\');
-    const nama2 = (u.nama||uid).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-
-    const alasanBadge = alasan
-      ? `<span class="chip chip-gray" style="font-size:8px;">📝 ${esc(alasan.tipe)}</span>`
-      : '';
+    const eu = uid.replace(/'/g, "\\'");
+    const en = (u.nama||uid).replace(/'/g, "\\'");
+    const alasanBadge = alasan ? `<span class="chip chip-gray" style="font-size:8px;">📝 ${esc(alasan.tipe)}</span>` : '';
 
     return `<div class="today-row">
       <div class="today-avatar">👤</div>
@@ -1928,21 +1767,19 @@ function renderGuruKehadiran(users, todayData, todayStr) {
         <div class="time-badge"><svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>${esc(pulangW||'–')}</div>
         ${alasanBadge}
         <span class="chip ${chipClass}">${chipText}</span>
-        ${!tanpaJ ? `<button class="btn btn-ghost" style="padding:4px 8px;font-size:9px;" title="Koreksi / Buat Absensi" onclick="openKoreksi('${esc2}','${nama2}')">✏️</button>` : ''}
-        ${!tanpaJ && !masukW && !alasan ? `<button class="btn btn-ok" style="padding:4px 8px;font-size:9px;" onclick="openHadirManual('${esc2}','${nama2}')">✅ Hadir</button>` : ''}
-        ${!tanpaJ && !alasan ? `<button class="btn btn-err" style="padding:4px 8px;font-size:9px;" onclick="openTidakHadir('${esc2}','${nama2}')">❌ Tdk Hadir</button>` : ''}
+        ${!tanpaJ ? `<button class="btn btn-ghost" style="padding:4px 8px;font-size:9px;" onclick="window.openKoreksi('${eu}','${en}')">✏️</button>` : ''}
+        ${!tanpaJ && !masukW && !alasan ? `<button class="btn btn-ok" style="padding:4px 8px;font-size:9px;" onclick="window.openHadirManual('${eu}','${en}')">✅ Hadir</button>` : ''}
+        ${!tanpaJ && !alasan ? `<button class="btn btn-err" style="padding:4px 8px;font-size:9px;" onclick="window.openTidakHadir('${eu}','${en}')">❌ Tdk Hadir</button>` : ''}
       </div>
     </div>`;
-  });
-  el.innerHTML = rows.join('');
+  }).join('');
 }
 
 // ═══════════════════════════════════════════════════════════
-// HADIR MANUAL — reuse existing openKoreksi with today pre-fill
+// HADIR MANUAL
 // ═══════════════════════════════════════════════════════════
 
 window.openHadirManual = (uid, nama) => {
-  // Use existing koreksi modal but pre-fill default schedule times
   state.koreksiUID = uid;
   const tgl = todayISO();
   document.getElementById('koreksi-sub').textContent = `Guru: ${esc(nama)} · ${esc(tgl)}`;
@@ -1980,28 +1817,24 @@ window.submitTidakHadir = async () => {
   if (!uid || !tgl) { showToast('Data tidak valid', 'error'); return; }
   try {
     await set(ref(db, `absensi/${tgl}/${uid}/alasanTidakHadir`), {
-      tipe,
-      detail: detail || '',
+      tipe, detail: detail || '',
       setByAdmin: true,
       setByEmail: auth.currentUser?.email || 'admin',
     });
     showToast(`✅ Ketidakhadiran ${tipe} berhasil dicatat`, 'success');
     closeTidakHadir();
-  } catch (e) {
-    showToast('❌ Gagal: ' + e.message, 'error');
-  }
+  } catch (e) { showToast('❌ Gagal: ' + e.message, 'error'); }
 };
 
 // ═══════════════════════════════════════════════════════════
-// CETAK ABSENSI PER GURU — Format Kemenag
+// CETAK ABSENSI PER GURU
 // ═══════════════════════════════════════════════════════════
 
 window.openCetakAbsensi = (uid, nama) => {
   document.getElementById('cetak-absensi-uid').value  = uid;
   document.getElementById('cetak-absensi-sub').textContent = `Guru: ${nama}`;
-  document.getElementById('cetak-nip').value = state.users?.[uid]?.nip || '';
+  document.getElementById('cetak-nip').value   = state.users?.[uid]?.nip   || '';
   document.getElementById('cetak-nuptk').value = state.users?.[uid]?.nuptk || '';
-
   const now = new Date();
   const bEl = document.getElementById('cetak-bulan');
   const tEl = document.getElementById('cetak-tahun');
@@ -2024,31 +1857,27 @@ window.closeCetakAbsensi = () =>
   document.getElementById('modal-cetak-absensi').classList.remove('open');
 
 window.generateCetakAbsensi = async () => {
-  const uid    = document.getElementById('cetak-absensi-uid').value;
-  const bulan  = document.getElementById('cetak-bulan').value;
-  const tahun  = document.getElementById('cetak-tahun').value;
-  const nip    = document.getElementById('cetak-nip').value.trim();
-  const nuptk  = document.getElementById('cetak-nuptk').value.trim();
-  const btn    = document.getElementById('btn-generate-cetak');
+  const uid   = document.getElementById('cetak-absensi-uid').value;
+  const bulan = document.getElementById('cetak-bulan').value;
+  const tahun = document.getElementById('cetak-tahun').value;
+  const nip   = document.getElementById('cetak-nip').value.trim();
+  const nuptk = document.getElementById('cetak-nuptk').value.trim();
+  const btn   = document.getElementById('btn-generate-cetak');
   if (!uid || !bulan || !tahun) { showToast('Pilih bulan dan tahun', 'warning'); return; }
-
-  btn.disabled = true;
-  btn.textContent = 'Memuat data…';
+  btn.disabled = true; btn.textContent = 'Memuat data…';
 
   try {
-    const users    = state.users || (await get(ref(db,'users'))).val() || {};
-    const guru     = users[uid];
+    const users = state.users || (await get(ref(db,'users'))).val() || {};
+    const guru  = users[uid];
     if (!guru) { showToast('Data guru tidak ditemukan','error'); return; }
 
-    const jab     = JABATAN_LABEL[guru.jabatan] || 'Guru Kelas';
-    const namaBln = NAMA_BULAN[parseInt(bulan)];
+    const jab         = JABATAN_LABEL[guru.jabatan] || 'Guru Kelas';
+    const namaBln     = NAMA_BULAN[parseInt(bulan)];
     const daysInMonth = new Date(tahun, parseInt(bulan), 0).getDate();
 
-    // Fetch libur khusus
     let liburKhusus = {};
     try { const ls = await get(ref(db,'libur_khusus')); if(ls.exists()) liburKhusus = ls.val(); } catch(e){}
 
-    // Fetch all absensi for the month
     const dates = [];
     for (let i=1; i<=daysInMonth; i++)
       dates.push(`${tahun}-${bulan}-${String(i).padStart(2,'0')}`);
@@ -2060,31 +1889,23 @@ window.generateCetakAbsensi = async () => {
       settled.filter(r=>r.status==='fulfilled').map(r=>[r.value.tgl, r.value.data])
     );
 
-    // Build table rows — sesuai format Kemenag
     const tableRows = dates.map(tgl => {
-      const dayNum  = new Date(tgl+'T00:00:00').getDay();
-      const namaH   = NAMA_HARI[dayNum];
-      const liburNas = LIBUR_NASIONAL[tgl];
-      const liburKh  = liburKhusus[tgl];
-      const ket      = liburNas || liburKh || '';
-      const jad      = getJadwalEfektif(users, uid, tgl);
+      const dayNum   = new Date(tgl+'T00:00:00').getDay();
+      if (dayNum === 0) return null;
+      const liburNas  = LIBUR_NASIONAL[tgl];
+      const liburKh   = liburKhusus[tgl];
+      const jad       = getJadwalEfektif(users, uid, tgl);
+      const ab        = absMap[tgl];
+      const masukAct  = ab?.masuk?.waktu   || null;
+      const pulangAct = ab?.pulang?.waktu  || null;
+      const alasan    = ab?.alasanTidakHadir || null;
 
-      if (dayNum === 0) return null; // Skip Minggu
-
-      const ab       = absMap[tgl];
-      const masukAct = ab?.masuk?.waktu  || null;
-      const pulangAct= ab?.pulang?.waktu || null;
-      const alasan   = ab?.alasanTidakHadir || null;
-
-      // Telat/Cepat menit (+ = cepat, - = telat)
       let telatCepat = '0';
       if (masukAct && !liburNas && !liburKh) {
         const jmMin  = parseInt(jad.masuk.split(':')[0])*60  + parseInt(jad.masuk.split(':')[1]);
         const actMin = parseInt(masukAct.split(':')[0])*60   + parseInt(masukAct.split(':')[1]);
         telatCepat   = String(jmMin - actMin);
       }
-
-      // PSW/Lewat Waktu menit (+ = lewat/overtime, - = pulang awal)
       let pswLewat = '0';
       if (pulangAct && !liburNas && !liburKh) {
         const jpMin  = parseInt(jad.pulang.split(':')[0])*60 + parseInt(jad.pulang.split(':')[1]);
@@ -2092,229 +1913,55 @@ window.generateCetakAbsensi = async () => {
         pswLewat     = String(actMin - jpMin);
       }
 
-      const keterangan = ket || (alasan ? alasan.tipe+(alasan.detail?` (${alasan.detail})`:'') : '');
-      const tglFormatted = tgl.split('-').reverse().join('-');
-
+      const ket = liburNas || liburKh || (alasan ? alasan.tipe+(alasan.detail?` (${alasan.detail})`:'') : '');
+      const tglF = tgl.split('-').reverse().join('-');
       return `<tr>
-        <td class="col-tanggal">${esc(tglFormatted)}</td>
-        <td class="col-hari">${esc(namaH)}</td>
+        <td class="col-tanggal">${esc(tglF)}</td>
+        <td class="col-hari">${esc(NAMA_HARI[dayNum])}</td>
         <td class="col-jam-masuk">${liburNas||liburKh ? '–' : esc(jad.masuk)}</td>
         <td class="col-absen-masuk">${esc(masukAct||'–')}</td>
         <td class="col-telat-cepat">${esc(telatCepat)}</td>
         <td class="col-jam-pulang">${liburNas||liburKh ? '–' : esc(jad.pulang)}</td>
         <td class="col-absen-pulang">${esc(pulangAct||'–')}</td>
         <td class="col-psw-lewat">${esc(pswLewat)}</td>
-        <td class="col-keterangan">${esc(keterangan)}</td>
+        <td class="col-keterangan">${esc(ket)}</td>
       </tr>`;
     }).filter(Boolean).join('');
 
     const cetakTgl = new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
-    const headerTitanah = `Pelaporan Presensi | SD Negeri Wawonggole`;
-    
     const html = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Absensi ${guru.nama||uid} - ${namaBln} ${tahun}</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html { font-size: 14px; }
-  body {
-    font-family: 'DM Sans', Arial, sans-serif;
-    font-size: 10.4pt;
-    color: #000;
-    line-height: 1.2;
-    background: white;
-  }
-  
-  .page {
-    width: 210mm;
-    height: 297mm;
-    padding: 8.5mm;
-    background: white;
-  }
-  
-  /* Header Section — sesuai Kemenag */
-  .header-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 15pt;
-    font-size: 8pt;
-    color: #333;
-  }
-  
-  .header-title-main {
-    font-size: 11.2pt;
-    font-weight: bold;
-    margin-bottom: 16pt;
-    color: #000;
-  }
-  
-  /* Info Table — 2 kolom, border abu-abu */
-  .info-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-bottom: 58pt;
-    font-size: 10.4pt;
-  }
-  
-  .info-table tr td:first-child {
-    width: 24%;
-    padding: 3pt 4pt;
-    border-bottom: 0.7pt solid #808080;
-  }
-  
-  .info-table tr td:last-child {
-    width: 76%;
-    padding: 3pt 4pt;
-    border-bottom: 0.7pt solid #808080;
-  }
-  
-  .info-table td {
-    height: 23pt;
-    vertical-align: middle;
-    color: #000;
-  }
-  
-  /* Main Data Table — sesuai Kemenag format */
-  .data-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 10.4pt;
-    margin-top: 0;
-  }
-  
-  .data-table thead {
-    background-color: #f5f5f5;
-  }
-  
-  .data-table th {
-    padding: 3pt 4pt;
-    border: 0.7pt solid #808080;
-    text-align: center;
-    font-weight: bold;
-    color: #000;
-    height: 80.6pt;
-    word-wrap: break-word;
-    vertical-align: middle;
-    line-height: 1.3;
-  }
-  
-  .data-table td {
-    padding: 2pt 3pt;
-    border: 0.7pt solid #808080;
-    text-align: center;
-    height: 51.5pt;
-    vertical-align: middle;
-    color: #000;
-  }
-  
-  .data-table .col-keterangan {
-    text-align: left;
-  }
-  
-  /* Column Widths */
-  .col-tanggal { width: 69.4pt; }
-  .col-hari { width: 51.5pt; }
-  .col-jam-masuk { width: 52.2pt; }
-  .col-absen-masuk { width: 52pt; }
-  .col-telat-cepat { width: 52pt; }
-  .col-jam-pulang { width: 52pt; }
-  .col-absen-pulang { width: 52pt; }
-  .col-psw-lewat { width: 70pt; }
-  .col-keterangan { flex: 1; min-width: 80pt; }
-  
-  /* Footer */
-  .footer {
-    margin-top: 40pt;
-    display: flex;
-    justify-content: flex-end;
-  }
-  
-  .ttd-box {
-    text-align: center;
-    min-width: 180pt;
-    font-size: 10pt;
-  }
-  
-  .ttd-box p {
-    margin: 0;
-    font-size: 10pt;
-  }
-  
-  .ttd-line {
-    margin-top: 64pt;
-    padding-top: 4pt;
-    font-size: 10pt;
-  }
-  
-  .print-btn {
-    padding: 8px 16px;
-    background: #4F46E5;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 12px;
-    margin-top: 16px;
-  }
-  
-  @media print {
-    body { margin: 0; padding: 0; }
-    .print-btn { display: none !important; }
-    .page { width: auto; height: auto; padding: 0; }
-  }
-</style>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:Arial,sans-serif;font-size:10.4pt;color:#000;background:white}.page{width:210mm;height:297mm;padding:8.5mm;background:white}.header-top{display:flex;justify-content:space-between;margin-bottom:15pt;font-size:8pt;color:#333}.header-title-main{font-size:11.2pt;font-weight:bold;margin-bottom:16pt}.info-table{width:100%;border-collapse:collapse;margin-bottom:58pt;font-size:10.4pt}.info-table td{height:23pt;vertical-align:middle;padding:3pt 4pt;border-bottom:.7pt solid #808080}.info-table td:first-child{width:24%}.data-table{width:100%;border-collapse:collapse;font-size:10.4pt}.data-table th{padding:3pt 4pt;border:.7pt solid #808080;text-align:center;font-weight:bold;height:80.6pt;vertical-align:middle;line-height:1.3;background:#f5f5f5}.data-table td{padding:2pt 3pt;border:.7pt solid #808080;text-align:center;height:51.5pt;vertical-align:middle}.col-keterangan{text-align:left!important}.footer{margin-top:40pt;display:flex;justify-content:flex-end}.ttd-box{text-align:center;min-width:180pt;font-size:10pt}.ttd-line{margin-top:64pt;padding-top:4pt;font-size:10pt}.print-btn{padding:8px 16px;background:#4F46E5;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:12px;margin-top:16px}@media print{body{margin:0;padding:0}.print-btn{display:none!important}.page{width:auto;height:auto;padding:0}}</style>
 </head><body>
-
 <div class="page">
-  <div class="header-top">
-    <span>${cetakTgl}</span>
-    <span style="text-align:right;">${esc(headerTitanah)}</span>
-  </div>
-  
+  <div class="header-top"><span>${cetakTgl}</span><span>Pelaporan Presensi | SD Negeri Wawonggole</span></div>
   <div class="header-title-main">Data Kehadiran Bulan ${esc(namaBln)} Tahun ${esc(tahun)}</div>
-  
   <table class="info-table">
     <tr><td><strong>Nama</strong></td><td>${esc(guru.nama||uid)}</td></tr>
-    ${nip ? `<tr><td><strong>NIP</strong></td><td>${esc(nip)}</td></tr>` : ''}
+    ${nip   ? `<tr><td><strong>NIP</strong></td><td>${esc(nip)}</td></tr>` : ''}
     ${nuptk ? `<tr><td><strong>NUPTK</strong></td><td>${esc(nuptk)}</td></tr>` : ''}
     <tr><td><strong>Jabatan</strong></td><td>${esc(jab)}</td></tr>
     <tr><td><strong>Sumber</strong></td><td>E-Presensi SDN Wawonggole</td></tr>
   </table>
-  
   <table class="data-table">
-    <thead>
-      <tr>
-        <th class="col-tanggal">TANGGAL</th>
-        <th class="col-hari">HARI</th>
-        <th class="col-jam-masuk">JAM<br>MASUK</th>
-        <th class="col-absen-masuk">ABSEN<br>MASUK</th>
-        <th class="col-telat-cepat">TELAT/<br>CEPAT<br>(Menit)</th>
-        <th class="col-jam-pulang">JAM<br>PULANG</th>
-        <th class="col-absen-pulang">ABSEN<br>PULANG</th>
-        <th class="col-psw-lewat">PSW/<br>LEWAT<br>(Menit)</th>
-        <th class="col-keterangan">KETERANGAN</th>
-      </tr>
-    </thead>
-    <tbody>
-      ${tableRows}
-    </tbody>
+    <thead><tr>
+      <th style="width:69pt">TANGGAL</th><th style="width:52pt">HARI</th>
+      <th style="width:52pt">JAM<br>MASUK</th><th style="width:52pt">ABSEN<br>MASUK</th>
+      <th style="width:52pt">TELAT/<br>CEPAT<br>(Mnt)</th><th style="width:52pt">JAM<br>PULANG</th>
+      <th style="width:52pt">ABSEN<br>PULANG</th><th style="width:70pt">PSW/<br>LEWAT<br>(Mnt)</th>
+      <th>KETERANGAN</th>
+    </tr></thead>
+    <tbody>${tableRows}</tbody>
   </table>
-  
-  <div class="footer">
-    <div class="ttd-box">
-      <p>Mengetahui,</p>
-      <p style="margin-top: 4pt;">Kepala Sekolah</p>
-      <div class="ttd-line">ASTIN, S.Pd.SD., M.Pd<br>NIP. 198002292005022003</div>
-    </div>
-  </div>
+  <div class="footer"><div class="ttd-box">
+    <p>Mengetahui,</p><p style="margin-top:4pt">Kepala Sekolah</p>
+    <div class="ttd-line">ASTIN, S.Pd.SD., M.Pd<br>NIP. 198002292005022003</div>
+  </div></div>
 </div>
-
 <button class="print-btn" onclick="window.print()">🖨 Cetak PDF</button>
-
 </body></html>`;
 
     const w = window.open('', '_blank', 'width=900,height=700');
-    w.document.write(html);
-    w.document.close();
+    w.document.write(html); w.document.close();
     closeCetakAbsensi();
     showToast('✅ Dokumen absensi siap dicetak', 'success');
   } catch (e) {
@@ -2327,23 +1974,27 @@ window.generateCetakAbsensi = async () => {
   }
 };
 
+// ═══════════════════════════════════════════════════════════
+// KOREKSI ABSENSI
+// ═══════════════════════════════════════════════════════════
+
 window.openKoreksi = async (uid, nama) => {
   state.koreksiUID = uid;
   const tgl = todayISO();
   document.getElementById('koreksi-sub').textContent = `Guru: ${esc(nama)} · ${esc(tgl)}`;
   document.getElementById('koreksi-tgl').value = tgl;
-  
   const snap = await get(ref(db, `absensi/${tgl}/${uid}`));
   if (snap.exists()) {
     const ab = snap.val();
-    document.getElementById('koreksi-masuk').value = normalizeTime(ab.masuk?.waktu || '');
+    document.getElementById('koreksi-masuk').value  = normalizeTime(ab.masuk?.waktu || '');
     document.getElementById('koreksi-pulang').value = normalizeTime(ab.pulang?.waktu || '');
     document.getElementById('btn-hapus-ab').style.display = 'block';
   } else {
-    document.getElementById('koreksi-masuk').value = '';
+    document.getElementById('koreksi-masuk').value  = '';
     document.getElementById('koreksi-pulang').value = '';
     document.getElementById('btn-hapus-ab').style.display = 'none';
   }
+  document.getElementById('koreksi-ket').value = '';
   document.getElementById('modal-koreksi').classList.add('open');
   setTimeout(initTimeInputs, 100);
 };
@@ -2356,67 +2007,40 @@ window.submitKoreksi = async () => {
   const masuk  = normalizeTime(document.getElementById('koreksi-masuk').value);
   const pulang = normalizeTime(document.getElementById('koreksi-pulang').value);
   const ket    = document.getElementById('koreksi-ket').value.trim();
-  
   if (!uid || !tgl) { showToast('Data tidak valid', 'error'); return; }
+  if (!masuk && !pulang) { showToast('Isi minimal satu waktu absensi', 'warning'); return; }
+
   if (masuk) {
     const jad = getJadwalEfektif(state.users, uid, tgl);
-    const menitSekarang = (parseInt(masuk.split(':')[0]) * 60) + parseInt(masuk.split(':')[1]);
-    const menitJadwal = (parseInt(jad.masuk.split(':')[0]) * 60) + parseInt(jad.masuk.split(':')[1]);
-    const selisih = menitSekarang - menitJadwal;
-    // SINKRON dengan hitungStatusMasuk di index.html
+    const menitAkt = parseInt(masuk.split(':')[0])*60 + parseInt(masuk.split(':')[1]);
+    const menitJad = parseInt(jad.masuk.split(':')[0])*60 + parseInt(jad.masuk.split(':')[1]);
+    const sel = menitAkt - menitJad;
     let status, keterangan;
-    if (selisih < 0) {
-      status = 'Hadir Lebih Awal';
-      keterangan = `${Math.abs(selisih)} menit lebih awal`;
-    } else if (selisih === 0) {
-      status = 'Hadir';
-      keterangan = 'Tepat waktu';
-    } else {
-      status = `Terlambat ${selisih} menit`;
-      keterangan = `${selisih} menit keterlambatan`;
-    }
+    if (sel < 0)      { status = 'Hadir Lebih Awal'; keterangan = `${Math.abs(sel)} menit lebih awal`; }
+    else if (sel ===0){ status = 'Hadir'; keterangan = 'Tepat waktu'; }
+    else              { status = `Terlambat ${sel} menit`; keterangan = `${sel} menit keterlambatan`; }
     await set(ref(db, `absensi/${tgl}/${uid}/masuk`), {
-      waktu: masuk,
-      status: status,
-      keterangan: keterangan,
-      koreksi: true,
-      koreksiOleh: auth.currentUser?.email || 'admin'
+      waktu: masuk, status, keterangan, koreksi: true, koreksiOleh: auth.currentUser?.email || 'admin'
     });
   }
   if (pulang) {
     const jad = getJadwalEfektif(state.users, uid, tgl);
-    const menitSekarang = (parseInt(pulang.split(':')[0]) * 60) + parseInt(pulang.split(':')[1]);
-    const menitJadwal = (parseInt(jad.pulang.split(':')[0]) * 60) + parseInt(jad.pulang.split(':')[1]);
-    const selisih = menitSekarang - menitJadwal;
-    // SINKRON dengan hitungStatusPulang di index.html
+    const menitAkt = parseInt(pulang.split(':')[0])*60 + parseInt(pulang.split(':')[1]);
+    const menitJad = parseInt(jad.pulang.split(':')[0])*60 + parseInt(jad.pulang.split(':')[1]);
+    const sel = menitAkt - menitJad;
     let status, keterangan;
-    if (selisih < 0) {
-      status = `Pulang Lebih Awal ${Math.abs(selisih)} menit`;
-      keterangan = `${Math.abs(selisih)} menit lebih awal`;
-    } else if (selisih === 0) {
-      status = 'Pulang Tepat Waktu';
-      keterangan = 'Tepat waktu';
-    } else {
-      status = 'Pulang';
-      keterangan = `${selisih} menit setelah jadwal`;
-    }
+    if (sel < 0)      { status = `Pulang Lebih Awal ${Math.abs(sel)} menit`; keterangan = `${Math.abs(sel)} menit lebih awal`; }
+    else if (sel ===0){ status = 'Pulang Tepat Waktu'; keterangan = 'Tepat waktu'; }
+    else              { status = 'Pulang'; keterangan = `${sel} menit setelah jadwal`; }
     await set(ref(db, `absensi/${tgl}/${uid}/pulang`), {
-      waktu: pulang,
-      status: status,
-      keterangan: keterangan,
-      koreksi: true,
+      waktu: pulang, status, keterangan, koreksi: true,
       koreksiOleh: auth.currentUser?.email || 'admin',
       catatan: ket || 'Koreksi dari admin'
     });
   }
-  if (!masuk && !pulang) { showToast('Isi minimal satu waktu absensi', 'warning'); return; }
-  
   showToast('✅ Koreksi absensi disimpan', 'success');
   closeKoreksi();
-  // Refresh kehadiran list if on guru panel
-  if (document.getElementById('panel-guru')?.classList.contains('active')) {
-    loadGuruKehadiran();
-  }
+  if (document.getElementById('panel-guru')?.classList.contains('active')) loadGuruKehadiran();
 };
 
 window.hapusAbsensi = async () => {
@@ -2430,142 +2054,139 @@ window.hapusAbsensi = async () => {
   } catch (e) { showToast('❌ Gagal: ' + e.message, 'error'); }
 };
 
+// ═══════════════════════════════════════════════════════════
+// LAPORAN
+// ═══════════════════════════════════════════════════════════
+
 window.fetchLaporan = async () => {
-  const el = document.getElementById('laporan-table');
-  const bulan = document.getElementById('f-bulan').value;
-  const tahun = document.getElementById('f-tahun').value;
+  const el     = document.getElementById('laporan-table');
+  const bulan  = document.getElementById('f-bulan').value;
+  const tahun  = document.getElementById('f-tahun').value;
   const guruId = document.getElementById('f-guru').value;
   const status = document.getElementById('f-status').value;
-  
-  if (!bulan || !tahun) {
-    el.innerHTML = '<div class="empty">Pilih bulan dan tahun untuk menampilkan data</div>';
-    return;
-  }
-  
+  if (!bulan || !tahun) { el.innerHTML = '<div class="empty">Pilih bulan dan tahun untuk menampilkan data</div>'; return; }
   el.innerHTML = '<div class="spinner-wrap"><div class="spin"></div></div>';
   try {
-    const snap = await get(ref(db, 'users'));
+    const snap  = await get(ref(db, 'users'));
     const users = snap.exists() ? snap.val() : {};
-    const guruList = guruId 
+    const guruList = guruId
       ? { [guruId]: users[guruId] }
       : Object.fromEntries(Object.entries(users).filter(([,u]) => u.role === 'guru' || u.role === 'kepala_sekolah'));
-    
+
     const daysInMonth = new Date(tahun, parseInt(bulan), 0).getDate();
     const dates = [];
-    for (let i = 1; i <= daysInMonth; i++) {
+    for (let i = 1; i <= daysInMonth; i++)
       dates.push(`${tahun}-${String(bulan).padStart(2,'0')}-${String(i).padStart(2,'0')}`);
-    }
-    
-    const dbRef = ref(db);
+
+    const dbRef   = ref(db);
     const settled = await Promise.allSettled(
-      dates.map(tgl => get(child(dbRef, `absensi/${tgl}`)).then(snap => ({tgl, data: snap.exists() ? snap.val() : {}})))
+      dates.map(tgl => get(child(dbRef, `absensi/${tgl}`)).then(s => ({tgl, data: s.exists()?s.val():{}})))
     );
-    
     const absData = Object.fromEntries(
-      settled.filter(r => r.status === 'fulfilled').map(r => [r.value.tgl, r.value.data])
+      settled.filter(r=>r.status==='fulfilled').map(r=>[r.value.tgl, r.value.data])
     );
-    
-    // Fetch libur khusus untuk bulan ini
+
     let liburKhusus = {};
-    try {
-      const lkSnap = await get(ref(db, 'libur_khusus'));
-      if (lkSnap.exists()) liburKhusus = lkSnap.val();
-    } catch(e) {}
-    
+    try { const lk = await get(ref(db,'libur_khusus')); if(lk.exists()) liburKhusus = lk.val(); } catch(e){}
+
     let rows = [];
     let hasKetTanpaJadwal = false;
-    
+
     for (const [uid, guru] of Object.entries(guruList)) {
       if (!guru) continue;
       const jab = JABATAN_LABEL[guru.jabatan] || 'Guru Kelas';
-      let hadir = 0, terlambat = 0, izin = 0, sakit = 0, dinas = 0, belum = 0, tanpaJadwal = 0, libur = 0;
+      let hadir=0, terlambat=0, izin=0, sakit=0, dinas=0, belum=0, tanpaJadwal=0, libur=0;
       const details = [];
-      
+
       for (const tgl of dates) {
-        const dayNum    = new Date(tgl + 'T00:00:00').getDay();
-        // Skip Minggu otomatis
+        const dayNum = new Date(tgl+'T00:00:00').getDay();
         if (dayNum === 0) continue;
-        
-        // Cek libur nasional/khusus
         const namaLibur = LIBUR_NASIONAL[tgl] || liburKhusus[tgl];
-        if (namaLibur !== undefined && namaLibur !== null) { libur++; details.push({tgl, status:'Libur', waktu:'–', alasan: namaLibur}); continue; }
-        
+        if (namaLibur !== undefined && namaLibur !== null) { libur++; details.push({tgl,status:'Libur',waktu:'–',alasan:namaLibur}); continue; }
+
         const tanpaJ = guru.jadwal?.hari_tanpa_jadwal?.[dayNum] ? true : false;
         const ab     = absData[tgl]?.[uid];
         const masukS = ab?.masuk?.status || '';
         const alasan = ab?.alasanTidakHadir || null;
-        
+
         let statusTgl = 'Belum Absen', alasanStr = '';
         if (tanpaJ) {
-          statusTgl = 'Tdk Ada Jadwal'; tanpaJadwal++;
-          hasKetTanpaJadwal = true;
+          statusTgl = 'Tdk Ada Jadwal'; tanpaJadwal++; hasKetTanpaJadwal = true;
         } else if (ab?.masuk) {
           if (masukS.includes('Terlambat')) { statusTgl = 'Terlambat'; terlambat++; hadir++; }
           else { statusTgl = 'Hadir'; hadir++; }
         } else if (alasan) {
-          const tipeMap = { 'Sakit': () => { sakit++; return 'Sakit'; }, 'Izin': () => { izin++; return 'Izin'; }, 'Dinas Luar': () => { dinas++; return 'Dinas Luar'; }, 'Keperluan Keluarga': () => { izin++; return 'Keperluan Keluarga'; } };
+          const tipeMap = {
+            'Sakit':              () => { sakit++;  return 'Sakit'; },
+            'Izin':               () => { izin++;   return 'Izin'; },
+            'Dinas Luar':         () => { dinas++;  return 'Dinas Luar'; },
+            'Keperluan Keluarga': () => { izin++;   return 'Keperluan Keluarga'; },
+          };
           const fn = tipeMap[alasan.tipe] || (() => { izin++; return alasan.tipe || 'Izin'; });
-          statusTgl = fn();
-          alasanStr = alasan.detail || '';
+          statusTgl = fn(); alasanStr = alasan.detail || '';
         } else {
           statusTgl = 'Belum Absen'; belum++;
         }
-        
         details.push({tgl, status: statusTgl, waktu: ab?.masuk?.waktu || '–', alasan: alasanStr});
       }
-      
-      // Filter check — dinas & keperluan kini bisa difilter terpisah
+
       const izinTotal = izin + sakit + dinas;
       const statusFilter = !status ||
-        (status === 'hadir'      && hadir > 0) ||
-        (status === 'terlambat'  && terlambat > 0) ||
-        (status === 'izin'       && izin > 0) ||
-        (status === 'sakit'      && sakit > 0) ||
-        (status === 'dinas'      && dinas > 0) ||
-        (status === 'keperluan'  && details.some(d => d.status === 'Keperluan Keluarga')) ||
-        (status === 'belum'      && belum > 0) ||
+        (status === 'hadir'        && hadir > 0) ||
+        (status === 'terlambat'    && terlambat > 0) ||
+        (status === 'izin'         && izin > 0) ||
+        (status === 'sakit'        && sakit > 0) ||
+        (status === 'dinas'        && dinas > 0) ||
+        (status === 'keperluan'    && details.some(d => d.status === 'Keperluan Keluarga')) ||
+        (status === 'belum'        && belum > 0) ||
         (status === 'tanpa_jadwal' && tanpaJadwal > 0);
-      
       if (!statusFilter) continue;
-      
-      // Detail chip cells (per-day summary)
+
       let detailHTML = '<div style="display:flex;flex-wrap:wrap;gap:3px;">';
       for (const d of details.slice(0, 15)) {
-        if (!d || !d.status || !d.tgl) continue; // Skip invalid entries
-        const cc = d.status === 'Hadir' ? 'chip-ok'
-          : d.status === 'Terlambat'    ? 'chip-warn'
-          : d.status === 'Sakit'        ? 'chip-err'
+        if (!d?.status || !d?.tgl) continue;
+        const cc = d.status === 'Hadir'        ? 'chip-ok'
+          : d.status === 'Terlambat'           ? 'chip-warn'
+          : d.status === 'Sakit'               ? 'chip-err'
           : ['Izin','Dinas Luar','Keperluan Keluarga'].includes(d.status) ? 'chip-blue'
-          : d.status === 'Libur'        ? 'chip-purple'
-          : d.status === 'Tdk Ada Jadwal' ? 'chip-purple'
+          : ['Libur','Tdk Ada Jadwal'].includes(d.status) ? 'chip-purple'
           : 'chip-gray';
-        const label = d.status === 'Hadir' ? '✓' : d.status === 'Terlambat' ? '⚠' : d.status === 'Belum Absen' ? '–' : '📝';
-        const dateParts = d.tgl.split('-');
-        const dayStr = dateParts.length === 3 ? dateParts[2] : '?';
+        const dayStr = (d.tgl.split('-')[2]) || '?';
         detailHTML += `<span class="chip ${cc}" style="font-size:8px;padding:2px 4px;" title="${esc(d.tgl)}: ${esc(d.status)} ${esc(d.waktu)}">${esc(dayStr)}</span>`;
       }
       if (details.length > 15) detailHTML += `<span style="font-size:9px;color:var(--ink3);">+${details.length-15}</span>`;
       detailHTML += '</div>';
-      
-      const alasanCatatan = details.filter(d => d.alasan).map(d => `${d.tgl}: ${d.alasan}`).join(' | ');
-      
+
+      const alasanCatatan = details.filter(d=>d.alasan).map(d=>`${d.tgl}: ${d.alasan}`).join(' | ');
       rows.push(`<tr>
-        <td style="padding:12px;font-weight:700;color:var(--ink);">${esc(guru.nama || uid)}</td>
+        <td style="padding:12px;font-weight:700;color:var(--ink);">${esc(guru.nama||uid)}</td>
         <td style="padding:12px;color:var(--ink2);font-size:12px;">${esc(jab)}</td>
         <td style="text-align:center;padding:12px;"><strong style="font-size:14px;color:var(--ok);">${hadir}</strong></td>
         <td style="text-align:center;padding:12px;"><strong style="font-size:14px;color:var(--warn);">${terlambat}</strong></td>
         <td style="text-align:center;padding:12px;"><strong style="font-size:14px;color:var(--orange);">${izinTotal}</strong></td>
         <td style="text-align:center;padding:12px;"><strong style="font-size:14px;color:var(--ink3);">${belum}</strong></td>
         <td style="text-align:center;padding:12px;"><strong style="font-size:14px;color:var(--purple);">${tanpaJadwal}</strong></td>
-        <td style="padding:12px;font-size:11px;color:var(--ink3);">${esc(alasanCatatan) || '–'}</td>
+        <td style="padding:12px;font-size:11px;color:var(--ink3);">${esc(alasanCatatan)||'–'}</td>
         <td style="padding:12px;">${detailHTML}</td>
       </tr>`);
     }
-    
-    const ketTanpaJadwal = document.getElementById('print-ket-tanpa-jadwal');
-    if (ketTanpaJadwal) ketTanpaJadwal.style.display = hasKetTanpaJadwal ? 'block' : 'none';
-    
-    const table = rows.length === 0 
+
+    const ketEl = document.getElementById('print-ket-tanpa-jadwal');
+    if (ketEl) ketEl.style.display = hasKetTanpaJadwal ? 'block' : 'none';
+
+    // Populate guru filter
+    const fGuru = document.getElementById('f-guru');
+    if (fGuru.options.length <= 1) {
+      Object.entries(guruList).forEach(([uid, g]) => {
+        if (!fGuru.querySelector(`option[value="${uid}"]`)) {
+          const opt = document.createElement('option');
+          opt.value = uid; opt.textContent = g.nama || uid;
+          fGuru.appendChild(opt);
+        }
+      });
+    }
+
+    el.innerHTML = rows.length === 0
       ? '<div class="empty">Tidak ada data yang cocok dengan filter</div>'
       : `<table style="width:100%;border-collapse:collapse;">
          <thead style="background:var(--bg);">
@@ -2583,22 +2204,8 @@ window.fetchLaporan = async () => {
          </thead>
          <tbody>${rows.join('')}</tbody>
        </table>`;
-    
-    el.innerHTML = table;
     document.getElementById('lap-count').textContent = `${rows.length} guru`;
-    
-    // Populate guru filter if empty
-    const guruEl = document.getElementById('f-guru');
-    if (guruEl.options.length <= 1) {
-      for (const [uid, guru] of Object.entries(guruList)) {
-        const opt = document.createElement('option');
-        opt.value = uid;
-        opt.textContent = guru.nama || uid;
-        guruEl.appendChild(opt);
-      }
-    }
   } catch(err) {
-    console.error('fetchLaporan error:', err);
     el.innerHTML = '<div class="empty">❌ Gagal memuat laporan: ' + esc(err.message) + '</div>';
   }
 };
@@ -2606,41 +2213,25 @@ window.fetchLaporan = async () => {
 // ═══════════════════════════════════════════════════════════
 // EXPORT & PRINT
 // ═══════════════════════════════════════════════════════════
+
 window.doExport = () => {
   const bulan = document.getElementById('f-bulan').value;
   const tahun = document.getElementById('f-tahun').value;
   if (!bulan || !tahun) { showToast('Pilih bulan dan tahun', 'warning'); return; }
-  
   const table = document.querySelector('#laporan-table table');
   if (!table) { showToast('Tidak ada data untuk diekspor', 'warning'); return; }
-  
-  const rows = [];
-  // Header
-  rows.push(['Nama', 'Jabatan', 'Hadir', 'Terlambat', 'Izin/Sakit', 'Belum Absen', 'Tdk Jadwal', 'Catatan Alasan']);
-  
+  const rows = [['Nama','Jabatan','Hadir','Terlambat','Izin/Sakit','Belum Absen','Tdk Jadwal','Catatan Alasan']];
   table.querySelectorAll('tbody tr').forEach(tr => {
     const cols = [];
     tr.querySelectorAll('td').forEach((td, idx) => {
-      if (idx < 8) { // Skip detail chips column (last)
-        cols.push(td.innerText.trim().replace(/\s+/g, ' '));
-      }
+      if (idx < 8) cols.push(td.innerText.trim().replace(/\s+/g,' '));
     });
     if (cols.length > 0) rows.push(cols);
   });
-  
   const ws = XLSX.utils.aoa_to_sheet(rows);
-  // Style header
-  const range = XLSX.utils.decode_range(ws['!ref']);
-  for (let c = range.s.c; c <= range.e.c; c++) {
-    const cellAddr = XLSX.utils.encode_cell({ r: 0, c });
-    if (!ws[cellAddr]) continue;
-    ws[cellAddr].s = { font: { bold: true } };
-  }
   ws['!cols'] = [{wch:25},{wch:20},{wch:8},{wch:10},{wch:12},{wch:12},{wch:12},{wch:40}];
-  
   const wb = XLSX.utils.book_new();
-  const namaBulan = NAMA_BULAN[parseInt(bulan)];
-  XLSX.utils.book_append_sheet(wb, ws, `${namaBulan} ${tahun}`);
+  XLSX.utils.book_append_sheet(wb, ws, `${NAMA_BULAN[parseInt(bulan)]} ${tahun}`);
   XLSX.writeFile(wb, `Laporan_Absensi_${tahun}-${bulan}_SDN_Wawonggole.xlsx`);
   showToast('✅ Laporan berhasil diekspor ke Excel', 'success');
 };
@@ -2649,27 +2240,24 @@ window.doPrint = () => {
   const bulan = document.getElementById('f-bulan').value;
   const tahun = document.getElementById('f-tahun').value;
   if (!bulan || !tahun) { showToast('Pilih bulan dan tahun', 'warning'); return; }
-  
-  const table = document.querySelector('table');
+  const table = document.querySelector('#laporan-table table');
   if (!table) { showToast('Tidak ada data untuk dicetak', 'warning'); return; }
-  
-  const printArea = document.getElementById('print-area');
   const namaBulan = NAMA_BULAN[parseInt(bulan)];
-  const title = `LAPORAN ABSENSI GURU - ${namaBulan} ${tahun}`;
-  const cetakTgl = new Date().toLocaleDateString('id-ID');
-  
-  printArea.innerHTML = `
+  const cetakTgl  = new Date().toLocaleDateString('id-ID');
+  document.getElementById('print-area').innerHTML = `
     <div style="text-align:center;margin-bottom:20px;border-bottom:2px solid #4F46E5;padding-bottom:16px;">
       <h2 style="font-size:16px;font-weight:800;color:#0D1117;">LAPORAN ABSENSI GURU</h2>
       <p style="font-size:12px;color:#475569;margin-top:4px;">SDN WAWONGGOLE · E-Presensi</p>
       <p style="font-size:11px;color:#94A3B8;margin-top:2px;">${namaBulan} ${tahun}</p>
       <p style="font-size:10px;color:#94A3B8;">Dicetak: ${cetakTgl}</p>
     </div>
-    ${table.outerHTML}
-  `;
-  
+    ${table.outerHTML}`;
   window.print();
 };
+
+// ═══════════════════════════════════════════════════════════
+// JADWAL GURU
+// ═══════════════════════════════════════════════════════════
 
 window.fetchJadwal = async () => {
   const el = document.getElementById('jadwal-container');
@@ -2677,104 +2265,89 @@ window.fetchJadwal = async () => {
   try {
     const snap = await get(ref(db, 'users'));
     if (!snap.exists()) { el.innerHTML = '<div class="empty">Tidak ada guru</div>'; return; }
-    
     state.users = snap.val();
     const guruList = Object.entries(state.users).filter(([,u]) => u.role === 'guru' || u.role === 'kepala_sekolah');
-    
     if (guruList.length === 0) { el.innerHTML = '<div class="empty">Tidak ada guru</div>'; return; }
-    
+
     el.innerHTML = guruList.map(([uid, u]) => {
-      const jab = JABATAN_LABEL[u.jabatan] || 'Guru Kelas';
-      const jmDef = normalizeTime(u.jadwal?.masuk || DEFAULT_MASUK);
+      const jab   = JABATAN_LABEL[u.jabatan] || 'Guru Kelas';
+      const jmDef = normalizeTime(u.jadwal?.masuk  || DEFAULT_MASUK);
       const jpDef = normalizeTime(u.jadwal?.pulang || DEFAULT_PULANG);
-      const hariNames = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-      const htjDays = u.jadwal?.hari_tanpa_jadwal ? Object.keys(u.jadwal.hari_tanpa_jadwal).filter(k => u.jadwal.hari_tanpa_jadwal[k]).map(k => hariNames[parseInt(k)]).join(', ') : '';
       const ovCount = u.jadwal?.override ? Object.keys(u.jadwal.override).length : 0;
-      const escapedUid = uid.replace(/'/g, '\\"');
-      
-      const hariHTML = hariNames.slice(1).map((h, idx) => {
+      const eu = uid.replace(/'/g, "\\'");
+
+      const hariHTML = NAMA_HARI.slice(1).map((h, idx) => {
         const day = idx + 1;
-        const jh = u.jadwal?.hari?.[day];
-        const jm = normalizeTime(jh?.masuk || jmDef);
-        const jp = normalizeTime(jh?.pulang || jpDef);
+        const jh  = u.jadwal?.hari?.[day];
+        const jm  = normalizeTime(jh?.masuk  || jmDef);
+        const jp  = normalizeTime(jh?.pulang || jpDef);
         const isCust = jh?.masuk || jh?.pulang;
         return `<div style="display:flex;gap:6px;font-size:11px;margin:2px 0;">
           <span style="width:50px;font-weight:700;color:var(--ink2);">${h}</span>
-          <input type="time" value="${esc(jm)}" data-uid="${escapedUid}" data-day="${day}" data-type="masuk" style="width:70px;padding:4px;border:1px solid var(--line);border-radius:6px;${isCust?'background:var(--prim-l);':''}"/>
-          <input type="time" value="${esc(jp)}" data-uid="${escapedUid}" data-day="${day}" data-type="pulang" style="width:70px;padding:4px;border:1px solid var(--line);border-radius:6px;${isCust?'background:var(--prim-l);':''}"/>
-          <button class="btn btn-ghost" style="padding:2px 6px;font-size:9px;" onclick="resetJadwalHari('${escapedUid}',${day})">Reset</button>
+          <input type="time" value="${esc(jm)}" data-uid="${eu}" data-day="${day}" data-type="masuk" style="width:70px;padding:4px;border:1px solid var(--line);border-radius:6px;${isCust?'background:var(--prim-l);':''}"/>
+          <input type="time" value="${esc(jp)}" data-uid="${eu}" data-day="${day}" data-type="pulang" style="width:70px;padding:4px;border:1px solid var(--line);border-radius:6px;${isCust?'background:var(--prim-l);':''}"/>
+          <button class="btn btn-ghost" style="padding:2px 6px;font-size:9px;" onclick="window.resetJadwalHari('${eu}',${day})">Reset</button>
         </div>`;
       }).join('');
-      
+
       return `<div class="card" style="margin-bottom:16px;">
         <div class="card-head">
-          <div>
-            <div class="card-title">${esc(u.nama || uid)}</div>
-            <div class="card-sub">${esc(jab)}</div>
-          </div>
-          <button class="btn btn-ghost" onclick="openEditGuru('${escapedUid}')">✏️ Edit Nama</button>
+          <div><div class="card-title">${esc(u.nama||uid)}</div><div class="card-sub">${esc(jab)}</div></div>
+          <button class="btn btn-ghost" onclick="window.openEditGuru('${eu}')">✏️ Edit Nama</button>
         </div>
         <div class="card-body" style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
           <div>
             <div style="font-weight:700;color:var(--ink);margin-bottom:10px;font-size:11px;text-transform:uppercase;letter-spacing:.1em;">📅 Jadwal Default</div>
             <div style="display:flex;gap:8px;margin-bottom:12px;">
-              <div>
-                <label style="font-size:10px;font-weight:700;color:var(--ink3);">Masuk</label>
-                <input type="time" id="jm-${uid}" value="${esc(jmDef)}" style="padding:6px;border:1px solid var(--line);border-radius:8px;width:100%;" />
-              </div>
-              <div>
-                <label style="font-size:10px;font-weight:700;color:var(--ink3);">Pulang</label>
-                <input type="time" id="jp-${uid}" value="${esc(jpDef)}" style="padding:6px;border:1px solid var(--line);border-radius:8px;width:100%;" />
-              </div>
+              <div><label style="font-size:10px;font-weight:700;color:var(--ink3);">Masuk</label>
+                <input type="time" id="jm-${uid}" value="${esc(jmDef)}" style="padding:6px;border:1px solid var(--line);border-radius:8px;width:100%;"/></div>
+              <div><label style="font-size:10px;font-weight:700;color:var(--ink3);">Pulang</label>
+                <input type="time" id="jp-${uid}" value="${esc(jpDef)}" style="padding:6px;border:1px solid var(--line);border-radius:8px;width:100%;"/></div>
             </div>
-            <button class="btn btn-prim" onclick="saveJadwalDefault('${escapedUid}')" style="width:100%;">💾 Simpan Jadwal Default</button>
-            
+            <button class="btn btn-prim" onclick="window.saveJadwalDefault('${eu}')" style="width:100%;">💾 Simpan Jadwal Default</button>
             <div style="font-weight:700;color:var(--ink);margin-top:16px;margin-bottom:10px;font-size:11px;text-transform:uppercase;letter-spacing:.1em;">📋 Jadwal Per Hari</div>
             <div style="max-height:280px;overflow-y:auto;">${hariHTML}</div>
-            <button class="btn btn-prim" onclick="saveJadwalPerHari('${escapedUid}')" style="width:100%;margin-top:8px;">💾 Simpan Jadwal Per Hari</button>
+            <button class="btn btn-prim" onclick="window.saveJadwalPerHari('${eu}')" style="width:100%;margin-top:8px;">💾 Simpan Jadwal Per Hari</button>
           </div>
-          
           <div>
             <div style="font-weight:700;color:var(--ink);margin-bottom:10px;font-size:11px;text-transform:uppercase;letter-spacing:.1em;">🚫 Hari Tanpa Jadwal</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:12px;">
-              ${hariNames.slice(1).map((h, idx) => {
-                const day = idx + 1;
+              ${NAMA_HARI.slice(1).map((h, idx) => {
+                const day = idx+1;
                 const isChecked = u.jadwal?.hari_tanpa_jadwal?.[day] ? 'checked' : '';
                 return `<label style="display:flex;align-items:center;gap:6px;cursor:pointer;padding:6px;border:1px solid var(--line);border-radius:6px;">
-                  <input type="checkbox" data-uid="${escapedUid}" data-day="${day}" ${isChecked} />
+                  <input type="checkbox" data-uid="${eu}" data-day="${day}" ${isChecked}/>
                   <span style="font-size:11px;">${h}</span>
                 </label>`;
               }).join('')}
             </div>
-            <button class="btn btn-prim" onclick="saveHTJForGuru('${escapedUid}')" style="width:100%;">💾 Simpan Hari Tanpa Jadwal</button>
-            
+            <button class="btn btn-prim" onclick="window.saveHTJForGuru('${eu}')" style="width:100%;">💾 Simpan Hari Tanpa Jadwal</button>
             <div style="font-weight:700;color:var(--ink);margin-top:16px;margin-bottom:10px;font-size:11px;text-transform:uppercase;letter-spacing:.1em;">🔀 Override Tanggal (${ovCount})</div>
             <div id="override-${uid}" style="max-height:200px;overflow-y:auto;margin-bottom:8px;font-size:11px;">
-              ${ovCount === 0 ? '<span style="color:var(--ink3);">Belum ada override</span>' : Object.entries(u.jadwal.override || {}).map(([tgl, j]) => 
-                `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px;background:var(--bg);border-radius:6px;margin-bottom:4px;">
-                  <span><strong>${esc(tgl)}</strong>: ${esc(j.masuk || '–')}–${esc(j.pulang || '–')}</span>
-                  <button class="btn btn-err" style="padding:2px 6px;font-size:9px;" onclick="deleteOverrideDate('${escapedUid}','${tgl}')">Hapus</button>
-                </div>`).join('')}
+              ${ovCount === 0
+                ? '<span style="color:var(--ink3);">Belum ada override</span>'
+                : Object.entries(u.jadwal.override || {}).map(([tgl, j]) =>
+                  `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px;background:var(--bg);border-radius:6px;margin-bottom:4px;">
+                    <span><strong>${esc(tgl)}</strong>: ${esc(j.masuk||'–')}–${esc(j.pulang||'–')}</span>
+                    <button class="btn btn-err" style="padding:2px 6px;font-size:9px;" onclick="window.deleteOverrideDate('${eu}','${tgl}')">Hapus</button>
+                  </div>`).join('')}
             </div>
-            <button class="btn btn-cyan" onclick="promptAddOverride('${escapedUid}')" style="width:100%;">➕ Tambah Override</button>
+            <button class="btn btn-cyan" onclick="window.promptAddOverride('${eu}')" style="width:100%;">➕ Tambah Override</button>
           </div>
         </div>
       </div>`;
     }).join('');
     initTimeInputs();
   } catch(err) {
-    console.error('fetchJadwal error:', err);
     el.innerHTML = '<div class="empty">❌ Gagal memuat jadwal: ' + esc(err.message) + '</div>';
   }
 };
 
-// Helper functions untuk jadwal management
 window.resetJadwalHari = async (uid, day) => {
   if (!confirm(`Reset jadwal ${NAMA_HARI[day]}?`)) return;
   try {
     await set(ref(db, `users/${uid}/jadwal/hari/${day}`), null);
-    showToast('✅ Jadwal direset ke default', 'success');
-    fetchJadwal();
+    showToast('✅ Jadwal direset ke default', 'success'); fetchJadwal();
   } catch(e) { showToast('❌ Gagal: ' + e.message, 'error'); }
 };
 
@@ -2784,8 +2357,7 @@ window.saveJadwalDefault = async (uid) => {
   if (!jm || !jp) { showToast('❌ Isi jadwal masuk dan pulang', 'warning'); return; }
   try {
     await update(ref(db, `users/${uid}/jadwal`), { masuk: jm, pulang: jp });
-    showToast('✅ Jadwal default disimpan', 'success');
-    fetchJadwal();
+    showToast('✅ Jadwal default disimpan', 'success'); fetchJadwal();
   } catch(e) { showToast('❌ Gagal: ' + e.message, 'error'); }
 };
 
@@ -2797,11 +2369,10 @@ window.saveJadwalPerHari = async (uid) => {
     if (!hariData[day]) hariData[day] = {};
     hariData[day][type] = normalizeTime(inp.value);
   });
+  if (Object.keys(hariData).length === 0) { showToast('⚠️ Tidak ada perubahan', 'info'); return; }
   try {
-    if (Object.keys(hariData).length === 0) { showToast('⚠️ Tidak ada perubahan jadwal per hari', 'info'); return; }
     await update(ref(db, `users/${uid}/jadwal/hari`), hariData);
-    showToast('✅ Jadwal per hari disimpan', 'success');
-    fetchJadwal();
+    showToast('✅ Jadwal per hari disimpan', 'success'); fetchJadwal();
   } catch(e) { showToast('❌ Gagal: ' + e.message, 'error'); }
 };
 
@@ -2812,8 +2383,7 @@ window.saveHTJForGuru = async (uid) => {
   });
   try {
     await update(ref(db, `users/${uid}/jadwal/hari_tanpa_jadwal`), htj);
-    showToast('✅ Hari tanpa jadwal disimpan', 'success');
-    fetchJadwal();
+    showToast('✅ Hari tanpa jadwal disimpan', 'success'); fetchJadwal();
   } catch(e) { showToast('❌ Gagal: ' + e.message, 'error'); }
 };
 
@@ -2821,41 +2391,34 @@ window.deleteOverrideDate = async (uid, tgl) => {
   if (!confirm(`Hapus override untuk ${tgl}?`)) return;
   try {
     await set(ref(db, `users/${uid}/jadwal/override/${tgl}`), null);
-    showToast('✅ Override dihapus', 'success');
-    fetchJadwal();
+    showToast('✅ Override dihapus', 'success'); fetchJadwal();
   } catch(e) { showToast('❌ Gagal: ' + e.message, 'error'); }
 };
 
 window.promptAddOverride = async (uid) => {
   const tgl = prompt('Tanggal override (YYYY-MM-DD):', new Date().toLocaleDateString('sv-SE'));
   if (!tgl || !/^\d{4}-\d{2}-\d{2}$/.test(tgl)) { showToast('❌ Format tanggal tidak valid', 'warning'); return; }
-  
   const jm = normalizeTime(prompt('Jam masuk (HH:MM):', '07:20'));
   if (!jm || !/^\d{2}:\d{2}$/.test(jm)) { showToast('❌ Format jam tidak valid', 'warning'); return; }
-  
   const jp = normalizeTime(prompt('Jam pulang (HH:MM):', '12:00'));
   if (!jp || !/^\d{2}:\d{2}$/.test(jp)) { showToast('❌ Format jam tidak valid', 'warning'); return; }
-  
   try {
     await update(ref(db, `users/${uid}/jadwal/override/${tgl}`), { masuk: jm, pulang: jp });
-    showToast('✅ Override ditambahkan', 'success');
-    fetchJadwal();
+    showToast('✅ Override ditambahkan', 'success'); fetchJadwal();
   } catch(e) { showToast('❌ Gagal: ' + e.message, 'error'); }
 };
 
 // ═══════════════════════════════════════════════════════════
-// KALENDER LIBUR KHUSUS — FULLY IMPLEMENTED
+// KALENDER LIBUR KHUSUS
 // ═══════════════════════════════════════════════════════════
 
 window.initKalender = () => {
   const now = new Date();
   const bulanEl = document.getElementById('kal-bulan');
   const tahunEl = document.getElementById('kal-tahun');
-  
   bulanEl.innerHTML = NAMA_BULAN.slice(1).map((m, i) =>
     `<option value="${String(i+1).padStart(2,'0')}" ${i+1===now.getMonth()+1?'selected':''}>${m}</option>`
   ).join('');
-  
   const y = now.getFullYear();
   tahunEl.innerHTML = [y-1, y, y+1].map(yr =>
     `<option value="${yr}" ${yr===y?'selected':''}>${yr}</option>`
@@ -2866,69 +2429,41 @@ async function loadLiburKhusus() {
   try {
     const snap = await get(ref(db, 'libur_khusus'));
     state.kalender.liburKhusus = snap.exists() ? snap.val() : {};
-  } catch (e) {
-    console.warn('Load libur khusus:', e.message);
-    state.kalender.liburKhusus = {};
-  }
+  } catch (e) { state.kalender.liburKhusus = {}; }
 }
 
 window.renderKalender = async () => {
   await loadLiburKhusus();
-  
   const bulan = parseInt(document.getElementById('kal-bulan').value);
   const tahun = parseInt(document.getElementById('kal-tahun').value);
-  
-  const firstDay = new Date(tahun, bulan - 1, 1).getDay();
-  const lastDate = new Date(tahun, bulan, 0).getDate();
-  
-  const cal = document.getElementById('kalender-wrap');
+  const firstDay  = new Date(tahun, bulan-1, 1).getDay();
+  const lastDate  = new Date(tahun, bulan, 0).getDate();
+  const cal       = document.getElementById('kalender-wrap');
   let html = '<div class="kal-grid">';
-  
-  // Header
-  ['Min','Sen','Sel','Rab','Kam','Jum','Sab'].forEach(h => {
-    html += `<div class="kal-head">${h}</div>`;
-  });
-  
-  // Empty cells
-  for (let i = 0; i < firstDay; i++) {
-    html += '<div class="kal-day empty"></div>';
-  }
-  
+  ['Min','Sen','Sel','Rab','Kam','Jum','Sab'].forEach(h => { html += `<div class="kal-head">${h}</div>`; });
+  for (let i = 0; i < firstDay; i++) html += '<div class="kal-day empty"></div>';
   const today = todayISO();
   for (let d = 1; d <= lastDate; d++) {
-    const tglStr = `${tahun}-${String(bulan).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    const isToday = tglStr === today;
-    const liburNas = LIBUR_NASIONAL[tglStr] || '';
-    const liburKhusus = state.kalender.liburKhusus[tglStr] || '';
+    const tglStr    = `${tahun}-${String(bulan).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday   = tglStr === today;
+    const liburNas  = LIBUR_NASIONAL[tglStr] || '';
+    const liburKhus = state.kalender.liburKhusus[tglStr] || '';
     const liburBaru = state.kalender.liburBaru[tglStr] || '';
-    const liburHapus = state.kalender.liburHapus.includes(tglStr);
-    
-    let className = 'kal-day';
-    let ket = '';
-    
-    if (isToday) className += ' today';
-    if (liburHapus) className += ' libur-baru'; // Ditandai untuk dihapus
-    else if (liburNas) { className += ' libur-nasional'; ket = liburNas; }
+    let className   = 'kal-day', ket = '';
+    if (isToday)    className += ' today';
+    if (liburNas)   { className += ' libur-nasional'; ket = liburNas; }
     else if (liburBaru) { className += ' libur-baru'; ket = liburBaru; }
-    else if (liburKhusus) { className += ' libur-khusus'; ket = liburKhusus; }
-    
-    const hapusBtn = (liburKhusus || liburBaru) && !liburNas
-      ? `<button class="kal-hapus" onclick="markDeleteLibur('${tglStr}')">✕ Hapus</button>`
-      : '';
-    
-    html += `<div class="${className}" onclick="selectTgl('${tglStr}')">
+    else if (liburKhus) { className += ' libur-khusus'; ket = liburKhus; }
+    const hapusBtn = (liburKhus || liburBaru) && !liburNas
+      ? `<button class="kal-hapus" onclick="window.markDeleteLibur('${tglStr}')">✕ Hapus</button>` : '';
+    html += `<div class="${className}" onclick="window.selectTgl('${tglStr}')">
       <span class="kal-tgl">${d}</span>
       <div class="kal-ket">${esc(ket)}</div>
       ${hapusBtn}
     </div>`;
   }
-  
-  // Empty cells at end
   const totalCells = firstDay + lastDate;
-  for (let i = totalCells; i < (Math.ceil(totalCells / 7) * 7); i++) {
-    html += '<div class="kal-day empty"></div>';
-  }
-  
+  for (let i = totalCells; i < (Math.ceil(totalCells/7)*7); i++) html += '<div class="kal-day empty"></div>';
   html += '</div>';
   cal.innerHTML = html;
   loadLiburList();
@@ -2939,7 +2474,6 @@ let tglSelectedForLibur = null;
 window.selectTgl = (tgl) => {
   const existing = LIBUR_NASIONAL[tgl] || state.kalender.liburKhusus[tgl];
   if (existing) { showToast('⚠️ Tanggal ini sudah libur nasional atau khusus', 'warning'); return; }
-  
   tglSelectedForLibur = tgl;
   document.getElementById('dialog-tgl-label').textContent = `📅 ${tgl} (${namaHari(tgl)})`;
   document.getElementById('dialog-ket').value = '';
@@ -2955,7 +2489,6 @@ window.konfirmasiTambahLibur = () => {
   if (!tglSelectedForLibur) return;
   const ket = document.getElementById('dialog-ket').value.trim();
   if (!ket) { showToast('Isi keterangan libur', 'warning'); return; }
-  
   state.kalender.liburBaru[tglSelectedForLibur] = ket;
   state.kalender.liburHapus = state.kalender.liburHapus.filter(t => t !== tglSelectedForLibur);
   tutupDialog();
@@ -2970,8 +2503,7 @@ window.markDeleteLibur = (tgl) => {
   } else if (!isKhusus && state.kalender.liburBaru[tgl]) {
     delete state.kalender.liburBaru[tgl];
   }
-  renderKalender();
-  showBulkSaveWrap();
+  renderKalender(); showBulkSaveWrap();
 };
 
 function showBulkSaveWrap() {
@@ -2982,42 +2514,27 @@ function showBulkSaveWrap() {
   if (total > 0) {
     el.style.display = 'flex';
     document.getElementById('bulk-info').textContent = `${total} perubahan (${addCount} tambah, ${delCount} hapus)`;
-  } else {
-    el.style.display = 'none';
-  }
+  } else { el.style.display = 'none'; }
 }
 
 window.simpanSemuaLibur = async () => {
   const updates = {};
-  
-  // Add libur baru
-  Object.entries(state.kalender.liburBaru).forEach(([tgl, ket]) => {
-    updates[`libur_khusus/${tgl}`] = ket;
-  });
-  
-  // Remove libur yang dihapus
-  state.kalender.liburHapus.forEach(tgl => {
-    updates[`libur_khusus/${tgl}`] = null;
-  });
-  
-  if (Object.keys(updates).length === 0) { showToast('Tidak ada perubahan untuk disimpan', 'warning'); return; }
-  
+  Object.entries(state.kalender.liburBaru).forEach(([tgl, ket]) => { updates[`libur_khusus/${tgl}`] = ket; });
+  state.kalender.liburHapus.forEach(tgl => { updates[`libur_khusus/${tgl}`] = null; });
+  if (Object.keys(updates).length === 0) { showToast('Tidak ada perubahan', 'warning'); return; }
   try {
     await update(ref(db), updates);
     showToast(`✅ Libur khusus disimpan (${Object.keys(updates).length} perubahan)`, 'success');
-    state.kalender.liburBaru = {};
+    state.kalender.liburBaru  = {};
     state.kalender.liburHapus = [];
     renderKalender();
-  } catch (e) {
-    showToast('❌ Gagal menyimpan: ' + e.message, 'error');
-  }
+  } catch (e) { showToast('❌ Gagal menyimpan: ' + e.message, 'error'); }
 };
 
 window.batalSemuaLibur = () => {
-  state.kalender.liburBaru = {};
+  state.kalender.liburBaru  = {};
   state.kalender.liburHapus = [];
-  renderKalender();
-  showBulkSaveWrap();
+  renderKalender(); showBulkSaveWrap();
 };
 
 async function loadLiburList() {
@@ -3025,35 +2542,28 @@ async function loadLiburList() {
   try {
     const snap = await get(ref(db, 'libur_khusus'));
     if (!snap.exists()) { el.innerHTML = '<div class="empty">Belum ada libur khusus</div>'; return; }
-    
     const libur = snap.val();
-    const items = Object.entries(libur).sort((a, b) => a[0].localeCompare(b[0])).map(([tgl, ket]) => `
+    el.innerHTML = Object.entries(libur).sort((a,b)=>a[0].localeCompare(b[0])).map(([tgl,ket]) => `
       <div class="libur-item">
         <div class="libur-info">
           <div class="libur-tgl">${esc(tgl)}</div>
           <div class="libur-ket">${esc(ket)} · ${esc(namaHari(tgl))}</div>
         </div>
-        <button class="btn-hapus-libur" onclick="deleteLiburKhusus('${tgl}')">🗑 Hapus</button>
-      </div>
-    `);
-    el.innerHTML = items.join('');
-  } catch (e) {
-    console.error('loadLiburList:', e);
-    el.innerHTML = '<div class="empty">❌ Gagal memuat data</div>';
-  }
+        <button class="btn-hapus-libur" onclick="window.deleteLiburKhusus('${tgl}')">🗑 Hapus</button>
+      </div>`).join('');
+  } catch (e) { el.innerHTML = '<div class="empty">❌ Gagal memuat data</div>'; }
 }
 
 window.deleteLiburKhusus = async (tgl) => {
   if (!confirm(`Hapus libur khusus untuk ${tgl}?`)) return;
   try {
     await set(ref(db, `libur_khusus/${tgl}`), null);
-    showToast('✅ Libur khusus dihapus', 'success');
-    renderKalender();
+    showToast('✅ Libur khusus dihapus', 'success'); renderKalender();
   } catch (e) { showToast('❌ Gagal: ' + e.message, 'error'); }
 };
 
 // ═══════════════════════════════════════════════════════════
-// FILTER INIT — Populate laporan bulan/tahun selects
+// FILTER INIT
 // ═══════════════════════════════════════════════════════════
 
 function initFilters() {
@@ -3061,35 +2571,18 @@ function initFilters() {
   const bEl = document.getElementById('f-bulan');
   const tEl = document.getElementById('f-tahun');
   bEl.innerHTML = NAMA_BULAN.slice(1).map((n, i) =>
-    `<option value="${String(i+1).padStart(2,'0')}" ${i+1 === now.getMonth()+1 ? 'selected' : ''}>${n}</option>`
+    `<option value="${String(i+1).padStart(2,'0')}" ${i+1===now.getMonth()+1?'selected':''}>${n}</option>`
   ).join('');
   const yr = now.getFullYear();
   tEl.innerHTML = [yr-1, yr, yr+1].map(y =>
-    `<option value="${y}" ${y === yr ? 'selected' : ''}>${y}</option>`
+    `<option value="${y}" ${y===yr?'selected':''}>${y}</option>`
   ).join('');
-  // Populate guru filter awal
-  const fGuru = document.getElementById('f-guru');
-  if (state.users) {
-    Object.entries(state.users)
-      .filter(([,u]) => u.role === 'guru' || u.role === 'kepala_sekolah')
-      .forEach(([uid, u]) => {
-        if (fGuru.querySelector(`option[value="${uid}"]`)) return;
-        const opt = document.createElement('option');
-        opt.value = uid;
-        opt.textContent = u.nama || uid;
-        fGuru.appendChild(opt);
-      });
-  }
 }
 
-// ─── populasi f-guru saat panel laporan dibuka ───────────────
-const _origFetchLaporan = window.fetchLaporan;
-// (sudah dihandle di dalam fetchLaporan baru)
+// ═══════════════════════════════════════════════════════════
+// KODE DARURAT QR
+// ═══════════════════════════════════════════════════════════
 
-// ═══════════════════════════════════════════════════════════
-// KODE DARURAT QR — Admin Generate & Monitor
-// Struktur Firebase: kode_darurat/{tgl}/{6digitKode} = { used, createdAt, usedBy?, usedAt? }
-// ═══════════════════════════════════════════════════════════
 function showRulesBanner(show) {
   const el = document.getElementById('kode-rules-banner');
   if (el) el.style.display = show ? 'block' : 'none';
@@ -3101,22 +2594,20 @@ function isPermissionDenied(e) {
 
 window.generateKodeDarurat = async function() {
   const tgl  = new Date().toLocaleDateString('sv-SE');
-  const jam  = String(new Date().getHours()).padStart(2,'0') + ':' + String(new Date().getMinutes()).padStart(2,'0');
+  const jam  = `${String(new Date().getHours()).padStart(2,'0')}:${String(new Date().getMinutes()).padStart(2,'0')}`;
   const kode = String(Math.floor(100000 + Math.random() * 900000));
-  const btn  = document.querySelector('#panel-kode_darurat .btn-primary');
+  const btn  = document.querySelector('#panel-kode_darurat .btn-prim');
   if (btn) { btn.disabled = true; btn.textContent = 'Membuat…'; }
   try {
     await set(ref(db, `kode_darurat/${tgl}/${kode}`), { used: false, createdAt: jam });
     showRulesBanner(false);
-    showToast(`✅ Kode darurat: ${kode}`, 'success', 7000);
+    showToast(`✅ Kode darurat: ${kode}`, 'success');
     loadKodeDaruratList();
   } catch(e) {
     if (isPermissionDenied(e)) {
       showRulesBanner(true);
-      showToast('❌ Akses ditolak Firebase. Lihat panduan rules di atas.', 'error', 6000);
-    } else {
-      showToast('Gagal membuat kode: ' + e.message, 'error');
-    }
+      showToast('❌ Akses ditolak Firebase. Lihat panduan rules di atas.', 'error');
+    } else { showToast('Gagal membuat kode: ' + e.message, 'error'); }
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '+ Generate Kode'; }
   }
@@ -3130,114 +2621,78 @@ async function loadKodeDaruratList() {
   try {
     const snap = await get(ref(db, `kode_darurat/${tgl}`));
     showRulesBanner(false);
-    if (!snap.exists()) {
-      el.innerHTML = '<div class="empty">Belum ada kode darurat hari ini. Klik "+ Generate Kode" untuk membuat.</div>';
-      return;
-    }
+    if (!snap.exists()) { el.innerHTML = '<div class="empty">Belum ada kode darurat hari ini. Klik "+ Generate Kode" untuk membuat.</div>'; return; }
     const data  = snap.val();
     const kodes = Object.entries(data).sort((a,b) => (b[1].createdAt||'').localeCompare(a[1].createdAt||''));
 
-    // Resolusi nama guru dari usedBy uid
-    const uids = kodes.filter(([,v]) => v.usedBy && v.usedBy !== 'DIBATALKAN_ADMIN').map(([,v]) => v.usedBy);
+    const uids    = kodes.filter(([,v]) => v.usedBy && v.usedBy !== 'DIBATALKAN_ADMIN').map(([,v]) => v.usedBy);
     const namaMap = {};
-    
-    // Initialize all uids with fallback value first
     uids.forEach(uid => { namaMap[uid] = uid.slice(0,8)+'…'; });
-    
-    // Then fetch actual names with error handling
     const results = await Promise.allSettled(
       uids.map(async uid => {
-        try {
-          const s = await get(ref(db, `users/${uid}/nama`));
-          return [uid, s.exists() ? s.val() : uid.slice(0,8)+'…'];
-        } catch(err) {
-          console.warn(`Failed to fetch name for ${uid}:`, err);
-          return [uid, uid.slice(0,8)+'…'];
-        }
+        try { const s = await get(ref(db,`users/${uid}/nama`)); return [uid, s.exists()?s.val():uid.slice(0,8)+'…']; }
+        catch(err) { return [uid, uid.slice(0,8)+'…']; }
       })
     );
-    
-    // Process results safely
-    results.forEach(r => {
-      if (r.status === 'fulfilled' && r.value) {
-        namaMap[r.value[0]] = r.value[1];
-      }
-    });
+    results.forEach(r => { if (r.status==='fulfilled' && r.value) namaMap[r.value[0]] = r.value[1]; });
 
-    el.innerHTML = `
-      <table style="width:100%;border-collapse:collapse;font-size:13px;">
-        <thead>
-          <tr style="background:var(--bg);">
-            <th style="padding:10px 14px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);">Kode</th>
-            <th style="padding:10px 14px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);">Dibuat</th>
-            <th style="padding:10px 14px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);">Status</th>
-            <th style="padding:10px 14px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);">Dipakai Oleh</th>
-            <th style="padding:10px 14px;text-align:center;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);">Aksi</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${kodes.map(([kode, v]) => {
-            const dibatalkan = v.usedBy === 'DIBATALKAN_ADMIN';
-            return `
-            <tr style="border-top:1px solid var(--line);">
-              <td style="padding:12px 14px;font-size:22px;font-weight:900;letter-spacing:.3em;color:var(--prim);font-variant-numeric:tabular-nums;${v.used ? 'opacity:.4;' : ''}">${esc(kode)}</td>
-              <td style="padding:12px 14px;color:var(--ink2);">${esc(v.createdAt || '–')}</td>
-              <td style="padding:12px 14px;">
-                ${dibatalkan
-                  ? `<span class="chip chip-err" style="font-size:10px;">✕ Dibatalkan</span>`
-                  : v.used
-                    ? `<span class="chip chip-ok" style="font-size:10px;">✓ Terpakai ${esc(v.usedAt||'')}</span>`
-                    : `<span class="chip chip-gray" style="font-size:10px;">⏳ Belum dipakai</span>`
-                }
-              </td>
-              <td style="padding:12px 14px;color:var(--ink2);font-size:12px;">
-                ${dibatalkan ? '<em style="color:var(--ink3)">–</em>'
-                  : v.used && v.usedBy ? esc(namaMap[v.usedBy] || v.usedBy)
-                  : '–'}
-              </td>
-              <td style="padding:12px 14px;text-align:center;">
-                ${!v.used
-                  ? `<button class="btn btn-sm" style="background:#FEF2F2;color:#DC2626;border:1px solid #FEE2E2;font-size:10px;padding:4px 10px;"
-                      onclick="batalKodeDarurat('${esc(tgl)}','${esc(kode)}')">Batalkan</button>`
-                  : '–'
-                }
-              </td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
-      <p style="font-size:10px;color:var(--ink3);margin-top:12px;padding:0 4px;">
-        Total hari ini: ${kodes.length} kode · 
-        ${kodes.filter(([,v])=>v.used && v.usedBy !== 'DIBATALKAN_ADMIN').length} terpakai · 
-        ${kodes.filter(([,v])=>!v.used).length} aktif
-      </p>`;
+    el.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <thead><tr style="background:var(--bg);">
+        <th style="padding:10px 14px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);">Kode</th>
+        <th style="padding:10px 14px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);">Dibuat</th>
+        <th style="padding:10px 14px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);">Status</th>
+        <th style="padding:10px 14px;text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);">Dipakai Oleh</th>
+        <th style="padding:10px 14px;text-align:center;font-size:9px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink3);">Aksi</th>
+      </tr></thead>
+      <tbody>${kodes.map(([kode, v]) => {
+        const dibatalkan = v.usedBy === 'DIBATALKAN_ADMIN';
+        return `<tr style="border-top:1px solid var(--line);">
+          <td style="padding:12px 14px;font-size:22px;font-weight:900;letter-spacing:.3em;color:var(--prim);${v.used?'opacity:.4;':''}">${esc(kode)}</td>
+          <td style="padding:12px 14px;color:var(--ink2);">${esc(v.createdAt||'–')}</td>
+          <td style="padding:12px 14px;">
+            ${dibatalkan
+              ? `<span class="chip chip-err" style="font-size:10px;">✕ Dibatalkan</span>`
+              : v.used
+                ? `<span class="chip chip-ok" style="font-size:10px;">✓ Terpakai ${esc(v.usedAt||'')}</span>`
+                : `<span class="chip chip-gray" style="font-size:10px;">⏳ Belum dipakai</span>`}
+          </td>
+          <td style="padding:12px 14px;color:var(--ink2);font-size:12px;">
+            ${dibatalkan?'<em style="color:var(--ink3)">–</em>' : v.used&&v.usedBy ? esc(namaMap[v.usedBy]||v.usedBy) : '–'}
+          </td>
+          <td style="padding:12px 14px;text-align:center;">
+            ${!v.used
+              ? `<button class="btn btn-ghost" style="font-size:10px;padding:4px 10px;color:var(--err);border-color:var(--err-l);"
+                  onclick="window.batalKodeDarurat('${esc(tgl)}','${esc(kode)}')">Batalkan</button>`
+              : '–'}
+          </td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>
+    <p style="font-size:10px;color:var(--ink3);margin-top:12px;padding:0 4px;">
+      Total hari ini: ${kodes.length} kode ·
+      ${kodes.filter(([,v])=>v.used && v.usedBy !== 'DIBATALKAN_ADMIN').length} terpakai ·
+      ${kodes.filter(([,v])=>!v.used).length} aktif
+    </p>`;
   } catch(e) {
     if (isPermissionDenied(e)) {
       showRulesBanner(true);
       el.innerHTML = '<div class="empty">⚠ Akses ditolak Firebase. Ikuti panduan konfigurasi rules di atas.</div>';
-    } else {
-      el.innerHTML = `<div class="empty">❌ Gagal memuat: ${esc(e.message)}</div>`;
-    }
+    } else { el.innerHTML = `<div class="empty">❌ Gagal memuat: ${esc(e.message)}</div>`; }
   }
 }
 
 window.batalKodeDarurat = async function(tgl, kode) {
   if (!confirm(`Batalkan kode ${kode}?\nKode tidak bisa digunakan setelah ini.`)) return;
   try {
-    // Use atomic update instead of separate set() calls
-    const updates = {};
-    updates[`kode_darurat/${tgl}/${kode}/used`] = true;
-    updates[`kode_darurat/${tgl}/${kode}/usedBy`] = 'DIBATALKAN_ADMIN';
-    await update(ref(db), updates);
+    await update(ref(db), {
+      [`kode_darurat/${tgl}/${kode}/used`]:   true,
+      [`kode_darurat/${tgl}/${kode}/usedBy`]: 'DIBATALKAN_ADMIN',
+    });
     showToast(`Kode ${kode} berhasil dibatalkan.`, 'success');
     loadKodeDaruratList();
   } catch(e) {
-    if (isPermissionDenied(e)) {
-      showRulesBanner(true);
-      showToast('❌ Akses ditolak. Lihat panduan rules di atas.', 'error', 5000);
-    } else {
-      showToast('Gagal membatalkan: ' + e.message, 'error');
-    }
+    if (isPermissionDenied(e)) { showRulesBanner(true); showToast('❌ Akses ditolak.', 'error'); }
+    else { showToast('Gagal membatalkan: ' + e.message, 'error'); }
   }
 };
 
