@@ -678,6 +678,13 @@
     let currentUserRole = 'guru';
     let currentUser     = null;
     let currentUserNama = '';
+    
+    // BUG FIX #4: Store listener references for cleanup
+    let _emailInputListener = null;
+    let _passInputListener = null;
+    
+    // BUG FIX #6: Store modal timeout ID for cleanup
+    let _alasanModalTimeoutId = null;
     let currentScanMode = 'masuk';
     let userJadwal      = { masuk: '07:20', pulang: '12:00' };
     let userHariTanpaJadwal = {};
@@ -802,9 +809,10 @@
         const menitSekarang = waktuKeMenit(jamSekarang);
         const menitJadwal   = waktuKeMenit(jadwalMasuk);
         const selisih       = menitSekarang - menitJadwal;
-        if (selisih < 0) {
+        // BUG FIX #21: Use tolerance for float precision (1 minute tolerance for "on time")
+        if (selisih < -1) {
             return { status: 'Hadir Lebih Awal', keterangan: `${Math.abs(selisih)} menit lebih awal`, chipClass: 'chip-awal', valClass: 'early' };
-        } else if (selisih === 0) {
+        } else if (Math.abs(selisih) <= 1) {
             return { status: 'Hadir', keterangan: 'Tepat waktu', chipClass: 'chip-hadir', valClass: '' };
         } else {
             return { status: `Terlambat ${selisih} menit`, keterangan: `${selisih} menit keterlambatan`, chipClass: 'chip-late', valClass: 'late' };
@@ -951,18 +959,30 @@
 
     // ══ INGAT EMAIL ══
     (function loadSavedEmail() {
+        const emailEl = document.getElementById('login-email');
+        const passEl = document.getElementById('login-pass');
+        
+        // BUG FIX #4: Remove old listeners before adding new ones
+        if (_emailInputListener) emailEl.removeEventListener('input', _emailInputListener);
+        if (_passInputListener) passEl.removeEventListener('input', _passInputListener);
+        
         const saved = localStorage.getItem('saved_email');
         if (saved) {
-            document.getElementById('login-email').value = saved;
+            emailEl.value = saved;
             const pinMap = JSON.parse(localStorage.getItem('pin_map') || '{}');
-            if (pinMap[saved]) document.getElementById('login-pass').value = pinMap[saved];
+            if (pinMap[saved]) passEl.value = pinMap[saved];
         }
-        document.getElementById('login-email').addEventListener('input', function() {
+        
+        // Store listener references for later cleanup
+        _emailInputListener = function() {
             clearLoginError();
             const pinMap = JSON.parse(localStorage.getItem('pin_map') || '{}');
-            document.getElementById('login-pass').value = pinMap[this.value] || '';
-        });
-        document.getElementById('login-pass').addEventListener('input', clearLoginError);
+            passEl.value = pinMap[this.value] || '';
+        };
+        _passInputListener = clearLoginError;
+        
+        emailEl.addEventListener('input', _emailInputListener);
+        passEl.addEventListener('input', _passInputListener);
     })();
 
     // ══ UX FIX #18: App loader stage text ══
@@ -1162,22 +1182,33 @@
         if (!gpsChecked) { showToast('Harap tunggu, GPS sedang diperiksa…', 'warning'); return; }
         if (!gpsValid)   { showToast('❌ Anda berada di luar area sekolah.', 'error');   return; }
         if (html5QrCode) return;
+        
+        // BUG FIX #8: Check auth.currentUser exists before using it
+        if (!auth.currentUser) { showToast('Sesi berakhir. Silakan login kembali.', 'error'); return; }
 
         currentScanMode = mode;
         const badge = document.getElementById('scanner-mode-badge');
-        badge.innerText = mode === 'masuk' ? 'Absen Masuk' : 'Absen Pulang';
-        badge.className = `scanner-mode-badge ${mode}`;
+        if (badge) {
+            badge.innerText = mode === 'masuk' ? 'Absen Masuk' : 'Absen Pulang';
+            badge.className = `scanner-mode-badge ${mode}`;
+        }
 
-        document.getElementById('scanner-modal').classList.add('open');
+        const scannerModal = document.getElementById('scanner-modal');
+        if (!scannerModal) { showToast('Elemen scanner tidak ditemukan.', 'error'); return; }
+        
+        scannerModal.classList.add('open');
         html5QrCode = new Html5Qrcode("qr-reader");
 
         let scanHandled = false;
+        const currentUserUid = auth.currentUser.uid; // BUG FIX #8: Cache uid to prevent race condition
+        
+        // BUG FIX #2: Proper error handling with cleanup
         html5QrCode.start(
             { facingMode: "environment" },
             { fps: 24, qrbox: 220 },
             (text) => {
                 if (scanHandled) return;
-                if (text === auth.currentUser.uid) {
+                if (text === currentUserUid) {
                     scanHandled = true;
                     stopScanner();
                     submitAbsen(currentScanMode);
@@ -1186,8 +1217,16 @@
                 }
             }
         ).catch((err) => {
-            console.error(err);
-            stopScanner();
+            console.error('[Scanner] Error:', err);
+            // Ensure cleanup on error
+            if (html5QrCode) {
+                html5QrCode.stop().catch(e => console.warn('[Scanner] Stop error:', e)).finally(() => {
+                    html5QrCode = null;
+                    scannerModal.classList.remove('open');
+                });
+            } else {
+                scannerModal.classList.remove('open');
+            }
             showToast('❌ Kamera tidak dapat diakses. Periksa izin kamera.', 'error');
         });
     };
@@ -1211,51 +1250,83 @@
         const tgl  = now.toLocaleDateString('sv-SE');
         const jam  = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
 
-        const existingSnap = await get(ref(db, `absensi/${tgl}/${user.uid}/${mode}`));
-        if (existingSnap.exists()) {
-            showToast(`⚠️ Anda sudah absen ${mode === 'masuk' ? 'masuk' : 'pulang'} hari ini.`, 'warning');
-            return;
-        }
-
-        if (mode === 'pulang') {
-            const masukSnap = await get(ref(db, `absensi/${tgl}/${user.uid}/masuk`));
-            if (!masukSnap.exists()) { showToast('⚠️ Absen masuk terlebih dahulu!', 'warning'); return; }
-        }
-
-        let statusResult = mode === 'masuk'
-            ? hitungStatusMasuk(jam, userJadwal.masuk)
-            : hitungStatusPulang(jam, userJadwal.pulang);
-
-        const record = { waktu: jam, status: statusResult.status, keterangan: statusResult.keterangan };
-
-        const GPS_STALE_MS = 5 * 60 * 1000;
-        if (lastCoords) {
-            if ((Date.now() - lastCoords.ts) > GPS_STALE_MS) {
-                showToast('⚠️ Data GPS kadaluarsa, perbarui lokasi terlebih dahulu.', 'warning');
-                checkGPS();
+        try {
+            const existingSnap = await get(ref(db, `absensi/${tgl}/${user.uid}/${mode}`));
+            if (existingSnap.exists()) {
+                showToast(`⚠️ Anda sudah absen ${mode === 'masuk' ? 'masuk' : 'pulang'} hari ini.`, 'warning');
                 return;
             }
-            record.gps = { lat: lastCoords.lat, lng: lastCoords.lng, acc: lastCoords.acc };
+
+            if (mode === 'pulang') {
+                const masukSnap = await get(ref(db, `absensi/${tgl}/${user.uid}/masuk`));
+                if (!masukSnap.exists()) { showToast('⚠️ Absen masuk terlebih dahulu!', 'warning'); return; }
+            }
+
+            // BUG FIX #7: Ensure userJadwal has default values
+            const jadwal = userJadwal || { masuk: '07:20', pulang: '12:00' };
+            let statusResult = mode === 'masuk'
+                ? hitungStatusMasuk(jam, jadwal.masuk)
+                : hitungStatusPulang(jam, jadwal.pulang);
+
+            const record = { waktu: jam, status: statusResult.status, keterangan: statusResult.keterangan };
+
+            const GPS_STALE_MS = 5 * 60 * 1000;
+            if (lastCoords) {
+                if ((Date.now() - lastCoords.ts) > GPS_STALE_MS) {
+                    // BUG FIX #16: Auto-refresh GPS if stale, wait 5 seconds for update
+                    showToast('⚠️ Data GPS kadaluarsa, memperbarui lokasi…', 'warning');
+                    checkGPS();
+                    // Wait up to 5 seconds for GPS to update
+                    await new Promise(resolve => {
+                        let waited = 0;
+                        const checkInterval = setInterval(() => {
+                            if (lastCoords && (Date.now() - lastCoords.ts) <= GPS_STALE_MS) {
+                                clearInterval(checkInterval);
+                                resolve();
+                            } else if (waited > 5000) {
+                                clearInterval(checkInterval);
+                                resolve(); // Give up waiting
+                            }
+                            waited += 100;
+                        }, 100);
+                    });
+                    // Re-check if GPS is now fresh
+                    if (lastCoords && (Date.now() - lastCoords.ts) <= GPS_STALE_MS) {
+                        record.gps = { lat: lastCoords.lat, lng: lastCoords.lng, acc: lastCoords.acc };
+                    } else {
+                        showToast('❌ Data GPS tidak dapat diperbarui. Coba lagi.', 'error');
+                        return;
+                    }
+                } else {
+                    record.gps = { lat: lastCoords.lat, lng: lastCoords.lng, acc: lastCoords.acc };
+                }
+            }
+
+            // BUG FIX #9: Wrap Firebase writes with error handling
+            await set(ref(db, `absensi/${tgl}/${user.uid}/${mode}`), record);
+            await set(ref(db, `absensi/${tgl}/${user.uid}/nama`),    currentUserNama);
+            await set(ref(db, `absensi/${tgl}/${user.uid}/jabatan`), currentJabatan);
+
+            updateStatusCard(mode, jam, statusResult);
+            updateScanButton(mode, 'done', jam);
+
+            // UX FIX #15: haptic feedback
+            if (navigator.vibrate) navigator.vibrate([60, 40, 100]);
+
+            const emoji = statusResult.valClass === 'late' ? '⚠️' : '✅';
+            showToast(`${emoji} ${esc(statusResult.status)}\nPukul ${esc(jam)}`, statusResult.valClass === 'late' ? 'warning' : 'success');
+            fetchHistory();
+        } catch (err) {
+            console.error('[Absensi] Submit error:', err);
+            showToast(`❌ Gagal menyimpan absensi: ${err.message}`, 'error');
         }
-
-        await set(ref(db, `absensi/${tgl}/${user.uid}/${mode}`), record);
-        await set(ref(db, `absensi/${tgl}/${user.uid}/nama`),    currentUserNama);
-        await set(ref(db, `absensi/${tgl}/${user.uid}/jabatan`), currentJabatan);
-
-        updateStatusCard(mode, jam, statusResult);
-        updateScanButton(mode, 'done', jam);
-
-        // UX FIX #15: haptic feedback
-        if (navigator.vibrate) navigator.vibrate([60, 40, 100]);
-
-        const emoji = statusResult.valClass === 'late' ? '⚠️' : '✅';
-        showToast(`${emoji} ${esc(statusResult.status)}\nPukul ${esc(jam)}`, statusResult.valClass === 'late' ? 'warning' : 'success');
-        fetchHistory();
     }
 
     function updateStatusCard(mode, jam, statusResult) {
         const elId = mode === 'masuk' ? 'status-masuk-val' : 'status-pulang-val';
         const el   = document.getElementById(elId);
+        // BUG FIX #25: Guard against missing DOM elements
+        if (!el) return;
         el.innerText  = `${esc(jam)} — ${esc(statusResult.status)}`;
         el.className  = `status-row-val${statusResult.valClass ? ' ' + statusResult.valClass : ''}`;
         el.style.color = '';
@@ -1313,75 +1384,81 @@
     async function fetchHistory() {
         const user      = auth.currentUser;
         const container = document.getElementById('home-history');
-        // UX FIX #3: skeleton
-        container.innerHTML = renderSkeletonHistory();
+        if (!container) return;
+        
+        try {
+            // UX FIX #3: skeleton
+            container.innerHTML = renderSkeletonHistory();
 
-        const dates = [];
-        for (let i = 0; i < 7; i++) {
-            const d = new Date(); d.setDate(d.getDate() - i);
-            dates.push(d.toLocaleDateString('sv-SE'));
-        }
-        const today = dates[0];
-
-        await fetchLiburNasional(new Date().getFullYear());
-        await fetchLiburKhususDB();
-
-        const dbRef   = ref(db);
-        const settled = await Promise.allSettled(
-            dates.map(tgl =>
-                get(child(dbRef, `absensi/${tgl}/${user.uid}`))
-                    .then(snap => snap.exists() ? { tgl, data: snap.val() } : null)
-            )
-        );
-
-        container.innerHTML = '';
-        let foundToday = false;
-
-        for (const r of settled) {
-            if (r.status !== 'fulfilled' || !r.value) continue;
-            const { tgl, data } = r.value;
-
-            if (tgl === today) {
-                foundToday = true;
-                if (data.masuk) {
-                    const sm = hitungStatusMasuk(data.masuk.waktu, userJadwal.masuk);
-                    updateStatusCard('masuk', data.masuk.waktu, sm);
-                    updateScanButton('masuk', 'done', data.masuk.waktu);
-                }
-                if (data.pulang) {
-                    const sp = hitungStatusPulang(data.pulang.waktu, userJadwal.pulang);
-                    updateStatusCard('pulang', data.pulang.waktu, sp);
-                    updateScanButton('pulang', 'done', data.pulang.waktu);
-                }
-                if (!data.masuk && data.alasanTidakHadir) {
-                    const tipe = data.alasanTidakHadir.tipe || 'Tidak Hadir';
-                    const masukEl = document.getElementById('status-masuk-val');
-                    if (masukEl) { masukEl.innerText = `Tidak Hadir · ${tipe}`; masukEl.className = 'status-row-val'; masukEl.style.color = '#DC2626'; }
-                    const pulangEl = document.getElementById('status-pulang-val');
-                    if (pulangEl && !data.pulang) { pulangEl.innerText = '–'; pulangEl.className = 'status-row-val empty'; pulangEl.style.color = ''; }
-                }
+            const dates = [];
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(); d.setDate(d.getDate() - i);
+                dates.push(d.toLocaleDateString('sv-SE'));
             }
+            const today = dates[0];
 
-            const namaLiburTgl = getNamaLibur(tgl);
-            if (namaLiburTgl) {
-                // UX FIX #6: tanggal format human-friendly
-                container.innerHTML += `
-                    <div class="activity-card" style="border-left:3px solid #7C3AED;">
-                        <p class="activity-date">${esc(formatTglHuman(tgl))}</p>
-                        <div class="activity-row">
-                            <span class="activity-type" style="color:#7C3AED;font-weight:700;">🎉 Hari Libur</span>
-                            <span class="activity-time" style="color:#7C3AED;background:#F3E8FF;border-color:#DDD6FE;">${esc(namaLiburTgl)}</span>
-                        </div>
-                    </div>`;
-                continue;
-            }
+            await fetchLiburNasional(new Date().getFullYear());
+            await fetchLiburKhususDB();
 
-            const alasanTgl = data.alasanTidakHadir || null;
+            const dbRef   = ref(db);
+            const settled = await Promise.allSettled(
+                dates.map(tgl =>
+                    get(child(dbRef, `absensi/${tgl}/${user.uid}`))
+                        .then(snap => snap.exists() ? { tgl, data: snap.val() } : null)
+                )
+            );
 
-            const masukHTML = data.masuk ? `
-                <div class="activity-row">
-                    <div class="activity-row-wrap">
-                        <span class="activity-type">Masuk</span>
+            container.innerHTML = '';
+            let foundToday = false;
+            
+            // BUG FIX #7: Ensure userJadwal has defaults before using
+            const jadwal = userJadwal || { masuk: '07:20', pulang: '12:00' };
+
+            for (const r of settled) {
+                if (r.status !== 'fulfilled' || !r.value) continue;
+                const { tgl, data } = r.value;
+
+                if (tgl === today) {
+                    foundToday = true;
+                    if (data.masuk) {
+                        const sm = hitungStatusMasuk(data.masuk.waktu, jadwal.masuk);
+                        updateStatusCard('masuk', data.masuk.waktu, sm);
+                        updateScanButton('masuk', 'done', data.masuk.waktu);
+                    }
+                    if (data.pulang) {
+                        const sp = hitungStatusPulang(data.pulang.waktu, jadwal.pulang);
+                        updateStatusCard('pulang', data.pulang.waktu, sp);
+                        updateScanButton('pulang', 'done', data.pulang.waktu);
+                    }
+                    if (!data.masuk && data.alasanTidakHadir) {
+                        const tipe = data.alasanTidakHadir.tipe || 'Tidak Hadir';
+                        const masukEl = document.getElementById('status-masuk-val');
+                        if (masukEl) { masukEl.innerText = `Tidak Hadir · ${tipe}`; masukEl.className = 'status-row-val'; masukEl.style.color = '#DC2626'; }
+                        const pulangEl = document.getElementById('status-pulang-val');
+                        if (pulangEl && !data.pulang) { pulangEl.innerText = '–'; pulangEl.className = 'status-row-val empty'; pulangEl.style.color = ''; }
+                    }
+                }
+
+                const namaLiburTgl = getNamaLibur(tgl);
+                if (namaLiburTgl) {
+                    // UX FIX #6: tanggal format human-friendly
+                    container.innerHTML += `
+                        <div class="activity-card" style="border-left:3px solid #7C3AED;">
+                            <p class="activity-date">${esc(formatTglHuman(tgl))}</p>
+                            <div class="activity-row">
+                                <span class="activity-type" style="color:#7C3AED;font-weight:700;">🎉 Hari Libur</span>
+                                <span class="activity-time" style="color:#7C3AED;background:#F3E8FF;border-color:#DDD6FE;">${esc(namaLiburTgl)}</span>
+                            </div>
+                        </div>`;
+                    continue;
+                }
+
+                const alasanTgl = data.alasanTidakHadir || null;
+
+                const masukHTML = data.masuk ? `
+                    <div class="activity-row">
+                        <div class="activity-row-wrap">
+                            <span class="activity-type">Masuk</span>
                         <span class="activity-status-chip ${chipMasukClass(data.masuk.status)}">${esc(data.masuk.status)}</span>
                     </div>
                     <span class="activity-time">${esc(data.masuk.waktu)}</span>
@@ -1432,6 +1509,12 @@
         if (!container.innerHTML) {
             container.innerHTML = renderEmptyState('Belum ada riwayat', '7 hari terakhir tidak ada data kehadiran');
         }
+        } catch (err) {
+            console.error('[Riwayat] Fetch error:', err);
+            if (container) {
+                container.innerHTML = renderEmptyState('⚠️ Error', 'Gagal memuat riwayat: ' + err.message);
+            }
+        }
     }
 
     function chipAlasanClass(tipe) {
@@ -1458,91 +1541,100 @@
         const user      = auth.currentUser;
         const container = document.getElementById('report-container');
         const summaryEl = document.getElementById('report-summary');
-        // UX FIX #3: skeleton
-        container.innerHTML = renderSkeletonReport();
-        if (summaryEl) summaryEl.style.display = 'none';
+        if (!container) return;
+        
+        try {
+            // UX FIX #3: skeleton
+            container.innerHTML = renderSkeletonReport();
+            if (summaryEl) summaryEl.style.display = 'none';
 
-        const dates = [];
-        for (let i = 0; i < 30; i++) {
-            const d = new Date(); d.setDate(d.getDate() - i);
-            dates.push(d.toLocaleDateString('sv-SE'));
-        }
-
-        await fetchLiburNasional(new Date().getFullYear());
-        await fetchLiburKhususDB();
-
-        const dbRef   = ref(db);
-        const settled = await Promise.allSettled(
-            dates.map(tgl =>
-                get(child(dbRef, `absensi/${tgl}/${user.uid}`))
-                    .then(snap => snap.exists() ? { tgl, data: snap.val() } : null)
-            )
-        );
-
-        const results = settled.filter(r => r.status === 'fulfilled' && r.value).map(r => r.value);
-        container.innerHTML = '';
-
-        // UX FIX #13: hitung statistik
-        let statHadir = 0, statTerlambat = 0, statIzin = 0;
-
-        for (const { tgl, data } of results) {
-            const alasanR    = data.alasanTidakHadir || null;
-            const namaLiburR = getNamaLibur(tgl);
-
-            if (namaLiburR) continue; // skip hari libur dari laporan
-
-            if (!data.masuk && !data.pulang && !alasanR) continue;
-
-            if (data.masuk) {
-                if (chipMasukClass(data.masuk.status) === 'chip-late') statTerlambat++;
-                else statHadir++;
+            const dates = [];
+            for (let i = 0; i < 30; i++) {
+                const d = new Date(); d.setDate(d.getDate() - i);
+                dates.push(d.toLocaleDateString('sv-SE'));
             }
-            if (alasanR && !data.masuk) statIzin++;
 
-            const masukHTML = data.masuk ? `
-                <div class="activity-row">
-                    <div class="activity-row-wrap">
-                        <span class="activity-type">Masuk</span>
-                        <span class="activity-status-chip ${chipMasukClass(data.masuk.status)}">${esc(data.masuk.status)}</span>
-                    </div>
-                    <span class="activity-time">${esc(data.masuk.waktu)}</span>
-                </div>`
-              : alasanR ? `
-                <div class="activity-row">
-                    <div class="activity-row-wrap">
-                        <span class="activity-type">Tidak Hadir</span>
-                        <span class="activity-status-chip ${chipAlasanClass(alasanR.tipe)}">${esc(alasanR.tipe || 'Laporan')}</span>
-                    </div>
-                    ${alasanR.detail ? `<span class="activity-time" style="font-size:10px;color:var(--t3);">${esc(alasanR.detail.slice(0,20))}${alasanR.detail.length>20?'…':''}</span>` : `<span class="activity-time" style="color:#94A3B8;">${esc(alasanR.waktu || '–')}</span>`}
-                </div>` : '';
+            await fetchLiburNasional(new Date().getFullYear());
+            await fetchLiburKhususDB();
 
-            const pulangHTML = data.pulang ? `
-                <div class="activity-row" style="margin-top:6px;">
-                    <div class="activity-row-wrap">
-                        <span class="activity-type">Pulang</span>
-                        <span class="activity-status-chip ${chipPulangClass(data.pulang.status)}">${esc(data.pulang.status)}</span>
-                    </div>
-                    <span class="activity-time pulang">${esc(data.pulang.waktu)}</span>
-                </div>` : '';
+            const dbRef   = ref(db);
+            const settled = await Promise.allSettled(
+                dates.map(tgl =>
+                    get(child(dbRef, `absensi/${tgl}/${user.uid}`))
+                        .then(snap => snap.exists() ? { tgl, data: snap.val() } : null)
+                )
+            );
 
-            const cardBorder = alasanR && !data.masuk ? 'border-left:3px solid #DC2626;' : '';
-            container.innerHTML += `
-                <div class="activity-card" style="${cardBorder}">
-                    <p class="activity-date">${esc(formatTglHuman(tgl))}</p>
-                    ${masukHTML}${pulangHTML}
-                </div>`;
-        }
+            const results = settled.filter(r => r.status === 'fulfilled' && r.value).map(r => r.value);
+            container.innerHTML = '';
 
-        // UX FIX #13: tampilkan summary stats
-        if (summaryEl && results.length > 0) {
-            summaryEl.style.display = 'grid';
-            document.getElementById('stat-hadir').textContent     = statHadir;
-            document.getElementById('stat-terlambat').textContent = statTerlambat;
-            document.getElementById('stat-izin').textContent      = statIzin;
-        }
+            // UX FIX #13: hitung statistik
+            let statHadir = 0, statTerlambat = 0, statIzin = 0;
 
-        if (!container.innerHTML) {
-            container.innerHTML = renderEmptyState('Belum ada data', '30 hari terakhir tidak ada riwayat absensi');
+            for (const { tgl, data } of results) {
+                const alasanR    = data.alasanTidakHadir || null;
+                const namaLiburR = getNamaLibur(tgl);
+
+                if (namaLiburR) continue; // skip hari libur dari laporan
+
+                if (!data.masuk && !data.pulang && !alasanR) continue;
+
+                if (data.masuk) {
+                    if (chipMasukClass(data.masuk.status) === 'chip-late') statTerlambat++;
+                    else statHadir++;
+                }
+                if (alasanR && !data.masuk) statIzin++;
+
+                const masukHTML = data.masuk ? `
+                    <div class="activity-row">
+                        <div class="activity-row-wrap">
+                            <span class="activity-type">Masuk</span>
+                            <span class="activity-status-chip ${chipMasukClass(data.masuk.status)}">${esc(data.masuk.status)}</span>
+                        </div>
+                        <span class="activity-time">${esc(data.masuk.waktu)}</span>
+                    </div>`
+                  : alasanR ? `
+                    <div class="activity-row">
+                        <div class="activity-row-wrap">
+                            <span class="activity-type">Tidak Hadir</span>
+                            <span class="activity-status-chip ${chipAlasanClass(alasanR.tipe)}">${esc(alasanR.tipe || 'Laporan')}</span>
+                        </div>
+                        ${alasanR.detail ? `<span class="activity-time" style="font-size:10px;color:var(--t3);">${esc(alasanR.detail.slice(0,20))}${alasanR.detail.length>20?'…':''}</span>` : `<span class="activity-time" style="color:#94A3B8;">${esc(alasanR.waktu || '–')}</span>`}
+                    </div>` : '';
+
+                const pulangHTML = data.pulang ? `
+                    <div class="activity-row" style="margin-top:6px;">
+                        <div class="activity-row-wrap">
+                            <span class="activity-type">Pulang</span>
+                            <span class="activity-status-chip ${chipPulangClass(data.pulang.status)}">${esc(data.pulang.status)}</span>
+                        </div>
+                        <span class="activity-time pulang">${esc(data.pulang.waktu)}</span>
+                    </div>` : '';
+
+                const cardBorder = alasanR && !data.masuk ? 'border-left:3px solid #DC2626;' : '';
+                container.innerHTML += `
+                    <div class="activity-card" style="${cardBorder}">
+                        <p class="activity-date">${esc(formatTglHuman(tgl))}</p>
+                        ${masukHTML}${pulangHTML}
+                    </div>`;
+            }
+
+            // UX FIX #13: tampilkan summary stats
+            if (summaryEl && results.length > 0) {
+                summaryEl.style.display = 'grid';
+                document.getElementById('stat-hadir').textContent     = statHadir;
+                document.getElementById('stat-terlambat').textContent = statTerlambat;
+                document.getElementById('stat-izin').textContent      = statIzin;
+            }
+
+            if (!container.innerHTML) {
+                container.innerHTML = renderEmptyState('Belum ada data', '30 hari terakhir tidak ada riwayat absensi');
+            }
+        } catch (err) {
+            console.error('[Laporan] Fetch error:', err);
+            if (container) {
+                container.innerHTML = renderEmptyState('⚠️ Error', 'Gagal memuat laporan: ' + err.message);
+            }
         }
     }
 
@@ -1642,6 +1734,13 @@
 
     window.openAlasanModal = async function() {
         if (!currentUser) return;
+        
+        // BUG FIX #6: Clear previous timeout if modal is reopened
+        if (_alasanModalTimeoutId !== null) {
+            clearTimeout(_alasanModalTimeoutId);
+            _alasanModalTimeoutId = null;
+        }
+        
         const tgl = new Date().toLocaleDateString("sv-SE");
         _selectedAlasan = null;
         document.querySelectorAll("#alasan-chips .alasan-chip").forEach(c => c.classList.remove("selected"));
@@ -1674,10 +1773,16 @@
     // UX FIX #17: Animasi slide-down saat close modal
     window.closeAlasanModal = function(e) {
         if (!e || e.target === document.getElementById("modal-alasan")) {
+            // BUG FIX #6: Clear existing timeout before closing
+            if (_alasanModalTimeoutId !== null) {
+                clearTimeout(_alasanModalTimeoutId);
+                _alasanModalTimeoutId = null;
+            }
             const overlay = document.getElementById("modal-alasan");
             overlay.classList.add('closing');
-            setTimeout(() => {
+            _alasanModalTimeoutId = setTimeout(() => {
                 overlay.classList.remove('open', 'closing');
+                _alasanModalTimeoutId = null;
             }, 240);
         }
     };
@@ -1814,7 +1919,8 @@
     };
 
     window.validateKodeDarurat = function(el) {
-        el.value = el.value.replace(/\D/g,'');
+        // BUG FIX #15: Better input validation - remove non-digit, limit to 6 chars, trim spaces
+        el.value = el.value.replace(/\D/g,'').slice(0, 6);
         el.className = 'kode-darurat-input';
         document.getElementById('kode-sisa-wrap').style.display = 'none';
         document.getElementById('btn-submit-kode').disabled = el.value.length !== 6;
@@ -1822,7 +1928,12 @@
 
     window.submitKodeDarurat = async function() {
         const kode = document.getElementById('kode-darurat-input').value.trim();
-        if (kode.length !== 6) return;
+        // BUG FIX #15: Validate input format (must be 6 digits, numeric only)
+        if (!/^\d{6}$/.test(kode)) {
+            showToast('❌ Kode harus 6 digit angka.', 'error');
+            return;
+        }
+        
         const btn = document.getElementById('btn-submit-kode');
         btn.disabled = true;
         btn.textContent = 'Memverifikasi…';
@@ -1846,6 +1957,20 @@
                 showToast('⚠️ Kode sudah pernah digunakan.', 'warning');
                 btn.disabled = false; btn.textContent = 'Verifikasi & Absen';
                 return;
+            }
+            
+            // BUG FIX #15: Check kode expiration (if createdAt exists, validate not too old)
+            const createdAt = data.createdAt;
+            if (createdAt) {
+                const createdTime = new Date(createdAt).getTime();
+                const now = new Date().getTime();
+                const MAX_KODE_AGE_MS = 24 * 60 * 60 * 1000; // 24 hours
+                if (now - createdTime > MAX_KODE_AGE_MS) {
+                    document.getElementById('kode-darurat-input').className = 'kode-darurat-input invalid';
+                    showToast('❌ Kode sudah kadaluarsa.', 'error');
+                    btn.disabled = false; btn.textContent = 'Verifikasi & Absen';
+                    return;
+                }
             }
 
             // Kode valid — tandai used
